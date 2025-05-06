@@ -3,19 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\FilmRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints\Unique;
 
 #[ORM\Entity(repositoryClass: FilmRepository::class)]
+#[ORM\Table(name: 'film')]
 class Film
 {
     #[ORM\Id]
     #[ORM\Column(length: 15)]
     private ?string $tconst = null;
-
-    #[ORM\Column(length: 30)]
-    private ?string $titleType = null;
 
     #[ORM\Column(length: 499)]
     private ?string $primaryTitle = null;
@@ -24,19 +20,17 @@ class Film
     private ?string $originalTitle = null;
 
     #[ORM\Column(nullable: true)]
-    private ?bool $isAdult = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?int $startYear = null;
-
-    #[ORM\Column(nullable: true)]
     private ?int $endYear = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $runtimeMinutes = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $genres = null;
+    #[ORM\Column(nullable: true)]
+    private ?int $numVotes = null;
+
+    #[ORM\OneToOne(mappedBy: 'film', targetEntity: FilmFiltre::class, cascade: ['persist', 'remove'])]
+    // 'film' est la propriété dans FilmFiltre qui référence cet objet Film
+    private ?FilmFiltre $filmFiltre = null;
 
 
 
@@ -48,18 +42,6 @@ class Film
     public function setTconst(string $tconst): static
     {
         $this->tconst = $tconst;
-
-        return $this;
-    }
-
-    public function getTitleType(): ?string
-    {
-        return $this->titleType;
-    }
-
-    public function setTitleType(string $titleType): static
-    {
-        $this->titleType = $titleType;
 
         return $this;
     }
@@ -88,30 +70,6 @@ class Film
         return $this;
     }
 
-    public function isAdult(): ?bool
-    {
-        return $this->isAdult;
-    }
-
-    public function setIsAdult(?bool $isAdult): static
-    {
-        $this->isAdult = $isAdult;
-
-        return $this;
-    }
-
-    public function getStartYear(): ?int
-    {
-        return $this->startYear;
-    }
-
-    public function setStartYear(int $startYear): static
-    {
-        $this->startYear = $startYear;
-
-        return $this;
-    }
-
     public function getEndYear(): ?int
     {
         return $this->endYear;
@@ -136,15 +94,33 @@ class Film
         return $this;
     }
 
-    public function getGenres(): ?array
+    public function getNumVotes(): ?int
     {
-        return $this->genres;
+        return $this->numVotes;
     }
 
-    public function setGenres(?array $genres): static
+    public function setNumVotes(?int $numVotes): static
     {
-        $this->genres = $genres;
+        $this->numVotes = $numVotes;
 
+        return $this;
+    }
+
+    public function getFilmFiltre(): ?FilmFiltre
+    {
+        return $this->filmFiltre;
+    }
+
+    public function setFilmFiltre(FilmFiltre $filmFiltre): self
+    {
+        // Assurez-vous que le côté propriétaire est également mis à jour
+        // Ceci est crucial pour la cohérence des données en mémoire
+        // et pour que la cascade (persist) fonctionne correctement
+        if ($filmFiltre->getFilm() !== $this) {
+            $filmFiltre->setFilm($this);
+        }
+
+        $this->filmFiltre = $filmFiltre;
         return $this;
     }
 }
