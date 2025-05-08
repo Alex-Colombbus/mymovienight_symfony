@@ -1,0 +1,481 @@
+:root{
+  --color-backgroundBlanc: #F8F9FA;
+  --color-accentuationBleu: #007BFF;
+  --color-accentuationBleuClair: #9dc6f2;
+  --color-iconeRouge: #F90A0A;
+  --color-grisClair: #EBEBEB;
+  /* --color-accentuationBleu: #003566; */
+}
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* Bonne pratique */
+}
+ */
+
+/* --- Styles pour le conteneur des sliders --- */
+.range_container {
+  display: flex;
+  flex-direction: column;
+  width: 80%; /* Ajustez si besoin */
+  margin: 0 auto; /* Un peu moins de marge verticale peut-être? */
+}
+
+.sliders_control {
+  position: relative; /* ESSENTIEL pour positionner les sliders absolument à l'intérieur */
+  height: 50px; /* Hauteur suffisante pour contenir les curseurs et la barre */
+  display: flex; /* Bien que les enfants soient absolus, peut aider à l'alignement initial */
+  align-items: center;
+}
+
+/* --- Styles de base pour les DEUX barres (pistes) --- */
+input[type="range"] {
+  -webkit-appearance: none; /* Nécessaire pour Webkit */
+  appearance: none;         /* Standard */
+  width: 100%;
+  height: 8px;              /* Hauteur de la piste */
+  background: #e8e7e7;    /* Couleur de la piste pour barreMin */
+  border-radius: 5px;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  position: absolute;      /* Positionnement absolu pour superposition */
+  top: 50%;                /* Centre verticalement */
+  transform: translateY(-50%); /* Ajustement fin du centrage vertical */
+  pointer-events: none;    /* La PISTE n'est pas cliquable */
+  z-index: 1;              /* Niveau de base */
+}
+
+/* --- Style spécifique pour la piste de la barre MAX --- */
+/* Rend la piste supérieure transparente pour voir celle du dessous */
+#barreMax{
+  background-color: transparent;
+  z-index: 2; /* S'assure qu'elle est au-dessus de barreMin si jamais elles se superposent */
+}
+
+#barreAnneeMax{
+  background-color: transparent !important;
+  z-index: 2; /* S'assure qu'elle est au-dessus de barreMin si jamais elles se superposent */
+}
+
+
+#barreAnneeMax::-moz-range-track {
+  background-color: transparent !important;
+}
+
+/* --- Styles pour le CURSEUR (thumb) --- */
+
+/* Curseur pour WebKit (Chrome, Safari, Edge, Opera) */
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Obligatoire pour styler */
+  appearance: none;
+  width: 7px;          /* Largeur du curseur */
+  height: 24px;         /* Hauteur du curseur (vertical) */
+  background-color: #000000; /* Couleur du curseur */
+  border-radius: 3px;
+  cursor: pointer;
+  pointer-events: all;  /* TRES IMPORTANT: Rend le CURSEUR cliquable/déplaçable */
+  position: relative;   /* Permet z-index */
+  z-index: 3;           /* Doit être au-dessus des pistes */
+  /* box-shadow: 0 0 0 1px #C6C6C6; /* Optionnel */
+}
+
+/* Curseur pour Firefox */
+input[type=range]::-moz-range-thumb {
+  /* Pas besoin de -moz-appearance: none; ici */
+  width: 7px;          /* Largeur du curseur */
+  height: 24px;         /* Hauteur du curseur (vertical) */
+  background-color: #000000; /* Couleur du curseur */
+  border-radius: 3px;
+  border: none;         /* Enlève la bordure par défaut de Firefox */
+  cursor: pointer;
+  pointer-events: all;  /* TRES IMPORTANT: Rend le CURSEUR cliquable/déplaçable */
+  position: relative;   /* Permet z-index */
+  z-index: 3;           /* Doit être au-dessus des pistes */
+  /* box-shadow: 0 0 0 1px #C6C6C6; /* Optionnel */
+}
+
+/* --- Styles Hover/Active pour le CURSEUR --- */
+
+/* Hover */
+input[type=range]::-webkit-slider-thumb:hover {
+  background: var(--color-backgroundBlanc);
+}
+input[type=range]::-moz-range-thumb:hover { /* Ajout pour Firefox */
+  background: var(--color-backgroundBlanc);
+}
+
+/* Active (pendant le glissement) */
+input[type=range]::-webkit-slider-thumb:active {
+  box-shadow: inset 0 0 3px #ffffff, 0 0 9px #ffffff;
+  -webkit-box-shadow: inset 0 0 3px #ffffff, 0 0 9px #ffffff;
+}
+input[type=range]::-moz-range-thumb:active { /* Ajout pour Firefox */
+  /* Vous pouvez définir un style 'active' pour Firefox, par ex. une ombre ou une couleur différente */
+   box-shadow: inset 0 0 3px #ffffff, 0 0 9px #ffffff; /* Essayez si ça marche */
+  /* Ou simplement une couleur: */
+  /* background-color: #333; */
+}
+
+
+/* --- Styles pour les inputs numériques --- */
+/* .form_control {
+  position: relative; Garder relatif si besoin
+  display: flex;
+  justify-content: space-between;
+  font-size: 24px; Taille texte 'Min'/'Max'
+  color: #635a5a;
+ 
+  margin-top: 15px; Espace après les sliders
+} */
+
+.form_control_container {
+  display: flex;
+  flex-direction: column; /* Label au-dessus de l'input */
+  align-items: center;
+}
+
+.form_control_container__time {
+  font-size: 0.8em; /* Taille du label (Min/Max) */
+  margin-bottom: 5px;
+  
+}
+
+.form_control_container__time__input {
+  /* Utilise les styles de input[type=number] définis plus bas */
+}
+
+input[type="number"] {
+  color: var(--color-accentuationBleu); /* Couleur du texte */ 
+  width: 60px; /* Un peu plus large peut-être */
+  height: 30px;
+  font-size: 20px;
+ border: none;
+ background-color: transparent;
+  border-radius: 4px;
+  text-align: center;
+  padding: 2px 5px;
+  /* Supprime les flèches */
+  -moz-appearance: textfield; /* Firefox */
+}
+/* Webkit */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+
+
+*{
+  list-style: none;
+  /* box-sizing: border-box; /* Bonne pratique */
+}
+
+h1{
+  font-family: Jolly Lodger, serif;
+  -webkit-text-stroke: 2px var(--color-grisClair);
+  letter-spacing: -3px;
+  font-size: 6rem !important;
+  color: var(--color-accentuationBleu); /* Assurez-vous que la couleur du texte est définie */
+  text-align: center; /* Centrer le h1 */
+}
+
+.navIndex{
+  height: 20vh; /* Utilisez peut-être min-height pour flexibilité */
+ 
+}
+
+
+.mainIndex{
+  height: 60vh; /* min-height est souvent mieux que height */
+  display: flex; /* Ajouté pour mieux centrer le contenu si besoin */
+  flex-direction: column;
+  align-items: center; /* Centre .range_container horizontalement */
+  padding-top: 20px; /* Un peu d'espace en haut */
+  background-color: var(--color-backgroundBlanc);
+}
+
+.accueilGlobal{
+  padding-top: 5rem;
+
+}
+
+.chevron{
+  border: none;
+  background-color: transparent;
+  font-size: 30px;
+}
+
+.footerIndex{
+
+  min-height: 20vh; /* Utilisez peut-être min-height */
+}
+
+.navIndex, .footerIndex {
+  /* Couleur de fond FINALE (celle qui sera révélée) */
+  background-color: var(--color-backgroundBlanc);
+  /* Position relative pour positionner le pseudo-élément absolument */
+  position: relative;
+  /* Cache tout ce qui dépasse (important pour l'effet de glissement) */
+  overflow: hidden;
+  /* Ajoutez d'autres styles si besoin : padding, height, etc. */
+
+  color: var(--color-accentuationBleu); /* Couleur du texte sur fond jaune */
+}
+
+.navIndex::before,
+.footerIndex::before {
+    content: ''; /* Nécessaire pour qu'un pseudo-élément s'affiche */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-accentuationBleu); /* Couleur initiale */
+    z-index: 1; /* Pour être au-dessus du background jaune de l'élément parent */
+
+    /* La transition s'appliquera à la transformation */
+    transition: transform 0.6s ease-in-out; /* Durée et type de transition */
+}
+
+.navIndex.color-changed::before {
+  /* Déplace le ::before de la nav vers le HAUT */
+  transform: translateY(-100%);
+}
+
+.footerIndex.color-changed::before {
+  /* Déplace le ::before du footer vers le BAS */
+  transform: translateY(100%);
+}
+
+.iconeNavIndex{
+  font-size: 2rem;
+  color: var(--color-backgroundBlanc); /* Couleur initiale (jaune) */
+  /* Position relative pour pouvoir utiliser z-index */
+  position: relative;
+  /* Mettre l'icône AU-DESSUS de la couche ::before de nav/footer (qui a z-index: 1) */
+  z-index: 2;
+  /* Ajouter une transition pour le changement de couleur de l'icône elle-même */
+  transition: color 0.6s ease-in-out; /* Même durée que le fond pour la synchro */
+  /* Important : Assurez-vous que l'icône n'est pas affectée par l'overflow:hidden du parent
+     si elle devait dépasser un peu (peu probable pour une icône mais bon à savoir).
+     Cela dépendra de la structure HTML exacte. Souvent, ce n'est pas un problème. */
+}
+
+.navIndex.color-changed .iconeNav {
+  color: var(--color-accentuationBleu); /* Couleur finale (jaune) */
+}
+
+.boutonFind{
+  background-color: var(--color-accentuationBleu);
+  color: var(--color-backgroundBlanc);
+  font-family: Jolly Lodger, serif;
+  border: none;
+  padding:1px 30px;
+  font-size: 20px;
+  border-radius: 30px;
+  cursor: pointer;
+  z-index: 2; /* Pour être au-dessus du ::before */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Transition pour le changement de couleur */
+}
+
+.sectionCachee {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.6s ease-in-out, opacity 0.6s ease-in-out;
+}
+
+.sectionCachee.visible {
+  max-height: 100%; /* Large enough to reveal content */
+  opacity: 1;
+}
+
+.labelFont{
+  font-size: 10px; /* Taille du texte de la case à cocher */
+  font-weight: 500;
+}
+
+.checkbox-item {
+  text-align: center; /* Ensure content inside is centered */
+  width: 100%; /* Ensure item takes full width of its grid cell */
+}
+
+.checkbox-item input[type="checkbox"]:checked {
+  background-color: var(--color-accentuationBleu);
+}
+
+/***************** Page non index *******************/
+.headerFilm{
+  height: 10vh;
+  background-color: var(--color-backgroundBlanc);
+}
+
+.footerFilm{
+  background-color: var(--color-backgroundBlanc);
+  height: 10vh;
+}
+
+.bgSite{
+  background-color: var(--color-backgroundBlanc);
+}
+
+.iconeNav{
+  font-size: 2rem;
+  color: var(--color-accentuationBleu); /* Couleur initiale (jaune) */
+  /* Position relative pour pouvoir utiliser z-index */
+
+}
+/***************** Page Film *******************/
+
+
+
+.img-film {
+  max-height: 70vh; /* Limite la hauteur de l'image à la hauteur du viewport moins la hauteur du footer */
+  width: auto; /* Garde les proportions de l'image */
+  object-fit: contain; /* Ajuste l'image pour qu'elle reste visible sans déformation */
+  display: block; /* Évite les marges indésirables */
+  margin: 0 auto; /* Centre l'image horizontalement */
+}
+
+.main-film {
+  display: flex; /* Active Flexbox pour aligner le contenu */
+  flex-direction: column; /* Aligne les éléments verticalement */
+  align-items: center; /* Centre horizontalement */
+  justify-content: center; /* Centre verticalement */
+  height: 80vh; /* Hauteur totale du viewport moins la hauteur du footer */
+  overflow: hidden; /* Cache tout dépassement */
+}
+
+/***************** Page List *******************/
+
+.mainList{
+  background-color: var(--color-backgroundBlanc);
+}
+
+.divListFilm::-webkit-scrollbar-track {
+  background: transparent; /* Rend le fond de la piste transparent */
+}
+
+.divListFilm::-webkit-scrollbar {
+  width: 8px; /* Largeur de la scrollbar */
+}
+
+.divListFilm::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.5); /* Couleur du curseur avec transparence */
+  border-radius: 4px; /* Arrondir les coins */
+}
+
+.divListFilm{
+  overflow : auto; /* Permet le défilement si le contenu dépasse */
+  height: 80vh; /* Limite la hauteur de la liste à 80% de la hauteur du viewport */
+}
+
+
+.posterFilmList {
+  height: 10rem;
+  width: auto; /* Garde les proportions de l'image */
+  object-fit: contain; /* Ajuste l'image pour qu'elle reste visible sans déformation */
+  display: block; /* Évite les marges indésirables */
+  margin: 0 auto; /* Centre l'image horizontalement */
+}
+
+.detailsFilm{
+  height: 80vh;
+}
+
+.divAfficheFilm{
+
+  height: 50vh;
+}
+
+.detailsAfficheFilm{
+
+  height: 100%;
+  width: auto;
+}
+
+/***************** Login *******************/
+
+.loginMain{
+  height: 80vh; /* min-height est souvent mieux que height */
+}
+
+.card-border{
+  max-Width: 400px;
+  background-Color:  var(--color-backgroundBlanc);
+  border: 2px solid var(--color-accentuationBleu) !important;
+  border-radius: 10px;
+
+}
+
+.boutonSite{
+  background-color: var(--color-accentuationBleu)!important;
+  color: var(--color-backgroundBlanc)!important;
+  font-family: Jolly Lodger, serif;
+  border: none;
+  padding:1px 30px;
+  font-size: 20px;
+  border-radius: 30px;
+  
+}
+
+.labelFormLogin{
+  color: var(--color-accentuationBleu) !important;
+}
+
+.inputFormLogin{
+  background-color: transparent !important;
+  color: var(--color-accentuationBleu) !important;
+  border-color: var(--color-accentuationBleu) !important;
+}
+
+.inputFormLogin::placeholder{
+  color : var(--color-accentuationBleuClair) !important;
+  font-weight: 300 !important;
+}
+
+
+
+/***************** Register *******************/
+
+.RegisterMain{
+  height: 80vh; /* min-height est souvent mieux que height */
+}
+
+.card-border{
+  max-Width: 400px;
+  background-Color:  var(--color-backgroundBlanc);
+  border: 1px solid var(--color-accentuationBleu);
+  border-radius: 10px;
+
+}
+
+.boutonSite{
+  background-color: var(--color-accentuationBleu);
+  color: var(--color-backgroundBlanc);
+  font-family: Jolly Lodger, serif;
+  border: none;
+  padding:1px 30px;
+  font-size: 20px;
+  border-radius: 30px;
+  
+}
+
+.labelFormRegister{
+  color: var(--color-accentuationBleu) !important;
+}
+
+.inputFormRegister{
+  background-color: transparent !important;
+  color: var(--color-accentuationBleu) !important;
+  border-color: var(--color-accentuationBleu) !important;
+}
+
+.inputFormRegister::placeholder{
+  color : var(--color-accentuationBleuClair) !important;
+  font-weight: 300 !important;
+}

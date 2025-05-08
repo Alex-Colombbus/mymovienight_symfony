@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello LoginController!{% endblock %}
+
+{% block body %}
+
+{% if error %}
+<div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+{% endif %}
+<div class="container-fluid d-flex align-items-center justify-content-center loginMain bgSite">
+
+    <div class="card-border col-6">
+          <div class="cardBody p-4">
+                <form action="{{ path('app_login') }}" method="post">
+                      <div class="mb-3">
+                            <label for="username" class="form-label labelFormLogin fw-lighter">
+                                  Email
+                            </label>
+                            <input
+                                  type="email"
+                                  name="_username"
+                                  class="form-control inputFormLogin"
+                                  id="email"
+                                  placeholder="Entrez votre email" value="{{ last_username }}" required />
+                      </div>
+                      <div class="mb-3">
+                            <label for="password" class="form-label labelFormLogin fw-lighter">
+                                  Mot de passe
+                            </label>
+                            <input
+                                  type="password"
+                                  class="form-control inputFormLogin"
+                                  name="_password"
+                                  id="password"
+                                  placeholder="Entrez votre mot de passe" required />
+                      </div>
+                      {# Redirection après connexion #}
+                      <input type="hidden" name="_target_path" value="/compte">  
+                      <button
+                            type="submit"
+                            class="boutonSite w-100 mb-3">Connexion</button>
+                      <div class="d-flex justify-content-between">
+                            <a href="#" class="text-decoration-none">
+                                  Mot de passe oublié?
+                            </a>
+                            <a href="{{ path('app_register') }}" class="text-decoration-none">
+                                  Créer un compte
+                            </a>
+                      </div>
+                </form>
+          </div>
+    </div>
+</div>
+{% endblock %}

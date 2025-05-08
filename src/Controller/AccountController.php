@@ -1,0 +1,54 @@
+<?php
+
+namespace App\Controller;
+
+use App\Entity\User;
+use App\Form\PasswordUserForm;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
+
+final class AccountController extends AbstractController
+{
+    #[Route('/compte', name: 'app_account')]
+    public function index(): Response
+    {
+
+
+
+
+        return $this->render('account/index.html.twig', [
+            'pageTitle' => 'Mon compte',
+
+        ]);
+    }
+    #[Route('compte/modifier-mdp', name: 'app_account_modify_pwd')]
+    public function modifyPassword(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    {
+
+        $user = $this->getUser(); // Récupère l'utilisateur connecté
+        // $passwordTest = $user->getPassword(); // Récupère l'utilisateur connecté
+
+        // Envois une option userPasswordHasher dans le formulaire
+        $form = $this->createForm(PasswordUserForm::class, $user, [
+            "userPasswordHasher" => $userPasswordHasher,
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+        
+            // Exécute la requête SQL pour insérer l'utilisateur dans la base de données
+            $entityManager->flush();
+        }
+
+        return $this->render('account/password.html.twig', [
+            'modifyPwd' => $form->createView(),
+        ]);
+    }
+}
