@@ -27,6 +27,7 @@ final class RegisterController extends AbstractController
 
         // Vérifie si le formulaire a été soumis et si les données sont valides
         if ($form->isSubmitted() && $form->isValid()) {
+
             // Définit le rôle par défaut de l'utilisateur comme "ROLE_USER"
             $user->setRoles(['ROLE_USER']);
 
@@ -34,7 +35,16 @@ final class RegisterController extends AbstractController
             $entityManager->persist($user);
 
             // Exécute la requête SQL pour insérer l'utilisateur dans la base de données
+            // Pas besoin de persist() car on insere pas une nouvelle entité
             $entityManager->flush();
+
+            //Message de succès de l'inscription
+            $this->addFlash(
+                'success',
+                'Vous êtes inscrit avec succès !'
+            );
+
+            return $this->redirectToRoute('app_login');
         }
 
 

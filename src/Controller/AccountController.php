@@ -30,6 +30,7 @@ final class AccountController extends AbstractController
     public function modifyPassword(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
 
+
         $user = $this->getUser(); // Récupère l'utilisateur connecté
         // $passwordTest = $user->getPassword(); // Récupère l'utilisateur connecté
 
@@ -42,9 +43,16 @@ final class AccountController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-        
+
+            // Pas besoin de persist() car on insere pas une nouvelle entité
             // Exécute la requête SQL pour insérer l'utilisateur dans la base de données
             $entityManager->flush();
+
+            // Envoie un message flash de succès
+            $this->addFlash(
+                'success',
+                'Votre mot de passe a été modifié avec succès !'
+            );
         }
 
         return $this->render('account/password.html.twig', [
