@@ -12,7 +12,7 @@
   padding: 0;
   box-sizing: border-box; /* Bonne pratique */
 }
- 
+ */
 
 /* --- Styles pour le conteneur des sliders --- */
 .range_container {
@@ -20,7 +20,7 @@
   flex-direction: column;
   width: 80%; 
    margin: 0 auto; /* Un peu moins de marge verticale peut-être?  */
-   
+   border : 1px solid var(--color-accentuationBleu) !important; /* Bordure pour le conteneur */
 }
 
 .sliders_control {
@@ -267,7 +267,7 @@ h1{
 }
 
 .navIndex.color-changed .iconeNav {
-  color: var(--color-accentuationBleu); /* Couleur finale (bleu) */
+  color: var(--color-accentuationBleu); /* Couleur finale (jaune) */
 }
 
 .boutonFind{
@@ -329,18 +329,6 @@ h1{
   color: var(--color-accentuationBleu); /* Couleur initiale (jaune) */
   /* Position relative pour pouvoir utiliser z-index */
 
-}
-
-.item-drop{
-
-  color: var(--color-accentuationBleu); /* Couleur initiale (jaune) */
-  /* Position relative pour pouvoir utiliser z-index */
-
-}
-
-nav button{
-  border: none;
-  background-color: transparent;
 }
 /***************** Page Film *******************/
 

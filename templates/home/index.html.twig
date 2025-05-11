@@ -3,18 +3,176 @@
 {% block title %}Hello HomeController!{% endblock %}
 
 {% block main %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
-    <h1>Hello {{ userName }}! ✅</h1>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/alexandre/Desktop/Documents Formation/mymovienight_symfony/src/Controller/HomeController.php</code></li>
-        <li>Your template at <code>C:/Users/alexandre/Desktop/Documents Formation/mymovienight_symfony/templates/home/index.html.twig</code></li>
-    </ul>
-</div>
+    <section class="container accueilGlobal my-auto" id="accueilGlobal">
+        <div class="container d-flex justify-content-center">
+            <h1>My Movie Night</h1>
+        </div>
+
+        <div class="container col-8">
+
+            <form action="" method="post" class="container d-flex flex-column justify-content-center align-items-center">
+                <div class="range_container">
+                    <div class="row">
+                        <div class="d-flex align-items-center">
+                            <!-- Affichage input min/gauche-->
+                            <div class="form_control_container col-2">
+                                <input class="form_control_container__time__input fw-bold" type="number" id="chiffreMin" value="5.5" min="0" max="10" step="0.1" />
+                            </div>
+                            <!-- Barres de sliders -->
+                            <div class="sliders_control col-8">
+                                <input id="barreMin" type="range" value="5.5" min="0" max="10" step="0.1" name="minNote" />
+                                <input id="barreMax" type="range" value="7" min="0" max="10" step="0.1" name="maxNote" />
+                            </div>
+                            <!-- Affichage input max/droite -->
+                            <div class="form_control_container col-2">
+
+                                <input class="form_control_container__time__input fw-bold" type="number" id="chiffreMax" value="7" min="0" max="10" step="0.1" />
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <section class="container sectionCachee">
+                    <div class="checkbox-section">
+                        <div class="checkbox-container d-flex flex-wrap justify-content-center">
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="action">action</label>
+                                <input class="form-check-input" type="checkbox" value="action" id="action" name="genres[]">
+                            </div>
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="adventure">adventure</label>
+                                <input class="form-check-input" type="checkbox" value="adventure" id="adventure" name="genres[]">
+                            </div>
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="animation">animation</label>
+                                <input class="form-check-input" type="checkbox" value="animation" id="animation" name="genres[]">
+                            </div>
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="biography">biography</label>
+                                <input class="form-check-input" type="checkbox" value="biography" id="biography" name="genres[]">
+                            </div>
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="comedy">comedy</label>
+                                <input class="form-check-input" type="checkbox" value="comedy" id="comedy" name="genres[]">
+                            </div>
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="crime">crime</label>
+                                <input class="form-check-input" type="checkbox" value="crime" id="crime" name="genres[]">
+                            </div>
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="documentary">documentary</label>
+                                <input class="form-check-input" type="checkbox" value="documentary" id="documentary" name="genres[]">
+                            </div>
+                        </div>
+                        <div class="checkbox-container d-flex flex-wrap justify-content-center">
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="drama">drama</label>
+                                <input class="form-check-input" type="checkbox" value="drama" id="drama" name="genres[]">
+                            </div>
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="familly">familly</label>
+                                <input class="form-check-input" type="checkbox" value="familly" id="familly" name="genres[]">
+                            </div>
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="fantasy">fantasy</label>
+                                <input class="form-check-input" type="checkbox" value="fantasy" id="fantasy" name="genres[]">
+                            </div>
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="sciFi">film Noir</label>
+                                <input class="form-check-input" type="checkbox" value="film-Noir" id="filmNoir" name="genres[]">
+                            </div>
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="history">history</label>
+                                <input class="form-check-input" type="checkbox" value="history" id="history" name="genres[]">
+                            </div>
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="horror">horror</label>
+                                <input class="form-check-input" type="checkbox" value="horror" id="horror" name="genres[]">
+                            </div>
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="music">music</label>
+                                <input class="form-check-input" type="checkbox" value="music" id="music" name="genres[]">
+                            </div>
+                        </div>
+                        <div class="checkbox-container d-flex flex-wrap justify-content-center">
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="musical">musical</label>
+                                <input class="form-check-input" type="checkbox" value="musical" id="musical" name="genres[]">
+                            </div>
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="mystery">mystery</label>
+                                <input class="form-check-input" type="checkbox" value="mystery" id="mystery" name="genres[]">
+                            </div>
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="romance">romance</label>
+                                <input class="form-check-input" type="checkbox" value="romance" id="romance" name="genres[]">
+                            </div>
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="sciFi">sci-fi</label>
+                                <input class="form-check-input" type="checkbox" value="sci-fi" id="sciFi" name="genres[]">
+                            </div>
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="short">short</label>
+                                <input class="form-check-input" type="checkbox" value="short" id="short" name="genres[]">
+                            </div>
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="sport">sport</label>
+                                <input class="form-check-input" type="checkbox" value="sport" id="sport" name="genres[]">
+                            </div>
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col-sm-4 col-md py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="thriller">thriller</label>
+                                <input class="form-check-input" type="checkbox" value="thriller" id="thriller" name="genres[]">
+                            </div>
+                        </div>
+                        <div class="checkbox-container d-flex flex-wrap justify-content-center">
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="war">war</label>
+                                <input class="form-check-input" type="checkbox" value="war" id="war" name="genres[]">
+                            </div>
+                            <div class="checkbox-item d-flex flex-column align-items-center mx-2 col py-2">
+                                <label class="form-check-label text-center  text-uppercase labelFont" for="western">western</label>
+                                <input class="form-check-input" type="checkbox" value="western" id="western" name="genres[]">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="range_container">
+                        <div class="row">
+                            <div class="d-flex align-items-center">
+                                <!-- Affichage input min/gauche-->
+                                <div class="form_control_container col-2">
+                                    <input class="form_control_container__time__input fw-bold" type="number" id="inputAnneeMin" value="1980" min="1920" max="2024" />
+                                </div>
+                                <!-- Barres de sliders -->
+                                <div class="sliders_control col-8">
+                                    <input id="barreAnneeMin" type="range" value="1980" min="1920" max="2024" step="1" name="minAnnee" />
+                                    <input id="barreAnneeMax" type="range" value="2024" min="1920" max="2024" step="1" name="maxAnnee" />
+                                </div>
+                                <!-- Affichage input max/droite -->
+                                <div class="form_control_container col-2">
+
+                                    <input class="form_control_container__time__input fw-bold" type="number" id="inputAnneeMax" value="2024" min="1920" max="2024" />
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <div class="d-flex justify-content-center">
+                    <button type="submit" name="submit" class="boutonFind  ">Find</button>
+                </div>
+            </form>
+
+            <div class="container d-flex justify-content-center p-0 m-0">
+                <button type="submit" name="" class="chevron">
+                    <i class="bi bi-chevron-compact-down fs"></i>
+                </button>
+            </div>
+        </div>
+        </div>
+    </section>
+
+
 {% endblock %}

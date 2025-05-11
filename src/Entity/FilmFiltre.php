@@ -25,8 +25,8 @@ class FilmFiltre
     #[ORM\Column(nullable: true)]
     private ?int $startYear = null;
 
-    #[ORM\Column(type: Types::ARRAY, nullable: true)]
-    private array $genres = [];
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $genres = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 3, scale: 1, nullable: true)]
     private ?string $averageRating = null;
@@ -96,12 +96,12 @@ class FilmFiltre
         return $this;
     }
 
-    public function getGenres(): array
+    public function getGenres(): ?string
     {
         return $this->genres;
     }
 
-    public function setGenres(array $genres): static
+    public function setGenres(string $genres): static
     {
         $this->genres = $genres;
 

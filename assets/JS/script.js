@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // gestion de la couleur de la barre de navigation et du footer sur la page d'accueil
-    if (pathname === '/' || pathname === '/index.php') {
+    if (pathname === '/' || pathname === '/home') {
         const barreMin = document.querySelector('#barreMin');
         const barreMax = document.querySelector('#barreMax');
         const chiffreMin = document.querySelector('#chiffreMin');
@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { once: true }); // L'écouteur sera automatiquement retiré après le premier clic
     }
 
-    if (pathname === '/film.php') {
+    if (pathname === '/film') {
     
         console.log('film.php loaded');
         
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
              
      }
 
-    if (pathname === '/list.php') {
+    if (pathname === '/list') {
     
         console.log('list.php loaded');
         

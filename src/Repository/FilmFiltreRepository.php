@@ -40,4 +40,128 @@ class FilmFiltreRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findMoviesWithGenres(array $genresArray, ?float $minRating, ?float $maxRating, ?int $minYear, ?int $maxYear): array
+    {
+        // Cette fonction cherche 
+        // $conn = $this->getEntityManager()->getConnection();
+
+        // $sql = 'SELECT * FROM film_filtre f WHERE 1=1';
+
+        // if (!empty($genres)) {
+        //     $sql .= ' AND f.genres LIKE :genres';
+        // }
+        // if ($minRating !== null) {
+        //     $sql .= ' AND f.average_rating >= :minRating';
+        // }
+        // if ($maxRating !== null) {
+        //     $sql .= ' AND f.average_rating <= :maxRating';
+        // }
+        // if ($minYear !== null) {
+        //     $sql .= ' AND f.start_year >= :minYear';
+        // }
+        // if ($maxYear !== null) {
+        //     $sql .= ' AND f.start_year <= :maxYear';
+        // }
+
+        // $sql .= ' ORDER BY RAND() LIMIT 20';
+
+        // $stmt = $conn->executeQuery($sql, [
+        //     'genres' => '%' . $genres . '%',
+        //     'minRating' => $minRating,
+        //     'maxRating' => $maxRating,
+        //     'minYear' => $minYear,
+        //     'maxYear' => $maxYear,
+        // ]);
+
+        // return $stmt->fetchAllAssociative();
+        $conn = $this->getEntityManager()->getConnection();
+        $params = []; // Pour stocker les paramètres de la requête
+
+        // Construction de la requête de base
+        $sql = 'SELECT f.* FROM film_filtre f WHERE 1=1'; // 1=1 est une astuce pour simplifier l'ajout de conditions
+
+        // Gestion des genres: $genresArray est non vide à ce stade (garanti par HomeController)
+        $genreConditions = [];
+        foreach ($genresArray as $key => $genre) {
+
+
+            // Crée un nom de paramètre unique pour chaque genre (ex: :genre0, :genre1)
+            $paramName = 'genre' . $key;
+
+            // Ajoute une condition LIKE pour ce genre.
+            // Utilisation de CONCAT(',', f.genres, ',') et '%,genre,%'
+            // pour une correspondance exacte du mot/genre.
+            $genreConditions[] = "CONCAT(',', f.genres, ',') LIKE :" . $paramName;
+            $params[$paramName] = '%,' . $genre . ',%';
+        }
+
+        // S'il y a des conditions de genre valides (après avoir ignoré les genres vides du tableau)
+        // on les ajoute à la requête.
+        if (!empty($genreConditions)) {
+            // Combine toutes les conditions de genre avec OR
+            // ex: AND ((CONCAT(',', f.genres, ',') LIKE :genre0) OR (CONCAT(',', f.genres, ',') LIKE :genre1))
+            $sql .= ' AND (' . implode(' OR ', $genreConditions) . ')';
+        }
+        // Note: Si $genresArray contenait uniquement des chaînes vides (ex: ['', '  ']),
+        // alors $genreConditions serait vide, et aucun filtre de genre ne serait appliqué.
+        // Si la logique métier exigeait qu'au moins un genre VALIDE soit présent
+        // si $genresArray est fourni, il faudrait ajouter une gestion d'erreur ici (ex: retourner []).
+        // Pour l'instant, on suppose que ne pas filtrer est acceptable si aucun genre valide n'est trouvé.
+
+        // Ajout des autres filtres et de leurs paramètres
+        if ($minRating !== null && $minRating !== '') { // Ajout d'une vérification pour chaîne vide
+            $sql .= ' AND f.average_rating >= :minRating';
+            $params['minRating'] = (float)$minRating;
+        }
+        if ($maxRating !== null && $maxRating !== '') { // Ajout d'une vérification pour chaîne vide
+            $sql .= ' AND f.average_rating <= :maxRating';
+            $params['maxRating'] = (float)$maxRating;
+        }
+        if ($minYear !== null && $minYear !== '') { // Ajout d'une vérification pour chaîne vide
+            $sql .= ' AND f.start_year >= :minYear';
+            $params['minYear'] = (int)$minYear;
+        }
+        if ($maxYear !== null && $maxYear !== '') { // Ajout d'une vérification pour chaîne vide
+            $sql .= ' AND f.start_year <= :maxYear';
+            $params['maxYear'] = (int)$maxYear;
+        }
+
+        // Attention: ORDER BY RAND() peut être très lent sur de grandes tables.
+        $sql .= ' ORDER BY RAND() LIMIT 20';
+
+        $stmt = $conn->executeQuery($sql, $params);
+        return $stmt->fetchAllAssociative();
+    }
+
+    public function findMoviesAllGenres(?float $minRating, ?float $maxRating, ?int $minYear, ?int $maxYear): array
+    {
+        $qb = $this->createQueryBuilder('f');
+
+        if ($minRating !== null) {
+            $qb->andWhere('f.averageRating >= :minRating')
+                ->setParameter('minRating', $minRating);
+        }
+
+        if ($maxRating !== null) {
+            $qb->andWhere('f.averageRating <= :maxRating')
+                ->setParameter('maxRating', $maxRating);
+        }
+
+
+        if ($minYear !== null) {
+            $qb->andWhere('f.startYear >= :minYear')
+                ->setParameter('minYear', $minYear);
+        }
+
+        if ($maxYear !== null) {
+            $qb->andWhere('f.startYear <= :maxYear')
+                ->setParameter('maxYear', $maxYear);
+        }
+
+        $qb->orderBy('RAND()')
+            ->setMaxResults(20);
+
+        return $qb->getQuery()->getResult();
+    }
 }

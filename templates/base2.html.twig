@@ -16,42 +16,43 @@
   </head>
   
   <body>
+
+    <header class="headerFilm">
+        <nav>
+            <div class="row d-flex justify-content-between">
+                <div class="col-2">
+                    <li><a href="{{path('app_home')}}"><img src="./assets/img/MMN.svg" alt="Logo"></a></li>
+                </div>
+
+
+                <ul class="col-4 p-5 d-flex justify-content-around">
   
-        <header>
-              <nav class="navIndex">
-                    <div class="row d-flex justify-content-between">
-                          <div class="col-2 p-4">
-                                <li><a href="path('app_home')"><img src="./assets/img/MMN.svg" alt="Logo"></a></li>
-                          </div>
-  
-  
-                          <ul class="col-4 p-5 d-flex justify-content-around">
-  
-                                <li><a href="#"><i class="bi bi-list-ul iconeNavIndex"></i></a></li>
+                               <button type="button">
+                                         <li><a href="#"><i class="bi bi-list-ul iconeNav"></i></a></li>
+                                </button>
 
                                 
 
                                <div class="dropdown">
-                                    
-                                    <button class ="dropdown-toggle" type="button"  data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-person-circle iconeNavIndex"></i>
+                                    <button class ="" type="button"  data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="dropdown-toggle bi bi-person-circle iconeNav"></i>
                                     </button>
             
                                     <ul class="dropdown-menu row">
-                                        <li><a class="dropdown-item" href="{{path("app_register")}}">S'inscrire</a></li>
-                                        <li><a class="dropdown-item" href="{{path("app_login")}}">Connexion</a></li>
-                                        <li><a class="dropdown-item" href="{{path("app_login")}}">Backoffice</a></li>
-                                        <li><a class="dropdown-item" href="{{path("app_logout")}}">Deconnexion</a></li>
+                                        <li><a class="dropdown-item item-drop" href="{{path("app_register")}}">S'inscrire</a></li>
+                                        <li><a class="dropdown-item item-drop" href="{{path("app_login")}}">Connexion</a></li>
+                                        <li><a class="dropdown-item item-drop" href="{{path("app_login")}}">Backoffice</a></li>
+                                        <li><a class="dropdown-item item-drop" href="{{path("app_logout")}}">Deconnexion</a></li>
                                     </ul>
                                </div>
   
-                          </ul>
-  
-                    </div>
-              </nav>
-  
-        </header>
-    <main class="bgSite mainIndex">
+                </ul>
+
+            </div>
+        </nav>
+
+    </header>
+    <main class="main-film bgSite">
 
 {# Permet l'affichage des notification flash #}
 {# Utilisation des classes de bootstrap #}
@@ -71,13 +72,14 @@
         {% block main %}
 
         {% endblock %}
-    </main>
-    <footer class="footerIndex">
 
-    </footer>
-    <script src="{{ asset('JS/script.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
-    {# <link rel="stylesheet" href="./bootstrap/js/bootstrap.min.js"> #}
-    </body>
-    
-    </html>
+
+    </main>
+    <footer class="footerFilm">
+
+</footer>
+<script src="{{ asset('JS/script.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+</body>
+
+</html>
