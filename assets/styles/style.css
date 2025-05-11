@@ -352,6 +352,7 @@ nav button{
   object-fit: contain; /* Ajuste l'image pour qu'elle reste visible sans déformation */
   display: block; /* Évite les marges indésirables */
   margin: 0 auto; /* Centre l'image horizontalement */
+  box-shadow: 3px 3px 5px var(--color-accentuationBleu);
 }
 
 .main-film {

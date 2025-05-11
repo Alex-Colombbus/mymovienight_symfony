@@ -86,18 +86,27 @@ final class FilmController extends AbstractController
             $currentFilmInfo = clone $tmdbFilmInfo; // Clone the service instance for each film
             $currentFilmInfo->setTconst($film['tconst']);
             $currentFilmInfo->setFilmInfos();
-            $jsonFilm = $currentFilmInfo->serialize();
+
+
+            if ($currentFilmInfo->getSynopsis() == null || $currentFilmInfo->getSynopsis() == '' || $currentFilmInfo->getActors() == [] || $currentFilmInfo->getActors() == null) {
+                continue;
+            } else {
+
+                $jsonFilm = $currentFilmInfo->serialize();
+                if ($currentFilmInfo->isValid()) {
+                    $films[] = $jsonFilm;
+                }
+            }
+
+
+
+
             // dd($jsonFilm);
 
             // You might want to only add valid films to the list
-            if ($currentFilmInfo->isValid()) {
-                $films[] = $jsonFilm;
-            } else {
-                // Optionally, you could add even invalid ones with a flag or log it
-                // For example, you could add a placeholder or log the tconst that failed
-                // $this->addFlash('warning', 'Could not retrieve details for film ID: ' . $filmItem['tconst']);
-            }
+
         }
+
 
         // dd($films);
 

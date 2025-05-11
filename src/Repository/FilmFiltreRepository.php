@@ -16,7 +16,7 @@ class FilmFiltreRepository extends ServiceEntityRepository
         parent::__construct($registry, FilmFiltre::class);
     }
 
-    //    /**
+    //    /*
     //     * @return FilmFiltre[] Returns an array of FilmFiltre objects
     //     */
     //    public function findByExampleField($value): array
@@ -126,6 +126,8 @@ class FilmFiltreRepository extends ServiceEntityRepository
             $sql .= ' AND f.start_year <= :maxYear';
             $params['maxYear'] = (int)$maxYear;
         }
+
+        $sql .= ' AND f.num_votes > 100';
 
         // Attention: ORDER BY RAND() peut être très lent sur de grandes tables.
         $sql .= ' ORDER BY RAND() LIMIT 20';

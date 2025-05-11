@@ -9,7 +9,7 @@
                   <div class="row justify-content-evenly">
                         <div class=" col-5 d-flex flex-column justify-content-center">
                               <div class="container">
-                                    {# <img src="https://image.tmdb.org/t/p/original{{films[0].posterPath}}" alt="affiche du film Jurassic Park" class="img-film rounded-1" /> #}
+                                    <img src="" alt="affiche du film " class="img-film rounded-1 posterFilm" />
                               </div>
                               <div class="container d-flex justify-content-around fs-3">
                                     <i class="bi bi-x-circle"></i>
@@ -18,28 +18,36 @@
                         </div>
                         <div class="col-5 d-flex flex-column justify-content-center">
                               <div class="col-12 mb-5 border border-2 border-dark">
-                                    {# <h2 class="text-center fw-bold fs-2 ">{{films[0].title}}</h2> #}
-                                    {# <h4 class="text-center">{{films[0].releaseDate}} - {{films[0].genres}} - {{films[0].duration}}</h4> #}
+                                    <h2 class="text-center fw-bold fs-2 titleFilm "></h2>
+                                    <h4 class="text-center infoFilm"></h4>
+                                    
                               </div>
-                              <div class="row ">
-                                {# {% for name, jobs in films[0].importantCrew %} #}
-                                     <div class="col-4">
-                                        {# <h5>{{ name }}</h5> <!-- Affiche le nom de la personne --> #}
-                                        {# <p>{{ jobs }}</p> <!-- Affiche les jobs associés sous forme de chaîne --> #}
-                                     </div>
-                                {# {% endfor %} #}
-                
+                              <div class="row importantCrew">
+                                
                               </div>
                               <h4>Synopsis</h4>
-                              {# <p>{{films[0].synopsis}}</p> #}
-                              <h4>Casting</h4>
-                              <ul class="row">
-                                {# {% for actor in films[0].actors %} #}
-                                    
-                                {# <li class="col">{{actor.name}}</li> #}
-                                {# {% endfor %} #}
-            
+                              <p class="synopsisFilm"></p>
+                              <h4>Acteurs principaux</h4>
+                              <ul class="row actorsFilm">
+                            
                               </ul>
+<div class="row align-items-center">
+<button class="btn btn-primary precedent col-2 rounded-5 p-0">
+      <i class="bi bi-arrow-left fs-3"></i>
+</button>
+      <div class="col-8 row">
+            <div class="imdbRating col-6 text-center">
+
+            </div>
+            <div class="tmdbRating col-6 text-center">
+
+            </div>
+      </div>
+<button class="btn btn-primary suivant col-2 rounded-5 p-0">
+      <i class="bi bi-arrow-right fs-3"></i>
+</button>
+</div>
+                              
 
 
                         </div>
@@ -47,21 +55,141 @@
             </div>
     </div>
 
+    <input type="hidden" id="filmList" name="filmList"value="">
+
 
     <script>
+
+document.addEventListener('DOMContentLoaded', function () {
         // Récupérer la variable PHP encodée en JSON par Twig
         // Le filtre |json_encode s'occupe de la conversion et de l'échappement.
         // Le filtre |raw est important ici pour que les guillemets du JSON ne soient pas double-échappés par Twig.
         let films = [];
         films = {{ films|json_encode|raw }};
-
-       
-        console.log(films); 
+        let titleFilm = document.querySelector('.titleFilm');
+        titleFilm.textContent = films[0].title;
+        let posterFilm = document.querySelector('.posterFilm');
+        posterFilm.src =(films[0].posterPath !== null) ? 'https://image.tmdb.org/t/p/original' + films[0].posterPath : "{{ asset('images/pas_de_poster.jpg') }}";
+        let infoFilm = document.querySelector('.infoFilm');
+        infoFilm.textContent = films[0].releaseDate + ' - ' + films[0].genres + ' - ' + films[0].duration;
+        let synopsis = document.querySelector('.synopsisFilm');
+        synopsis.textContent = films[0].synopsis;
 
         
-    
-       
+        let importantCrew = document.querySelector('.importantCrew');
+        let importantCrewObjet = films[0].importantCrew
+        let page = 0;
+        let filmList = document.querySelector('#filmList');
+        
+        filmList.value = JSON.stringify(films[0]);
 
+        getImportantCrew(importantCrewObjet);
+
+
+        function getImportantCrew(importantCrewObjet){ 
+      importantCrew.innerHTML = ''
+      Object.entries(importantCrewObjet).forEach(([key, value]) => { // On utilise la déstructuration d'array [key, valeur]
+      let divCrew = document.createElement('div');
+      divCrew.classList.add('col-4');
+      let jobCrew = document.createElement('h4')
+      jobCrew.textContent = value;
+      divCrew.append(jobCrew); 
+      let nameCrew = document.createElement('p')
+      nameCrew.textContent = key;
+      
+      divCrew.append(nameCrew); 
+      importantCrew.append(divCrew);
+});
+      
+}
+let actorsFilm = document.querySelector('.actorsFilm');
+let actors = films[0].actors;
+
+getActorsFilm(actors,actorsFilm);
+       
+function getActorsFilm(actors,actorsFilm) {
+      
+      actorsFilm.innerHTML = ''
+      actors.forEach(actor => {
+      let liActor = document.createElement('li');
+      liActor.classList.add('col');
+      liActor.textContent = actor;
+      actorsFilm.append(liActor);
+});
+
+}
+
+console.log(films);
+let tmdbRating = document.querySelector('.tmdbRating');
+let imdbRating = document.querySelector('.imdbRating');
+getRating(imdbRating,tmdbRating,0)
+function getRating(imdbRating,tmdbRating,page){ 
+      
+      imdbRating.textContent = 'IMDb : ' + films[page].imdbRating;
+if (films[page].tmdbRating === null||films[page].tmdbRating === 0){
+
+      tmdbRating.textContent ='';
+           
+}else{
+
+tmdbRating.textContent = 'TMDB : ' + films[page].tmdbRating;
+
+}
+      
+}
+ 
+let buttonPrecedent = document.querySelector('.precedent');
+buttonPrecedent.classList.add('invisible');
+buttonPrecedent.addEventListener('click', () => {
+      
+       page --;
+       titleFilm.textContent = films[page].title;
+       infoFilm.textContent = films[page].releaseDate + ' - ' + films[page].genres + ' - ' + films[page].duration;
+        posterFilm.src =(films[page].posterPath !== null) ? 'https://image.tmdb.org/t/p/original' + films[page].posterPath : "{{ asset('images/pas_de_poster.jpg') }}";
+        synopsis.textContent = films[page].synopsis;
+        importantCrewObjet = films[page].importantCrew;
+        actors = films[page].actors;
+        buttonSuivant.classList.remove('invisible');
+        filmList.value = films[page];
+
+        getImportantCrew(importantCrewObjet);
+        getActorsFilm(actors,actorsFilm);
+
+        getRating(imdbRating,tmdbRating,page);
+
+if(page === 0){
+            buttonPrecedent.classList.add('invisible');
+      }
+});
+
+let buttonSuivant = document.querySelector('.suivant');
+
+buttonSuivant.addEventListener('click', () => {
+      
+      buttonPrecedent.disabled = false;
+      
+       page ++;
+       titleFilm.textContent = films[page].title;
+       infoFilm.textContent = films[page].releaseDate + ' - ' + films[page].genres + ' - ' + films[page].duration;
+        posterFilm.src =(films[page].posterPath !== null) ? 'https://image.tmdb.org/t/p/original' + films[page].posterPath : "{{ asset('images/pas_de_poster.jpg') }}";
+        synopsis.textContent = films[page].synopsis;
+        importantCrewObjet = films[page].importantCrew;
+        actors = films[page].actors;
+        buttonPrecedent.classList.remove('invisible');
+        filmList.value = films[page];
+
+        getImportantCrew(importantCrewObjet);
+        getActorsFilm(actors,actorsFilm);
+        getRating(imdbRating,tmdbRating,page);
+
+        if(page === films.length - 1){
+            buttonSuivant.classList.add('invisible');
+        }
+});
+      
+        
+ 
+    });
         
     </script>
     

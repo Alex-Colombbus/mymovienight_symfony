@@ -11,7 +11,7 @@ class TmdbFilmInfo
 {
     private HttpClientInterface $client;
     private FilmFiltreRepository $filmFiltreRepository;
-    private FilmRepository $filmRepository;
+
     private string $token;
     private LoggerInterface $logger; // Inject logger
 
@@ -39,7 +39,6 @@ class TmdbFilmInfo
     ) {
         $this->client = $client;
         $this->token = $tokenKey;
-        $this->filmRepository = $filmRepository;
         $this->filmFiltreRepository = $filmFiltreRepository;
         $this->logger = $logger; // Store logger
     }
@@ -127,12 +126,12 @@ class TmdbFilmInfo
             $this->tmdbRating = isset($mainFilmInfo['vote_average']) ? (float)$mainFilmInfo['vote_average'] : null;
 
             // Fetch from local BDD
-            $filmBDD = $this->filmRepository->find($this->tconst);
+            $filmBDD = $this->filmFiltreRepository->find($this->tconst);
             if ($filmBDD) {
                 $minutes = $filmBDD->getRuntimeMinutes();
                 $hours = floor($minutes / 60); // Nombre d'heures
                 $remainingMinutes = $minutes % 60;
-                $this->duration = ($hours > 0 ? $hours . 'h' . $remainingMinutes : $minutes);
+                $this->duration = ($hours > 0 ? $hours . 'h' . $remainingMinutes : $minutes . 'mins');
             } else {
                 $this->logger->info('TmdbFilmInfo: Film not found in local FilmRepository for tconst: ' . $this->tconst);
             }

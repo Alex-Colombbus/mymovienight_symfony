@@ -9,15 +9,27 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: FilmFiltreRepository::class)]
 class FilmFiltre
 {
-    #[ORM\Id] // tconst (via la relation 'film') est la clé primaire
-    #[ORM\OneToOne(targetEntity: Film::class, inversedBy: 'filmFiltre')]
-    #[ORM\JoinColumn(name: 'tconst', referencedColumnName: 'tconst', nullable: false)]
-    // name: 'tconst' -> nom de la colonne FK dans film_filtre
-    // referencedColumnName: 'tconst' -> nom de la colonne PK dans film
-    private ?Film $film = null; // Cette propriété représente la FK et la relation
+    #[ORM\Id]
+    #[ORM\Column(length: 15, unique: true)]
+    private ?string $tconst = null;
 
     #[ORM\Column(length: 30)]
     private ?string $titleType = null;
+
+    #[ORM\Column(length: 499, nullable: true)]
+    private ?string $title = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $synopsis = null;
+
+    #[ORM\Column(type: Types::ARRAY, nullable: true)]
+    private ?array $importantCrew = null;
+
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $actors = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $posterPath = null;
 
     #[ORM\Column]
     private ?bool $isAdult = null;
@@ -25,40 +37,40 @@ class FilmFiltre
     #[ORM\Column(nullable: true)]
     private ?int $startYear = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $runtimeMinutes = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $genres = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 3, scale: 1, nullable: true)]
     private ?string $averageRating = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?float $tmdbRating = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $numVotes = null;
 
 
-    // public function getTconst(): ?string
-    // {
-    //     return $this->tconst;
-    // }
 
-    // public function setTconst(string $tconst): static
-    // {
-    //     $this->tconst = $tconst;
 
-    //     return $this;
-    // }
 
-    public function getFilm(): ?Film
+    public function getTconst(): ?string
     {
-        return $this->film;
+        return $this->tconst;
     }
 
-    public function setFilm(Film $film): self // Doit être un Film, pas null
+    public function setTconst(string $tconst): static
     {
-        $this->film = $film;
-        // Si vous voulez maintenir la bidirectionnalité:
-        // $film->setFilmFiltre($this); // Attention aux boucles infinies si mal géré
-        // Il est souvent préférable de gérer cela du côté inverse
-        // ou au moment de l'association des deux objets.
+        $this->tconst = $tconst;
+
         return $this;
     }
+
+
+
+
 
     public function getTitleType(): ?string
     {
@@ -116,6 +128,102 @@ class FilmFiltre
     public function setAverageRating(?string $averageRating): static
     {
         $this->averageRating = $averageRating;
+
+        return $this;
+    }
+
+    public function getSynopsis(): ?string
+    {
+        return $this->synopsis;
+    }
+
+    public function setSynopsis(?string $synopsis): static
+    {
+        $this->synopsis = $synopsis;
+
+        return $this;
+    }
+
+    public function getImportantCrew(): ?array
+    {
+        return $this->importantCrew;
+    }
+
+    public function setImportantCrew(?array $importantCrew): static
+    {
+        $this->importantCrew = $importantCrew;
+
+        return $this;
+    }
+
+    public function getActors(): ?string
+    {
+        return $this->actors;
+    }
+
+    public function setActors(?string $actors): static
+    {
+        $this->actors = $actors;
+
+        return $this;
+    }
+
+    public function getPosterPath(): ?string
+    {
+        return $this->posterPath;
+    }
+
+    public function setPosterPath(?string $posterPath): static
+    {
+        $this->posterPath = $posterPath;
+
+        return $this;
+    }
+
+    public function getTmdbRating(): ?float
+    {
+        return $this->tmdbRating;
+    }
+
+    public function setTmdbRating(?float $tmdbRating): static
+    {
+        $this->tmdbRating = $tmdbRating;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(?string $title): static
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getRuntimeMinutes(): ?int
+    {
+        return $this->runtimeMinutes;
+    }
+
+    public function setRuntimeMinutes(?int $runtimeMinutes): static
+    {
+        $this->runtimeMinutes = $runtimeMinutes;
+
+        return $this;
+    }
+
+    public function getNumVotes(): ?int
+    {
+        return $this->numVotes;
+    }
+
+    public function setNumVotes(?int $numVotes): static
+    {
+        $this->numVotes = $numVotes;
 
         return $this;
     }
