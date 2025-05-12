@@ -138,7 +138,7 @@ class TmdbFilmInfo
 
             $filmFiltreBDD = $this->filmFiltreRepository->find($this->tconst);
             if ($filmFiltreBDD) {
-                $this->genres = $filmFiltreBDD->getGenres(); // Assuming this returns an array
+                $this->genres = $filmFiltreBDD->getGenres();
                 $this->imdbRating = $filmFiltreBDD->getAverageRating();
             } else {
                 $this->logger->info('TmdbFilmInfo: Film not found in local FilmFiltreRepository for tconst: ' . $this->tconst);

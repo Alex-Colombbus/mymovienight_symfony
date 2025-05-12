@@ -6,54 +6,56 @@
 
 <div class="container ">
             <div class="container col-12 ">
-                  <div class="row justify-content-evenly">
+                  <div class="row justify-content-evenly align-items-center">
                         <div class=" col-5 d-flex flex-column justify-content-center">
-                              <div class="container">
+                              <div class="container d-flex justify-content-center">
                                     <img src="" alt="affiche du film " class="img-film rounded-1 posterFilm" />
                               </div>
                               <div class="container d-flex justify-content-around fs-3">
-                                    <i class="bi bi-x-circle"></i>
-                                    <i class="bi bi-heart"></i>
+                                    <i class="bi bi-x-circle incone-dynamique"></i>
+                                    <i class="bi bi-heart incone-dynamique"></i>
                               </div>
                         </div>
-                        <div class="col-5 d-flex flex-column justify-content-center">
-                              <div class="col-12 mb-5 border border-2 border-dark">
-                                    <h2 class="text-center fw-bold fs-2 titleFilm "></h2>
-                                    <h4 class="text-center infoFilm"></h4>
+                        <div class="col-5 d-flex flex-column">
+                              <div class="col-12 mb-3 d-flex flex-column justify-content-center align-items-center">
+                                    <h2 class="text-center fw-bold fs-2 titleFilm color-texte-accentuation"></h2>
+                                    <h4 class="text-center infoFilm surlignement fw-light fs-5 "></h4>
                                     
                               </div>
                               <div class="row importantCrew">
                                 
                               </div>
-                              <h4>Synopsis</h4>
+                              <h4 class="fw-bold color-texte-accentuation">Synopsis</h4>
                               <p class="synopsisFilm"></p>
-                              <h4>Acteurs principaux</h4>
+                              <h5 class="surlignement">Acteurs principaux</h5>
                               <ul class="row actorsFilm">
                             
                               </ul>
-<div class="row align-items-center">
-<button class="btn btn-primary precedent col-2 rounded-5 p-0">
-      <i class="bi bi-arrow-left fs-3"></i>
-</button>
-      <div class="col-8 row">
-            <div class="imdbRating col-6 text-center">
+                     
+                 
+      <div class="row align-items-center">
+            <button class="btn btn-changement precedent col-2 rounded-5 p-0">
+                  <i class="bi bi-arrow-left fs-3"></i>
+            </button>
+            <div class="col-8 row">
+                  <div class="imdbRating col-6 text-center">
 
-            </div>
-            <div class="tmdbRating col-6 text-center">
+                  </div>
+                  <div class="tmdbRating col-6 text-center">
 
-            </div>
-      </div>
-<button class="btn btn-primary suivant col-2 rounded-5 p-0">
-      <i class="bi bi-arrow-right fs-3"></i>
-</button>
-</div>
-                              
-
-
-                        </div>
                   </div>
             </div>
-    </div>
+      <button class="btn btn-changement suivant col-2 rounded-5 p-0">
+            <i class="bi bi-arrow-right fs-3"></i>
+      </button>
+      </div>
+                                    
+
+
+                              </div>
+                        </div>
+                  </div>
+      </div>
 
     <input type="hidden" id="filmList" name="filmList"value="">
 
@@ -71,7 +73,8 @@ document.addEventListener('DOMContentLoaded', function () {
         let posterFilm = document.querySelector('.posterFilm');
         posterFilm.src =(films[0].posterPath !== null) ? 'https://image.tmdb.org/t/p/original' + films[0].posterPath : "{{ asset('images/pas_de_poster.jpg') }}";
         let infoFilm = document.querySelector('.infoFilm');
-        infoFilm.textContent = films[0].releaseDate + ' - ' + films[0].genres + ' - ' + films[0].duration;
+      //  /,/ selectionne la virgule, g signifie toutes les occurences et ", " est le caractère qui va remplacer la virgule
+        infoFilm.textContent = films[0].releaseDate + ' - ' + films[0].genres.replace(/,/g, ", ") + ' - ' + films[0].duration;
         let synopsis = document.querySelector('.synopsisFilm');
         synopsis.textContent = films[0].synopsis;
 
@@ -91,7 +94,9 @@ document.addEventListener('DOMContentLoaded', function () {
       Object.entries(importantCrewObjet).forEach(([key, value]) => { // On utilise la déstructuration d'array [key, valeur]
       let divCrew = document.createElement('div');
       divCrew.classList.add('col-4');
-      let jobCrew = document.createElement('h4')
+     
+      let jobCrew = document.createElement('h5')
+      jobCrew.classList.add('surlignement');
       jobCrew.textContent = value;
       divCrew.append(jobCrew); 
       let nameCrew = document.createElement('p')

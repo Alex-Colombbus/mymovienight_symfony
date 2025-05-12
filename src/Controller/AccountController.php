@@ -18,14 +18,14 @@ final class AccountController extends AbstractController
     public function index(): Response
     {
 
-
-
-
         return $this->render('account/index.html.twig', [
             'pageTitle' => 'Mon compte',
 
         ]);
     }
+
+
+
     #[Route('compte/modifier-mdp', name: 'app_account_modify_pwd')]
     public function modifyPassword(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {

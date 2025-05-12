@@ -1,7 +1,8 @@
 :root{
   --color-backgroundBlanc: #F8F9FA;
-  --color-accentuationBleu: #007BFF;
-  --color-accentuationBleuClair: #9dc6f2;
+  --color-accentuationBleu: #055EB1 ;
+  --color-accentuationBleuClair: #007BFF;
+  --color-jaunemoche : #EBBD3F;
   --color-iconeRouge: #F90A0A;
   --color-grisClair: #EBEBEB;
   /* --color-accentuationBleu: #003566; */
@@ -176,16 +177,15 @@ input[type=number]::-webkit-inner-spin-button {
 }
 
 h1{
-  font-family: Jolly Lodger, serif;
-  -webkit-text-stroke: 2px var(--color-grisClair);
+  font-family: Nunito Sans, serif;
   letter-spacing: -3px;
-  font-size: 6rem !important;
+  font-size: 5rem !important;
   color: var(--color-accentuationBleu); /* Assurez-vous que la couleur du texte est définie */
   text-align: center; /* Centrer le h1 */
 }
 
 .navIndex{
-  height: 20vh; /* Utilisez peut-être min-height pour flexibilité */
+  min-height: 20vh; /* Utilisez peut-être min-height pour flexibilité */
  
 }
 
@@ -235,7 +235,7 @@ h1{
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: var(--color-accentuationBleu); /* Couleur initiale */
+    background-color: black; /* Couleur initiale */
     z-index: 1; /* Pour être au-dessus du background jaune de l'élément parent */
 
     /* La transition s'appliquera à la transformation */
@@ -271,9 +271,9 @@ h1{
 }
 
 .boutonFind{
-  background-color: var(--color-accentuationBleu);
-  color: var(--color-backgroundBlanc);
-  font-family: Jolly Lodger, serif;
+  background-color: var(--color-jaunemoche);
+  color: var(--color-accentuationBleu);
+  font-family: Roboto, serif;
   border: none;
   padding:1px 30px;
   font-size: 20px;
@@ -311,13 +311,14 @@ h1{
 
 /***************** Page non index *******************/
 .headerFilm{
-  height: 10vh;
+  height: 20vh;
   background-color: var(--color-backgroundBlanc);
 }
 
 .footerFilm{
   background-color: var(--color-backgroundBlanc);
-  height: 10vh;
+  height: 10px;
+  
 }
 
 .bgSite{
@@ -347,12 +348,13 @@ nav button{
 
 
 .img-film {
-  max-height: 70vh; /* Limite la hauteur de l'image à la hauteur du viewport moins la hauteur du footer */
+  
+  max-height: 80vh; /* Limite la hauteur de l'image à la hauteur du viewport moins la hauteur du footer */
   width: auto; /* Garde les proportions de l'image */
   object-fit: contain; /* Ajuste l'image pour qu'elle reste visible sans déformation */
-  display: block; /* Évite les marges indésirables */
-  margin: 0 auto; /* Centre l'image horizontalement */
-  box-shadow: 3px 3px 5px var(--color-accentuationBleu);
+  /* display: block; Évite les marges indésirables */
+  
+  box-shadow: 0px 0px 10px var(--color-accentuationBleu);
 }
 
 .main-film {
@@ -360,8 +362,27 @@ nav button{
   flex-direction: column; /* Aligne les éléments verticalement */
   align-items: center; /* Centre horizontalement */
   justify-content: center; /* Centre verticalement */
-  height: 80vh; /* Hauteur totale du viewport moins la hauteur du footer */
-  overflow: hidden; /* Cache tout dépassement */
+  /* overflow: hidden; Cache tout dépassement */
+}
+
+.color-texte-accentuation{
+
+  color: var(--color-accentuationBleu);
+}
+
+.surlignement{
+  text-decoration: underline;
+  text-decoration-color: var(--color-accentuationBleu);
+  text-underline-position: under;
+}
+
+.btn-changement{
+  background-color: var(--color-jaunemoche);
+  color: var(--color-accentuationBleu);
+}
+
+.incone-dynamique{
+  color: -var(--color-accentuationBleu);
 }
 
 /***************** Page List *******************/
@@ -429,7 +450,7 @@ nav button{
 .boutonSite{
   background-color: var(--color-accentuationBleu)!important;
   color: var(--color-backgroundBlanc)!important;
-  font-family: Jolly Lodger, serif;
+  font-family: Roboto, serif;
   border: none;
   padding:1px 30px;
   font-size: 20px;
@@ -471,7 +492,7 @@ nav button{
 .boutonSite{
   background-color: var(--color-accentuationBleu);
   color: var(--color-backgroundBlanc);
-  font-family: Jolly Lodger, serif;
+  font-family: Roboto, serif;
   border: none;
   padding:1px 30px;
   font-size: 20px;

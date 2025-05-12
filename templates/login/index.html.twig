@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base2.html.twig' %}
 
 {% block title %}Hello LoginController!{% endblock %}
 
@@ -7,7 +7,7 @@
 {% if error %}
 <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
 {% endif %}
-<main>
+
       <div class="container-fluid d-flex align-items-center justify-content-center loginMain bgSite">
       
           <div class="card-border col-6">
@@ -47,10 +47,13 @@
                                   <a href="{{ path('app_register') }}" class="text-decoration-none">
                                         Créer un compte
                                   </a>
+                                  <input type="hidden" name="_csrf_token"
+               value="{{ csrf_token('authenticate') }}"
+        >
                             </div>
                       </form>
                 </div>
           </div>
       </div>
-</main>
+
 {% endblock %}

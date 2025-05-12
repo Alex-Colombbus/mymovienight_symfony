@@ -127,7 +127,7 @@ class FilmFiltreRepository extends ServiceEntityRepository
             $params['maxYear'] = (int)$maxYear;
         }
 
-        $sql .= ' AND f.num_votes > 100';
+        $sql .= ' AND f.num_votes > 10000';
 
         // Attention: ORDER BY RAND() peut être très lent sur de grandes tables.
         $sql .= ' ORDER BY RAND() LIMIT 20';
@@ -161,8 +161,16 @@ class FilmFiltreRepository extends ServiceEntityRepository
                 ->setParameter('maxYear', $maxYear);
         }
 
+        $qb->andWhere('f.numVotes > :numVotes')
+            ->setParameter('numVotes', 10000);
+
+
+
+        // Attention: ORDER BY RAND() peut être très lent sur de grandes tables.
         $qb->orderBy('RAND()')
             ->setMaxResults(20);
+
+
 
         return $qb->getQuery()->getResult();
     }
