@@ -1,202 +1,254 @@
-{% extends 'base2.html.twig' %}
+{% extends 'base2.html.twig' %} {% block title %}Hello FilmController!{%
+endblock %} {% block main %}
 
-{% block title %}Hello FilmController!{% endblock %}
+<div class="container-fluid col-12">
+  <div class="container">
+    <div class="row justify-content-evenly align-items-center">
+      <div class="col-6 d-flex flex-column justify-content-center">
+        <div class="container d-flex justify-content-center">
+          <img
+            src=""
+            alt="affiche du film "
+            class="img-film rounded-1 posterFilm"
+          />
+        </div>
+        <div class="container d-flex justify-content-around fs-3">
+          <i class="bi bi-x-circle incone-dynamique"></i>
 
-{% block main %}
+          <button class="border-none bg-transparent" id="sendDataList">
+            <i class="bi bi-heart incone-dynamique" id="iconeHeart"></i>
+          </button>
+        </div>
+      </div>
+      <div class="col-6 d-flex flex-column">
+        <div
+          class="col-12 mb-3 d-flex flex-column justify-content-center align-items-center"
+        >
+          <h2
+            class="text-center fw-bold fs-2 titleFilm color-texte-accentuation"
+          ></h2>
+          <h4 class="text-center infoFilm surlignement fw-light fs-5"></h4>
+        </div>
+        <div class="row importantCrew"></div>
+        <h4 class="fw-bold color-texte-accentuation">Synopsis</h4>
+        <p class="synopsisFilm"></p>
+        <h5 class="surlignement">Acteurs principaux</h5>
+        <ul class="row actorsFilm"></ul>
 
-<div class="container ">
-            <div class="container col-12 ">
-                  <div class="row justify-content-evenly align-items-center">
-                        <div class=" col-5 d-flex flex-column justify-content-center">
-                              <div class="container d-flex justify-content-center">
-                                    <img src="" alt="affiche du film " class="img-film rounded-1 posterFilm" />
-                              </div>
-                              <div class="container d-flex justify-content-around fs-3">
-                                    <i class="bi bi-x-circle incone-dynamique"></i>
-                                    <i class="bi bi-heart incone-dynamique"></i>
-                              </div>
-                        </div>
-                        <div class="col-5 d-flex flex-column">
-                              <div class="col-12 mb-3 d-flex flex-column justify-content-center align-items-center">
-                                    <h2 class="text-center fw-bold fs-2 titleFilm color-texte-accentuation"></h2>
-                                    <h4 class="text-center infoFilm surlignement fw-light fs-5 "></h4>
-                                    
-                              </div>
-                              <div class="row importantCrew">
-                                
-                              </div>
-                              <h4 class="fw-bold color-texte-accentuation">Synopsis</h4>
-                              <p class="synopsisFilm"></p>
-                              <h5 class="surlignement">Acteurs principaux</h5>
-                              <ul class="row actorsFilm">
-                            
-                              </ul>
-                     
-                 
-      <div class="row align-items-center">
-            <button class="btn btn-changement precedent col-2 rounded-5 p-0">
-                  <i class="bi bi-arrow-left fs-3"></i>
-            </button>
-            <div class="col-8 row">
-                  <div class="imdbRating col-6 text-center">
-
-                  </div>
-                  <div class="tmdbRating col-6 text-center">
-
-                  </div>
-            </div>
-      <button class="btn btn-changement suivant col-2 rounded-5 p-0">
+        <div class="row align-items-center">
+          <button class="btn btn-changement precedent col-2 rounded-5 p-0">
+            <i class="bi bi-arrow-left fs-3"></i>
+          </button>
+          <div class="col-8 row">
+            <div class="imdbRating col-6 text-center"></div>
+            <div class="tmdbRating col-6 text-center"></div>
+          </div>
+          <button class="btn btn-changement suivant col-2 rounded-5 p-0">
             <i class="bi bi-arrow-right fs-3"></i>
-      </button>
+          </button>
+        </div>
       </div>
-                                    
+    </div>
+  </div>
+  <input type="hidden" id="filmToList" name="filmList" value="" />
+</div>
+
+<script>
+
+  document.addEventListener('DOMContentLoaded', function () {
+          // Récupérer la variable PHP encodée en JSON par Twig
+          // Le filtre |json_encode s'occupe de la conversion et de l'échappement.
+          // Le filtre |raw est important ici pour que les guillemets du JSON ne soient pas double-échappés par Twig.
+          let films = [];
+          films = {{ films|json_encode|raw }};
+          let titleFilm = document.querySelector('.titleFilm');
+          titleFilm.textContent = films[0].title;
+          let posterFilm = document.querySelector('.posterFilm');
+          posterFilm.src =(films[0].posterPath !== null) ? 'https://image.tmdb.org/t/p/original' + films[0].posterPath : "{{ asset('images/pas_de_poster.jpg') }}";
+          let infoFilm = document.querySelector('.infoFilm');
+        //  /,/ selectionne la virgule, g signifie toutes les occurences et ", " est le caractère qui va remplacer la virgule
+          infoFilm.textContent = films[0].releaseDate + ' - ' + films[0].genres.replace(/,/g, ", ") + ' - ' + films[0].duration;
+          let synopsis = document.querySelector('.synopsisFilm');
+          synopsis.textContent = films[0].synopsis;
 
 
-                              </div>
-                        </div>
-                  </div>
-      </div>
+          let importantCrew = document.querySelector('.importantCrew');
+          let importantCrewObjet = films[0].importantCrew
+          let page = 0;
+          let filmToList = document.querySelector('#filmToList');
 
-    <input type="hidden" id="filmList" name="filmList"value="">
+          filmToList.value = JSON.stringify(films[0]);
 
-
-    <script>
-
-document.addEventListener('DOMContentLoaded', function () {
-        // Récupérer la variable PHP encodée en JSON par Twig
-        // Le filtre |json_encode s'occupe de la conversion et de l'échappement.
-        // Le filtre |raw est important ici pour que les guillemets du JSON ne soient pas double-échappés par Twig.
-        let films = [];
-        films = {{ films|json_encode|raw }};
-        let titleFilm = document.querySelector('.titleFilm');
-        titleFilm.textContent = films[0].title;
-        let posterFilm = document.querySelector('.posterFilm');
-        posterFilm.src =(films[0].posterPath !== null) ? 'https://image.tmdb.org/t/p/original' + films[0].posterPath : "{{ asset('images/pas_de_poster.jpg') }}";
-        let infoFilm = document.querySelector('.infoFilm');
-      //  /,/ selectionne la virgule, g signifie toutes les occurences et ", " est le caractère qui va remplacer la virgule
-        infoFilm.textContent = films[0].releaseDate + ' - ' + films[0].genres.replace(/,/g, ", ") + ' - ' + films[0].duration;
-        let synopsis = document.querySelector('.synopsisFilm');
-        synopsis.textContent = films[0].synopsis;
-
-        
-        let importantCrew = document.querySelector('.importantCrew');
-        let importantCrewObjet = films[0].importantCrew
-        let page = 0;
-        let filmList = document.querySelector('#filmList');
-        
-        filmList.value = JSON.stringify(films[0]);
-
-        getImportantCrew(importantCrewObjet);
+          getImportantCrew(importantCrewObjet);
 
 
-        function getImportantCrew(importantCrewObjet){ 
-      importantCrew.innerHTML = ''
-      Object.entries(importantCrewObjet).forEach(([key, value]) => { // On utilise la déstructuration d'array [key, valeur]
-      let divCrew = document.createElement('div');
-      divCrew.classList.add('col-4');
-     
-      let jobCrew = document.createElement('h5')
-      jobCrew.classList.add('surlignement');
-      jobCrew.textContent = value;
-      divCrew.append(jobCrew); 
-      let nameCrew = document.createElement('p')
-      nameCrew.textContent = key;
-      
-      divCrew.append(nameCrew); 
-      importantCrew.append(divCrew);
-});
-      
-}
-let actorsFilm = document.querySelector('.actorsFilm');
-let actors = films[0].actors;
+          function getImportantCrew(importantCrewObjet){
+        importantCrew.innerHTML = ''
+        Object.entries(importantCrewObjet).forEach(([key, value]) => { // On utilise la déstructuration d'array [key, valeur]
+        let divCrew = document.createElement('div');
+        divCrew.classList.add('col-4');
 
-getActorsFilm(actors,actorsFilm);
-       
-function getActorsFilm(actors,actorsFilm) {
-      
-      actorsFilm.innerHTML = ''
-      actors.forEach(actor => {
-      let liActor = document.createElement('li');
-      liActor.classList.add('col');
-      liActor.textContent = actor;
-      actorsFilm.append(liActor);
-});
+        let jobCrew = document.createElement('h5')
+        jobCrew.classList.add('surlignement');
+        jobCrew.textContent = value;
+        divCrew.append(jobCrew);
+        let nameCrew = document.createElement('p')
+        nameCrew.textContent = key;
 
-}
+        divCrew.append(nameCrew);
+        importantCrew.append(divCrew);
+  });
 
-console.log(films);
-let tmdbRating = document.querySelector('.tmdbRating');
-let imdbRating = document.querySelector('.imdbRating');
-getRating(imdbRating,tmdbRating,0)
-function getRating(imdbRating,tmdbRating,page){ 
-      
-      imdbRating.textContent = 'IMDb : ' + films[page].imdbRating;
-if (films[page].tmdbRating === null||films[page].tmdbRating === 0){
+  }
 
-      tmdbRating.textContent ='';
-           
-}else{
+  let actorsFilm = document.querySelector('.actorsFilm');
+  let actors = films[0].actors;
 
-tmdbRating.textContent = 'TMDB : ' + films[page].tmdbRating;
+  getActorsFilm(actors,actorsFilm);
 
-}
-      
-}
- 
-let buttonPrecedent = document.querySelector('.precedent');
-buttonPrecedent.classList.add('invisible');
-buttonPrecedent.addEventListener('click', () => {
-      
-       page --;
-       titleFilm.textContent = films[page].title;
-       infoFilm.textContent = films[page].releaseDate + ' - ' + films[page].genres + ' - ' + films[page].duration;
-        posterFilm.src =(films[page].posterPath !== null) ? 'https://image.tmdb.org/t/p/original' + films[page].posterPath : "{{ asset('images/pas_de_poster.jpg') }}";
-        synopsis.textContent = films[page].synopsis;
-        importantCrewObjet = films[page].importantCrew;
-        actors = films[page].actors;
-        buttonSuivant.classList.remove('invisible');
-        filmList.value = films[page];
+  function getActorsFilm(actors,actorsFilm) {
 
-        getImportantCrew(importantCrewObjet);
-        getActorsFilm(actors,actorsFilm);
+        actorsFilm.innerHTML = ''
+        actors.forEach(actor => {
+        let liActor = document.createElement('li');
+        liActor.classList.add('col');
+        liActor.textContent = actor;
+        actorsFilm.append(liActor);
+  });
 
-        getRating(imdbRating,tmdbRating,page);
+  }
 
-if(page === 0){
-            buttonPrecedent.classList.add('invisible');
-      }
-});
+  console.log(films);
+  let tmdbRating = document.querySelector('.tmdbRating');
+  let imdbRating = document.querySelector('.imdbRating');
+  getRating(imdbRating,tmdbRating,0)
+  function getRating(imdbRating,tmdbRating,page){
 
-let buttonSuivant = document.querySelector('.suivant');
+        imdbRating.textContent = 'IMDb : ' + films[page].imdbRating;
+  if (films[page].tmdbRating === null||films[page].tmdbRating === 0){
 
-buttonSuivant.addEventListener('click', () => {
-      
-      buttonPrecedent.disabled = false;
-      
-       page ++;
-       titleFilm.textContent = films[page].title;
-       infoFilm.textContent = films[page].releaseDate + ' - ' + films[page].genres + ' - ' + films[page].duration;
-        posterFilm.src =(films[page].posterPath !== null) ? 'https://image.tmdb.org/t/p/original' + films[page].posterPath : "{{ asset('images/pas_de_poster.jpg') }}";
-        synopsis.textContent = films[page].synopsis;
-        importantCrewObjet = films[page].importantCrew;
-        actors = films[page].actors;
-        buttonPrecedent.classList.remove('invisible');
-        filmList.value = films[page];
+        tmdbRating.textContent ='';
 
-        getImportantCrew(importantCrewObjet);
-        getActorsFilm(actors,actorsFilm);
-        getRating(imdbRating,tmdbRating,page);
+  }else{
 
-        if(page === films.length - 1){
-            buttonSuivant.classList.add('invisible');
+  tmdbRating.textContent = 'TMDB : ' + films[page].tmdbRating;
+
+  }
+
+  }
+
+  let buttonPrecedent = document.querySelector('.precedent');
+  buttonPrecedent.classList.add('invisible');
+  buttonPrecedent.addEventListener('click', () => {
+
+         page --;
+         titleFilm.textContent = films[page].title;
+         infoFilm.textContent = films[page].releaseDate + ' - ' + films[page].genres + ' - ' + films[page].duration;
+          posterFilm.src =(films[page].posterPath !== null) ? 'https://image.tmdb.org/t/p/original' + films[page].posterPath : "{{ asset('images/pas_de_poster.jpg') }}";
+          synopsis.textContent = films[page].synopsis;
+          importantCrewObjet = films[page].importantCrew;
+          actors = films[page].actors;
+          buttonSuivant.classList.remove('invisible');
+          filmToList.value = films[page];
+
+          getImportantCrew(importantCrewObjet);
+          getActorsFilm(actors,actorsFilm);
+
+          getRating(imdbRating,tmdbRating,page);
+
+  if(page === 0){
+              buttonPrecedent.classList.add('invisible');
         }
-});
-      
-        
- 
-    });
-        
-    </script>
-    
-{% endblock %}
+  });
 
+  let buttonSuivant = document.querySelector('.suivant');
+
+  buttonSuivant.addEventListener('click', () => {
+
+        buttonPrecedent.disabled = false;
+
+         page ++;
+         titleFilm.textContent = films[page].title;
+         infoFilm.textContent = films[page].releaseDate + ' - ' + films[page].genres + ' - ' + films[page].duration;
+          posterFilm.src =(films[page].posterPath !== null) ? 'https://image.tmdb.org/t/p/original' + films[page].posterPath : "{{ asset('images/pas_de_poster.jpg') }}";
+          synopsis.textContent = films[page].synopsis;
+          importantCrewObjet = films[page].importantCrew;
+          actors = films[page].actors;
+          buttonPrecedent.classList.remove('invisible');
+          filmToList.value = films[page];
+
+          getImportantCrew(importantCrewObjet);
+          getActorsFilm(actors,actorsFilm);
+          getRating(imdbRating,tmdbRating,page);
+
+          if(page === films.length - 1){
+              buttonSuivant.classList.add('invisible');
+          }
+  });
+
+
+  let bouttonSendList = document.querySelector('#sendDataList');
+   let iconeHeart = document.querySelector('#iconeHeart');
+
+
+   bouttonSendList.addEventListener('click', () => {
+        // Désactiver le bouton pendant l'envoi pour éviter double-clic
+        bouttonSendList.disabled = true;
+
+
+                      // Récuperation des données
+                      let dataToSend = filmToList.value;
+
+
+                      // --- Requête AJAX avec Fetch API (JavaScript moderne) ---
+                      fetch('{{ path('app_save_data') }}', { // Utilise la route Symfony
+                          method: 'POST',
+                          headers: {
+                              'Content-Type': 'application/json', // Indique qu'on envoie du JSON
+                              'Accept': 'application/json' // Indique qu'on attend du JSON en retour
+                          },
+                          body: dataToSend
+                      })
+                      .then(response => {
+                        console.log('Réponse brute :', response);
+                          // Vérifie si la réponse HTTP est OK (status 2xx)
+                          if (!response.ok) {
+                               // Si le serveur retourne une erreur (4xx, 5xx), on la propage
+                               return response.json().then(errorData => {
+                                  throw new Error(errorData.message || `Erreur HTTP: ${response.status}`);
+                               });
+                          }
+                          return response.json(); // Convertit la réponse JSON en objet JS
+                      })
+                      .then(data => {
+                          // Traitement en cas de succès (réponse JSON du contrôleur)
+                          if (data.status === 'success') {
+                              console.log('Succès:', data.message);
+                    // --- Changer l'apparence du bouton ---
+                              iconeHeart.classList.remove('bi-heart'); // Enlever l'ancienne classe
+                              iconeHeart.classList.add('bi-heart-fill'); // Ajouter nouvelle classe (ex: Bootstrap vert)=
+                              // Optionnel: Garder le bouton désactivé ou le réactiver après un délai
+                              // bouton.disabled = false; // Réactiver si besoin
+                          } else {
+                              // Gérer le cas où le serveur retourne un statut 'error' même avec HTTP 200 (moins courant)
+                               throw new Error(data.message || 'Une erreur logique est survenue.');
+                          }
+                      })
+                      .catch(error => {
+                          // Traitement en cas d'erreur (réseau, JSON invalide, erreur serveur explicite)
+                          console.error('Erreur AJAX:', error);
+                          console.error('Erreur: ' + error.message);
+
+
+                          // Réactiver le bouton en cas d'erreur pour permettre une nouvelle tentative
+                          bouttonSendList.disabled = false;
+                          iconeHeart.classList.remove('bi-heart-fill'); // Assurer qu'il n'est pas vert
+                          iconeHeart.classList.add('bi-heart'); // Mettre en rouge par exemple
+                      });
+                  });
+
+
+      });
+</script>
+
+{% endblock %}

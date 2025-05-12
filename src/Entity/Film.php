@@ -110,17 +110,4 @@ class Film
     {
         return $this->filmFiltre;
     }
-
-    public function setFilmFiltre(FilmFiltre $filmFiltre): self
-    {
-        // Assurez-vous que le côté propriétaire est également mis à jour
-        // Ceci est crucial pour la cohérence des données en mémoire
-        // et pour que la cascade (persist) fonctionne correctement
-        if ($filmFiltre->getFilm() !== $this) {
-            $filmFiltre->setFilm($this);
-        }
-
-        $this->filmFiltre = $filmFiltre;
-        return $this;
-    }
 }

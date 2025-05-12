@@ -349,7 +349,7 @@ nav button{
 
 .img-film {
   
-  max-height: 80vh; /* Limite la hauteur de l'image à la hauteur du viewport moins la hauteur du footer */
+  max-height: 70vh; /* Limite la hauteur de l'image à la hauteur du viewport moins la hauteur du footer */
   width: auto; /* Garde les proportions de l'image */
   object-fit: contain; /* Ajuste l'image pour qu'elle reste visible sans déformation */
   /* display: block; Évite les marges indésirables */
