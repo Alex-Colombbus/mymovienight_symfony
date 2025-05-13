@@ -61,6 +61,7 @@ endblock %} {% block main %}
           // Le filtre |raw est important ici pour que les guillemets du JSON ne soient pas double-échappés par Twig.
           let films = [];
           films = {{ films|json_encode|raw }};
+         
           let titleFilm = document.querySelector('.titleFilm');
           titleFilm.textContent = films[0].title;
           let posterFilm = document.querySelector('.posterFilm');
@@ -75,9 +76,11 @@ endblock %} {% block main %}
           let importantCrew = document.querySelector('.importantCrew');
           let importantCrewObjet = films[0].importantCrew
           let page = 0;
-          let filmToList = document.querySelector('#filmToList');
+          let filmToList = JSON.stringify(films[0]);
+          let bouttonSendList = document.querySelector('#sendDataList');
+   let iconeHeart = document.querySelector('#iconeHeart');
 
-          filmToList.value = JSON.stringify(films[0]);
+          
 
           getImportantCrew(importantCrewObjet);
 
@@ -118,7 +121,7 @@ endblock %} {% block main %}
 
   }
 
-  console.log(films);
+  
   let tmdbRating = document.querySelector('.tmdbRating');
   let imdbRating = document.querySelector('.imdbRating');
   getRating(imdbRating,tmdbRating,0)
@@ -140,7 +143,12 @@ endblock %} {% block main %}
   let buttonPrecedent = document.querySelector('.precedent');
   buttonPrecedent.classList.add('invisible');
   buttonPrecedent.addEventListener('click', () => {
-
+  if(iconeHeart.classList.contains('bi-heart-fill')){
+    films.splice(page, 1);
+    iconeHeart.classList.remove('bi-heart-fill');
+    iconeHeart.classList.add('bi-heart');
+    bouttonSendList.disabled = false;
+  }
          page --;
          titleFilm.textContent = films[page].title;
          infoFilm.textContent = films[page].releaseDate + ' - ' + films[page].genres + ' - ' + films[page].duration;
@@ -149,7 +157,7 @@ endblock %} {% block main %}
           importantCrewObjet = films[page].importantCrew;
           actors = films[page].actors;
           buttonSuivant.classList.remove('invisible');
-          filmToList.value = films[page];
+          filmToList = films[page];
 
           getImportantCrew(importantCrewObjet);
           getActorsFilm(actors,actorsFilm);
@@ -166,7 +174,13 @@ endblock %} {% block main %}
   buttonSuivant.addEventListener('click', () => {
 
         buttonPrecedent.disabled = false;
-
+  if(iconeHeart.classList.contains('bi-heart-fill')){
+    films.splice(page, 1);
+    iconeHeart.classList.remove('bi-heart-fill');
+    iconeHeart.classList.add('bi-heart');
+    bouttonSendList.disabled = false;
+  }
+          
          page ++;
          titleFilm.textContent = films[page].title;
          infoFilm.textContent = films[page].releaseDate + ' - ' + films[page].genres + ' - ' + films[page].duration;
@@ -175,11 +189,12 @@ endblock %} {% block main %}
           importantCrewObjet = films[page].importantCrew;
           actors = films[page].actors;
           buttonPrecedent.classList.remove('invisible');
-          filmToList.value = films[page];
+          filmToList = films[page];
 
           getImportantCrew(importantCrewObjet);
           getActorsFilm(actors,actorsFilm);
           getRating(imdbRating,tmdbRating,page);
+          
 
           if(page === films.length - 1){
               buttonSuivant.classList.add('invisible');
@@ -187,8 +202,7 @@ endblock %} {% block main %}
   });
 
 
-  let bouttonSendList = document.querySelector('#sendDataList');
-   let iconeHeart = document.querySelector('#iconeHeart');
+  
 
 
    bouttonSendList.addEventListener('click', () => {
@@ -197,8 +211,13 @@ endblock %} {% block main %}
 
 
                       // Récuperation des données
-                      let dataToSend = filmToList.value;
+                      let dataToSend = filmToList;
 
+                      console.log('Donnees envoyees :', dataToSend);
+                      
+
+                    if(iconeHeart.classList.contains('bi-heart')){
+  
 
                       // --- Requête AJAX avec Fetch API (JavaScript moderne) ---
                       fetch('{{ path('app_save_data') }}', { // Utilise la route Symfony
@@ -207,7 +226,7 @@ endblock %} {% block main %}
                               'Content-Type': 'application/json', // Indique qu'on envoie du JSON
                               'Accept': 'application/json' // Indique qu'on attend du JSON en retour
                           },
-                          body: dataToSend
+                          body: JSON.stringify(dataToSend)
                       })
                       .then(response => {
                         console.log('Réponse brute :', response);
@@ -228,7 +247,7 @@ endblock %} {% block main %}
                               iconeHeart.classList.remove('bi-heart'); // Enlever l'ancienne classe
                               iconeHeart.classList.add('bi-heart-fill'); // Ajouter nouvelle classe (ex: Bootstrap vert)=
                               // Optionnel: Garder le bouton désactivé ou le réactiver après un délai
-                              // bouton.disabled = false; // Réactiver si besoin
+                              bouttonSendList.disabled = false; // Réactiver si besoin
                           } else {
                               // Gérer le cas où le serveur retourne un statut 'error' même avec HTTP 200 (moins courant)
                                throw new Error(data.message || 'Une erreur logique est survenue.');
@@ -245,6 +264,56 @@ endblock %} {% block main %}
                           iconeHeart.classList.remove('bi-heart-fill'); // Assurer qu'il n'est pas vert
                           iconeHeart.classList.add('bi-heart'); // Mettre en rouge par exemple
                       });
+
+                    }else{
+
+                      fetch('{{ path('app_remove_data') }}', { // Utilise la route Symfony
+                          method: 'POST',
+                          headers: {
+                              'Content-Type': 'application/json', // Indique qu'on envoie du JSON
+                              'Accept': 'application/json' // Indique qu'on attend du JSON en retour
+                          },
+                          body: JSON.stringify(dataToSend)
+                      })
+                      .then(response => {
+                        console.log('Réponse brute :', response);
+                          // Vérifie si la réponse HTTP est OK (status 2xx)
+                          if (!response.ok) {
+                               // Si le serveur retourne une erreur (4xx, 5xx), on la propage
+                               return response.json().then(errorData => {
+                                  throw new Error(errorData.message || `Erreur HTTP: ${response.status}`);
+                               });
+                          }
+                          return response.json(); // Convertit la réponse JSON en objet JS
+                      })
+                      .then(data => {
+                          // Traitement en cas de succès (réponse JSON du contrôleur)
+                          if (data.status === 'success') {
+                              console.log('Succès:', data.message);
+                    // --- Changer l'apparence du bouton ---
+                              iconeHeart.classList.remove('bi-heart-fill'); // Enlever l'ancienne classe
+                              iconeHeart.classList.add('bi-heart'); // Ajouter nouvelle classe (ex: Bootstrap vert)=
+                              // Optionnel: Garder le bouton désactivé ou le réactiver après un délai
+                              bouttonSendList.disabled = false; // Réactiver si besoin
+                          } else {
+                              // Gérer le cas où le serveur retourne un statut 'error' même avec HTTP 200 (moins courant)
+                               throw new Error(data.message || 'Une erreur logique est survenue.');
+                          }
+                      })
+                      .catch(error => {
+                          // Traitement en cas d'erreur (réseau, JSON invalide, erreur serveur explicite)
+                          console.error('Erreur AJAX:', error);
+                          console.error('Erreur: ' + error.message);
+
+
+                          // Réactiver le bouton en cas d'erreur pour permettre une nouvelle tentative
+                          bouttonSendList.disabled = false;
+                          iconeHeart.classList.remove('bi-heart'); // Assurer qu'il n'est pas vert
+                          iconeHeart.classList.add('bi-heart-fill'); // Mettre en rouge par exemple
+                      });
+                      
+                    }
+
                   });
 
 

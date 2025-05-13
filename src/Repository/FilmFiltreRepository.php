@@ -138,40 +138,36 @@ class FilmFiltreRepository extends ServiceEntityRepository
 
     public function findMoviesAllGenres(?float $minRating, ?float $maxRating, ?int $minYear, ?int $maxYear): array
     {
-        $qb = $this->createQueryBuilder('f');
+        $conn = $this->getEntityManager()->getConnection();
+        $params = []; // Pour stocker les paramètres de la requête
 
-        if ($minRating !== null) {
-            $qb->andWhere('f.averageRating >= :minRating')
-                ->setParameter('minRating', $minRating);
+        // Construction de la requête de base
+        $sql = 'SELECT f.tconst FROM film_filtre f WHERE 1=1'; // 1=1 est une astuce pour simplifier l'ajout de conditions
+
+
+        if ($minRating !== null && $minRating !== '') { // Ajout d'une vérification pour chaîne vide
+            $sql .= ' AND f.average_rating >= :minRating';
+            $params['minRating'] = (float)$minRating;
+        }
+        if ($maxRating !== null && $maxRating !== '') { // Ajout d'une vérification pour chaîne vide
+            $sql .= ' AND f.average_rating <= :maxRating';
+            $params['maxRating'] = (float)$maxRating;
+        }
+        if ($minYear !== null && $minYear !== '') { // Ajout d'une vérification pour chaîne vide
+            $sql .= ' AND f.start_year >= :minYear';
+            $params['minYear'] = (int)$minYear;
+        }
+        if ($maxYear !== null && $maxYear !== '') { // Ajout d'une vérification pour chaîne vide
+            $sql .= ' AND f.start_year <= :maxYear';
+            $params['maxYear'] = (int)$maxYear;
         }
 
-        if ($maxRating !== null) {
-            $qb->andWhere('f.averageRating <= :maxRating')
-                ->setParameter('maxRating', $maxRating);
-        }
+        $sql .= ' AND f.num_votes > 10000';
 
 
-        if ($minYear !== null) {
-            $qb->andWhere('f.startYear >= :minYear')
-                ->setParameter('minYear', $minYear);
-        }
+        $sql .= ' ORDER BY RAND() LIMIT 20';
 
-        if ($maxYear !== null) {
-            $qb->andWhere('f.startYear <= :maxYear')
-                ->setParameter('maxYear', $maxYear);
-        }
-
-        $qb->andWhere('f.numVotes > :numVotes')
-            ->setParameter('numVotes', 10000);
-
-
-
-        // Attention: ORDER BY RAND() peut être très lent sur de grandes tables.
-        $qb->orderBy('RAND()')
-            ->setMaxResults(20);
-
-
-
-        return $qb->getQuery()->getResult();
+        $stmt = $conn->executeQuery($sql, $params);
+        return $stmt->fetchAllAssociative();
     }
 }

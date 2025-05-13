@@ -6,6 +6,7 @@ use App\Repository\ListFilmRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ListFilmRepository::class)]
+#[ORM\UniqueConstraint(name: 'unique_tconst_liste', columns: ['tconst', 'liste_id'])] //Permet de faire une clé composite
 class ListFilm
 {
 
@@ -17,8 +18,10 @@ class ListFilm
 
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: Liste::class, inversedBy: 'listFilms')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(name: 'liste_id', referencedColumnName: 'id', nullable: false)]
     private ?Liste $liste = null;
+
+
     #[ORM\Column]
     private ?\DateTimeImmutable $added_at = null;
 

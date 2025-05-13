@@ -1,0 +1,94 @@
+{% extends 'base2.html.twig' %}
+
+{% block title %}Hello ListeController!{% endblock %}
+
+{% block main %}
+<div class="row py-3">
+        <div class="col-5">
+            <div class="container divListFilm">
+                {% for film in  listToDisplay %}
+                    
+                <div class="container listFilm my-1">
+                    <div class="row align-items-center justify-content-between text-center border border-1 border-dark rounded-2 filmInList">
+                        <div class="col-2"><img src="https://image.tmdb.org/t/p/original{{film.posterPath}}" alt="affiche du film {{film.title}}" class="posterFilmList rounded-1" /></div>
+                        <h4 class="col-4 fs-5 title">{{film.title}}</h4>
+                        <p class="d-none synopsis">{{film.synopsis}}</p>
+                        <p class="d-none addedAt">12/05/2025</p>
+                        <p class="d-none genre">{{film.genres}}</p>
+                        <p class="d-none duration">{{film.runtimeMinutes}}</p>
+                        <h4 class="col-2 rating">{{film.averageRating}}<i class="bi bi-star-fill"></i>
+                        </h4>
+                        <i class="bi bi-trash3 col-2 fs-4"></i>
+
+                    </div>
+
+                </div>
+                
+                {% endfor %}
+               
+                
+            </div>
+        </div>
+        <div class="container detailsFilm col-5">
+            <div class="row">
+                <p class="col" id="addedAtShow"></p>
+                <div class="row col justify-content-end col-2 align-items-center">
+                    <p class="col-6 fs-5 p-0 m-0" id="ratingShow"></p><i class="col-6 bi bi-star-fill p-0 m-0"></i>
+                </div>
+            </div>
+            <div>
+                <h3 class="text-center" id="titleShow"></h3>
+            </div>
+            <div class="divAfficheFilm d-flex justify-content-center">
+                <img src="" alt="affiche du film Le Seigneur des anneaux: La communauté de l'anneau" class=" rounded-1 detailsAfficheFilm" id="posterShow" />
+            </div>
+            <div class="text-center">
+                <p class="fs-6 fw-light"><b id="durationShow"></b>- <span id="genreShow"></span></p>
+            </div>
+            <div>
+                <p class="fs-6 fw-light" id="synopsisShow">...</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    
+
+        let addedAtShow = document.getElementById('addedAtShow');
+        let ratingShow = document.getElementById('ratingShow');
+        let titleShow = document.getElementById('titleShow');
+        let posterShow = document.getElementById('posterShow');
+        let durationShow = document.getElementById('durationShow');
+        let genreShow = document.getElementById('genreShow');
+        let synopsisShow = document.getElementById('synopsisShow');
+        let filmInList = document.querySelectorAll('.listFilm');
+
+         addedAtShow.textContent = filmInList[0].querySelector('.addedAt').textContent;
+                ratingShow.textContent = filmInList[0].querySelector('.rating').textContent;
+                titleShow.textContent = filmInList[0].querySelector('.title').textContent;
+                posterShow.src = "https://image.tmdb.org/t/p/original"+ filmInList[0].querySelector('.posterFilmList').src;
+                durationShow.textContent = filmInList[0].querySelector('.duration').textContent;
+                genreShow.textContent = filmInList[0].querySelector('.genre').textContent;
+                synopsisShow.textContent = filmInList[0].querySelector('.synopsis').textContent;
+        
+
+        filmInList.forEach(film => {
+            film.addEventListener('click', () => {
+                addedAtShow.textContent = film.querySelector('.addedAt').textContent;
+                ratingShow.textContent = film.querySelector('.rating').textContent;
+                titleShow.textContent = film.querySelector('.title').textContent;
+                posterShow.src = "https://image.tmdb.org/t/p/original" + film.querySelector('.posterFilmList').src;
+                durationShow.textContent = film.querySelector('.duration').textContent;
+                genreShow.textContent = film.querySelector('.genre').textContent;
+                synopsisShow.textContent = film.querySelector('.synopsis').textContent;
+                console.log(film);
+            })
+        })
+
+})
+
+    </script>
+{% endblock %}

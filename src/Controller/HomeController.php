@@ -28,6 +28,7 @@ final class HomeController extends AbstractController
 
             $minRating = $request->request->get('minNote'); // 'nom_utilisateur' est la valeur de l'attribut 'name' de l'input
             $maxRating = $request->request->get('maxNote');
+
             $genresArray = $request->request->all('genres') ?? []; // Récupère les genres sous forme de tableau
 
             // Convertit le tableau en chaîne de caractères séparée par des virgules
@@ -36,6 +37,7 @@ final class HomeController extends AbstractController
             $maxYear = $request->request->get('maxAnnee');
 
             if (empty($genresArray)) {
+                // dd("test");
                 $films = $filmFiltreRepository->findMoviesAllGenres($minRating, $maxRating, $minYear, $maxYear);
                 $session->set('films', $films);
                 return $this->redirectToRoute('app_film');
