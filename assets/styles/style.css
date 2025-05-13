@@ -311,7 +311,7 @@ h1{
 
 /***************** Page non index *******************/
 .headerFilm{
-  height: 20vh;
+  /* height: 20vh; */
   background-color: var(--color-backgroundBlanc);
 }
 
@@ -387,12 +387,11 @@ nav button{
 
 /***************** Page List *******************/
 
-.mainList{
-  background-color: var(--color-backgroundBlanc);
-}
+
+
 
 .divListFilm::-webkit-scrollbar-track {
-  background: transparent; /* Rend le fond de la piste transparent */
+  background: rgba(0, 162, 255, 0.397); /* Rend le fond de la piste transparent */
 }
 
 .divListFilm::-webkit-scrollbar {
@@ -404,10 +403,34 @@ nav button{
   border-radius: 4px; /* Arrondir les coins */
 }
 
-.divListFilm{
-  overflow : auto; /* Permet le défilement si le contenu dépasse */
-  height: 80vh; /* Limite la hauteur de la liste à 80% de la hauteur du viewport */
+
+.divScroll {
+   display: flex !important; /* Assurez-vous qu'il est flex */
+  flex-direction: column !important;
 }
+
+.divScroll-inner-flex-container {
+  /* `d-flex flex-column h-100` sont des classes Bootstrap.
+     `h-100` signifie `height: 100% !important;`.
+     Cela prendra 100% de la hauteur que .divScroll aura APRES avoir été étiré.
+     Ce conteneur devient le parent flex pour .divListFilm. */
+  overflow: hidden; /* TRÈS IMPORTANT: C'est MAINTENANT ce conteneur qui doit
+                       empêcher .divListFilm de l'étirer au-delà de sa hauteur (100% de .divScroll). */
+}
+
+.divListFilm {
+    flex-grow: 1; /* Pour prendre tout l'espace DANS .divScroll */
+  overflow-y: auto; /* Pour scroller */
+  min-height: 0; /* Toujours essentiel pour le scroll dans un parent flex */
+}
+
+.filmInList {
+  cursor: pointer; /* Indique que l'élément est cliquable */
+}
+
+.filmInList:hover {
+    background-color: #83b7f1; /* Effet de survol léger */
+  }
 
 
 .posterFilmList {
@@ -419,7 +442,7 @@ nav button{
 }
 
 .detailsFilm{
-  height: 80vh;
+  height: 100%;
 }
 
 .divAfficheFilm{
@@ -427,10 +450,14 @@ nav button{
   height: 50vh;
 }
 
-.detailsAfficheFilm{
-
-  height: 100%;
-  width: auto;
+.detailsAfficheFilm {
+  max-width: 100%;
+  max-height: 100%; /* Pour s'assurer qu'elle ne dépasse pas divAfficheFilm */
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /***************** Login *******************/

@@ -32,7 +32,7 @@ final class RegisterController extends AbstractController
 
             // Définit le rôle par défaut de l'utilisateur comme "ROLE_USER"
             $user->setRoles(['ROLE_USER']);
-            $liste->setUserId($user);
+            $liste->setUser($user);
             $liste->setNameListe('Ma liste');
 
             // Prépare l'entité User pour être sauvegardée dans la base de données

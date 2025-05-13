@@ -61,7 +61,7 @@ endblock %} {% block main %}
           // Le filtre |raw est important ici pour que les guillemets du JSON ne soient pas double-échappés par Twig.
           let films = [];
           films = {{ films|json_encode|raw }};
-         
+
           let titleFilm = document.querySelector('.titleFilm');
           titleFilm.textContent = films[0].title;
           let posterFilm = document.querySelector('.posterFilm');
@@ -76,16 +76,16 @@ endblock %} {% block main %}
           let importantCrew = document.querySelector('.importantCrew');
           let importantCrewObjet = films[0].importantCrew
           let page = 0;
-          let filmToList = JSON.stringify(films[0]);
+          let filmToList = films[0];
           let bouttonSendList = document.querySelector('#sendDataList');
-   let iconeHeart = document.querySelector('#iconeHeart');
+          let iconeHeart = document.querySelector('#iconeHeart');
 
-          
+
 
           getImportantCrew(importantCrewObjet);
 
 
-          function getImportantCrew(importantCrewObjet){
+        function getImportantCrew(importantCrewObjet){
         importantCrew.innerHTML = ''
         Object.entries(importantCrewObjet).forEach(([key, value]) => { // On utilise la déstructuration d'array [key, valeur]
         let divCrew = document.createElement('div');
@@ -121,7 +121,7 @@ endblock %} {% block main %}
 
   }
 
-  
+
   let tmdbRating = document.querySelector('.tmdbRating');
   let imdbRating = document.querySelector('.imdbRating');
   getRating(imdbRating,tmdbRating,0)
@@ -180,7 +180,7 @@ endblock %} {% block main %}
     iconeHeart.classList.add('bi-heart');
     bouttonSendList.disabled = false;
   }
-          
+
          page ++;
          titleFilm.textContent = films[page].title;
          infoFilm.textContent = films[page].releaseDate + ' - ' + films[page].genres + ' - ' + films[page].duration;
@@ -194,7 +194,7 @@ endblock %} {% block main %}
           getImportantCrew(importantCrewObjet);
           getActorsFilm(actors,actorsFilm);
           getRating(imdbRating,tmdbRating,page);
-          
+
 
           if(page === films.length - 1){
               buttonSuivant.classList.add('invisible');
@@ -202,7 +202,7 @@ endblock %} {% block main %}
   });
 
 
-  
+
 
 
    bouttonSendList.addEventListener('click', () => {
@@ -214,10 +214,10 @@ endblock %} {% block main %}
                       let dataToSend = filmToList;
 
                       console.log('Donnees envoyees :', dataToSend);
-                      
+
 
                     if(iconeHeart.classList.contains('bi-heart')){
-  
+
 
                       // --- Requête AJAX avec Fetch API (JavaScript moderne) ---
                       fetch('{{ path('app_save_data') }}', { // Utilise la route Symfony
@@ -311,7 +311,7 @@ endblock %} {% block main %}
                           iconeHeart.classList.remove('bi-heart'); // Assurer qu'il n'est pas vert
                           iconeHeart.classList.add('bi-heart-fill'); // Mettre en rouge par exemple
                       });
-                      
+
                     }
 
                   });

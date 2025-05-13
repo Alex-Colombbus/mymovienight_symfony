@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\FilmFiltreRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\FilmFiltreRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: FilmFiltreRepository::class)]
 class FilmFiltre
@@ -52,7 +54,43 @@ class FilmFiltre
     #[ORM\Column(nullable: true)]
     private ?int $numVotes = null;
 
+    #[ORM\OneToMany(targetEntity: ListFilm::class, mappedBy: 'tconst', orphanRemoval: true)]
+    private Collection $listFilms;
 
+    public function __construct()
+    {
+        $this->listFilms = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection<int, ListFilm>
+     */
+    public function getListFilms(): Collection
+    {
+        return $this->listFilms;
+    }
+
+    public function addListFilm(ListFilm $listFilm): static
+    {
+        if (!$this->listFilms->contains($listFilm)) {
+            $this->listFilms->add($listFilm);
+            $listFilm->setTconst($this);
+        }
+
+        return $this;
+    }
+
+    public function removeListFilm(ListFilm $listFilm): static
+    {
+        if ($this->listFilms->removeElement($listFilm)) {
+            // set the owning side to null (unless already changed)
+            if ($listFilm->getTconst() === $this) {
+                $listFilm->setTconst(null);
+            }
+        }
+
+        return $this;
+    }
 
 
 

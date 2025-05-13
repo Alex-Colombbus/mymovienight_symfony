@@ -43,7 +43,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Liste>
      */
-    #[ORM\OneToMany(targetEntity: Liste::class, mappedBy: 'user_id', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Liste::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $listes;
 
     public function __construct()
@@ -160,7 +160,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->listes->contains($liste)) {
             $this->listes->add($liste);
-            $liste->setUserId($this);
+            $liste->setUser($this);
         }
 
         return $this;
@@ -170,8 +170,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->listes->removeElement($liste)) {
             // set the owning side to null (unless already changed)
-            if ($liste->getUserId() === $this) {
-                $liste->setUserId(null);
+            if ($liste->getUser() === $this) {
+                $liste->setUser(null);
             }
         }
 

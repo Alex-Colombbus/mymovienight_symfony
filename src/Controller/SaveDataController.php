@@ -128,7 +128,7 @@ final class SaveDataController extends AbstractController
             // CONDITIONAL: Create the list ONLY if it doesn't exist
             if (!$liste) {
                 $liste = new Liste();
-                $liste->setUserId($user); // Use the correct setter name
+                $liste->setUser($user); // Use the correct setter name
                 $liste->setNameListe('My Watchlist'); // Set a default name
                 $entityManager->persist($liste); // Persist the new list
                 // No flush yet

@@ -52,14 +52,14 @@ class ListFilm
         return $this;
     }
 
-    public function getListeId(): ?Liste
+    public function getListe(): ?Liste
     {
         return $this->liste;
     }
 
-    public function setListeId(?Liste $list_id): static
+    public function setListe(?Liste $liste): static
     {
-        $this->liste = $list_id;
+        $this->liste = $liste;
 
         return $this;
     }

@@ -31,7 +31,7 @@ class Liste
     /**
      * @var Collection<int, ListFilm>
      */
-    #[ORM\OneToMany(targetEntity: ListFilm::class, mappedBy: 'list_id', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ListFilm::class, mappedBy: 'liste', orphanRemoval: true)]
     private Collection $listFilms;
 
     public function __construct()
@@ -46,14 +46,14 @@ class Liste
         return $this->id;
     }
 
-    public function getUserId(): ?User
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUserId(?User $user_id): static
+    public function setUser(?User $user): static
     {
-        $this->user = $user_id;
+        $this->user = $user;
 
         return $this;
     }
@@ -106,7 +106,7 @@ class Liste
     {
         if (!$this->listFilms->contains($listFilm)) {
             $this->listFilms->add($listFilm);
-            $listFilm->setListeId($this);
+            $listFilm->setListe($this);
         }
 
         return $this;
@@ -116,8 +116,8 @@ class Liste
     {
         if ($this->listFilms->removeElement($listFilm)) {
             // set the owning side to null (unless already changed)
-            if ($listFilm->getListeId() === $this) {
-                $listFilm->setListeId(null);
+            if ($listFilm->getListe() === $this) {
+                $listFilm->setListe(null);
             }
         }
 

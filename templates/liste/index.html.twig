@@ -1,94 +1,141 @@
-{% extends 'base2.html.twig' %}
+{% extends 'base2.html.twig' %} {% block title %}Hello ListeController!{%
+endblock %} {% block main %}
 
-{% block title %}Hello ListeController!{% endblock %}
+<div class="row testo">
+  <div class="col-5 d-flex flex-column divScroll">
+    <div class="divScroll-inner-flex-container d-flex flex-column h-100">
+      <div class="container flex-grow-1 divListFilm">
+        {% for film in listToDisplay %}
 
-{% block main %}
-<div class="row py-3">
-        <div class="col-5">
-            <div class="container divListFilm">
-                {% for film in  listToDisplay %}
-                    
-                <div class="container listFilm my-1">
-                    <div class="row align-items-center justify-content-between text-center border border-1 border-dark rounded-2 filmInList">
-                        <div class="col-2"><img src="https://image.tmdb.org/t/p/original{{film.posterPath}}" alt="affiche du film {{film.title}}" class="posterFilmList rounded-1" /></div>
-                        <h4 class="col-4 fs-5 title">{{film.title}}</h4>
-                        <p class="d-none synopsis">{{film.synopsis}}</p>
-                        <p class="d-none addedAt">12/05/2025</p>
-                        <p class="d-none genre">{{film.genres}}</p>
-                        <p class="d-none duration">{{film.runtimeMinutes}}</p>
-                        <h4 class="col-2 rating">{{film.averageRating}}<i class="bi bi-star-fill"></i>
-                        </h4>
-                        <i class="bi bi-trash3 col-2 fs-4"></i>
-
-                    </div>
-
-                </div>
-                
-                {% endfor %}
-               
-                
+        <div class="container listFilm my-1">
+          <div
+            class="row align-items-center justify-content-between text-center border border-1 border-dark rounded-2 filmInList"
+          >
+            <div class="col-2">
+              <img
+                src="https://image.tmdb.org/t/p/original{{ film.posterPath }}"
+                alt="affiche du film {{ film.title }}"
+                class="posterFilmList rounded-1"
+              />
             </div>
-        </div>
-        <div class="container detailsFilm col-5">
-            <div class="row">
-                <p class="col" id="addedAtShow"></p>
-                <div class="row col justify-content-end col-2 align-items-center">
-                    <p class="col-6 fs-5 p-0 m-0" id="ratingShow"></p><i class="col-6 bi bi-star-fill p-0 m-0"></i>
-                </div>
-            </div>
-            <div>
-                <h3 class="text-center" id="titleShow"></h3>
-            </div>
-            <div class="divAfficheFilm d-flex justify-content-center">
-                <img src="" alt="affiche du film Le Seigneur des anneaux: La communauté de l'anneau" class=" rounded-1 detailsAfficheFilm" id="posterShow" />
-            </div>
-            <div class="text-center">
-                <p class="fs-6 fw-light"><b id="durationShow"></b>- <span id="genreShow"></span></p>
-            </div>
-            <div>
-                <p class="fs-6 fw-light" id="synopsisShow">...</p>
-            </div>
-
+            <h4 class="col-4 fs-5 title">{{ film.title }}</h4>
+            <p class="d-none synopsis">{{ film.synopsis }}</p>
+            <p class="d-none addedAt">12/05/2025</p>
+            <p class="d-none genre">{{ film.genres }}</p>
+            <p class="d-none duration">{{ film.runtimeMinutes }}</p>
+            <h4 class="col-2 rating">
+              {{ film.averageRating }}<i class="bi bi-star-fill"></i>
+            </h4>
+            <i class="bi bi-trash3 col-2 fs-4"></i>
+          </div>
         </div>
 
+        {% endfor %}
+      </div>
     </div>
+  </div>
+  <div class="container detailsFilm col-5">
+    <div class="row">
+      <p class="col" id="addedAtShow"></p>
+      <div class="row col justify-content-end col-2 align-items-center">
+        <p class="col-6 fs-5 p-0 m-0" id="ratingShow"></p>
+        <i class="col-6 bi bi-star-fill p-0 m-0"></i>
+      </div>
+    </div>
+    <div>
+      <h3 class="text-center" id="titleShow"></h3>
+    </div>
+    <div class="divAfficheFilm d-flex justify-content-center">
+      <img
+        src=""
+        alt="affiche du film Le Seigneur des anneaux: La communauté de l'anneau"
+        class="rounded-1 detailsAfficheFilm"
+        id="posterShow"
+      />
+    </div>
+    <div class="text-center">
+      <p class="fs-5">
+        <b id="durationShow" class="fw-bold"></b>-
+        <span id="genreShow"></span>
+      </p>
+    </div>
+    <div>
+      <p class="fs-5" id="synopsisShow">...</p>
+    </div>
+  </div>
+</div>
 
-    <script>
-document.addEventListener('DOMContentLoaded', () => {
-    
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    let addedAtShow = document.getElementById("addedAtShow");
+    let ratingShow = document.getElementById("ratingShow");
+    let titleShow = document.getElementById("titleShow");
+    let posterShow = document.getElementById("posterShow");
+    let durationShow = document.getElementById("durationShow");
+    let genreShow = document.getElementById("genreShow");
+    let synopsisShow = document.getElementById("synopsisShow");
+    let filmInList = document.querySelectorAll(".listFilm");
+    const detailsFilmElement = document.querySelector(".detailsFilm");
+    const divScrollElement = document.querySelector(".divScroll");
 
-        let addedAtShow = document.getElementById('addedAtShow');
-        let ratingShow = document.getElementById('ratingShow');
-        let titleShow = document.getElementById('titleShow');
-        let posterShow = document.getElementById('posterShow');
-        let durationShow = document.getElementById('durationShow');
-        let genreShow = document.getElementById('genreShow');
-        let synopsisShow = document.getElementById('synopsisShow');
-        let filmInList = document.querySelectorAll('.listFilm');
+    function equalizeColumnHeights() {
+      if (detailsFilmElement && divScrollElement) {
+        // Réinitialiser la hauteur de divScroll pour que detailsFilm ait sa hauteur naturelle
+        divScrollElement.style.height = "auto"; // ou '1px' si vous aviez une base pour éviter les "sauts"
 
-         addedAtShow.textContent = filmInList[0].querySelector('.addedAt').textContent;
-                ratingShow.textContent = filmInList[0].querySelector('.rating').textContent;
-                titleShow.textContent = filmInList[0].querySelector('.title').textContent;
-                posterShow.src = "https://image.tmdb.org/t/p/original"+ filmInList[0].querySelector('.posterFilmList').src;
-                durationShow.textContent = filmInList[0].querySelector('.duration').textContent;
-                genreShow.textContent = filmInList[0].querySelector('.genre').textContent;
-                synopsisShow.textContent = filmInList[0].querySelector('.synopsis').textContent;
-        
+        const detailsHeight = detailsFilmElement.offsetHeight;
+        divScrollElement.style.height = detailsHeight + "px";
+        // console.log(`Hauteur detailsFilm: ${detailsHeight}px, Hauteur divScroll mise à jour.`);
+      }
+    }
 
-        filmInList.forEach(film => {
-            film.addEventListener('click', () => {
-                addedAtShow.textContent = film.querySelector('.addedAt').textContent;
-                ratingShow.textContent = film.querySelector('.rating').textContent;
-                titleShow.textContent = film.querySelector('.title').textContent;
-                posterShow.src = "https://image.tmdb.org/t/p/original" + film.querySelector('.posterFilmList').src;
-                durationShow.textContent = film.querySelector('.duration').textContent;
-                genreShow.textContent = film.querySelector('.genre').textContent;
-                synopsisShow.textContent = film.querySelector('.synopsis').textContent;
-                console.log(film);
-            })
-        })
+    // Appeler à différents moments clés
+    equalizeColumnHeights(); // Une première fois au chargement du DOM
 
-})
+    window.addEventListener("load", equalizeColumnHeights); // Après le chargement de toutes les ressources (images etc.)
+    window.addEventListener("resize", equalizeColumnHeights); // Si la fenêtre est redimensionnée
 
-    </script>
+    addedAtShow.textContent =
+      filmInList[0].querySelector(".addedAt").textContent;
+    ratingShow.textContent = filmInList[0].querySelector(".rating").textContent;
+    titleShow.textContent = filmInList[0].querySelector(".title").textContent;
+    posterShow.src =
+      "https://image.tmdb.org/t/p/original" +
+      filmInList[0].querySelector(".posterFilmList").src;
+    durationShow.textContent = durationToMinutes(
+      filmInList[0].querySelector(".duration").textContent
+    );
+    genreShow.textContent = filmInList[0]
+      .querySelector(".genre")
+      .textContent.replace(/,/g, ", ");
+    synopsisShow.textContent =
+      filmInList[0].querySelector(".synopsis").textContent;
+
+    filmInList.forEach((film) => {
+      film.addEventListener("click", () => {
+        addedAtShow.textContent = film.querySelector(".addedAt").textContent;
+        ratingShow.textContent = film.querySelector(".rating").textContent;
+        titleShow.textContent = film.querySelector(".title").textContent;
+        posterShow.src = film.querySelector(".posterFilmList").src;
+        durationShow.textContent = durationToMinutes(
+          film.querySelector(".duration").textContent
+        );
+        genreShow.textContent = film
+          .querySelector(".genre")
+          .textContent.replace(/,/g, ", ");
+        synopsisShow.textContent = film.querySelector(".synopsis").textContent;
+        equalizeColumnHeights();
+        console.log(film);
+      });
+    });
+  });
+
+  function durationToMinutes(duration) {
+    let minutes = Math.floor(duration / 60);
+    let seconds = duration % 60;
+    return `${minutes}h ${seconds}min`;
+  }
+
+  // --- Début du code d'égalisation des hauteurs ---
+</script>
 {% endblock %}
