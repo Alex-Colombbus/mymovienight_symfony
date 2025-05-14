@@ -39,6 +39,10 @@ class Liste
         $this->listFilms = new ArrayCollection();
         $this->created_at = new \DateTimeImmutable();
     }
+    public function __toString(): string
+    {
+        return $this->name_liste ?? 'Liste sans nom'; // Retourne le nom de la liste ou un texte par défaut
+    }
 
 
     public function getId(): ?int

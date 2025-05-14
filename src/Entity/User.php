@@ -51,6 +51,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->listes = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return $this->username ?? 'Utilisateur sans nom'; // Retourne le nom d'utilisateur ou un texte par défaut
+    }
+
     public function getId(): ?int
     {
         return $this->id;

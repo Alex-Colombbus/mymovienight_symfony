@@ -62,6 +62,11 @@ class FilmFiltre
         $this->listFilms = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return $this->title ?? 'Film sans titre'; // Retourne le titre du film ou un texte par défaut
+    }
+
     /**
      * @return Collection<int, ListFilm>
      */
