@@ -13,9 +13,11 @@ endblock %} {% block main %}
           />
         </div>
         <div class="container d-flex justify-content-around fs-3">
-          <i class="bi bi-x-circle incone-dynamique"></i>
+          <button class="border border-0 bg-transparent" id="sendDataListRef">
+            <i class="bi bi-x-circle incone-dynamique" id="iconeRefusal"></i>
+          </button>
 
-          <button class="border-none bg-transparent" id="sendDataList">
+          <button class="border border-0 bg-transparent" id="sendDataListFav">
             <i class="bi bi-heart incone-dynamique" id="iconeHeart"></i>
           </button>
         </div>
@@ -77,8 +79,10 @@ endblock %} {% block main %}
           let importantCrewObjet = films[0].importantCrew
           let page = 0;
           let filmToList = films[0];
-          let bouttonSendList = document.querySelector('#sendDataList');
+          let bouttonSendListFav = document.querySelector('#sendDataListFav');
+          let bouttonSendListRef = document.querySelector('#sendDataListRef');
           let iconeHeart = document.querySelector('#iconeHeart');
+          let iconeRef = document.querySelector('#iconeRefusal');
 
 
 
@@ -143,12 +147,21 @@ endblock %} {% block main %}
   let buttonPrecedent = document.querySelector('.precedent');
   buttonPrecedent.classList.add('invisible');
   buttonPrecedent.addEventListener('click', () => {
+    
   if(iconeHeart.classList.contains('bi-heart-fill')){
     films.splice(page, 1);
     iconeHeart.classList.remove('bi-heart-fill');
     iconeHeart.classList.add('bi-heart');
-    bouttonSendList.disabled = false;
+    bouttonSendListFav.disabled = false;
   }
+
+  if(iconeRef.classList.contains('bi-x-circle-fill')){
+    films.splice(page, 1);
+    iconeRef.classList.remove('bi-x-circle-fill');
+    iconeRef.classList.add('bi-x-circle');
+    bouttonSendListFav.disabled = false;
+  }
+
          page --;
          titleFilm.textContent = films[page].title;
          infoFilm.textContent = films[page].releaseDate + ' - ' + films[page].genres + ' - ' + films[page].duration;
@@ -178,7 +191,14 @@ endblock %} {% block main %}
     films.splice(page, 1);
     iconeHeart.classList.remove('bi-heart-fill');
     iconeHeart.classList.add('bi-heart');
-    bouttonSendList.disabled = false;
+    bouttonSendListFav.disabled = false;
+  }
+
+  if(iconeRef.classList.contains('bi-x-circle-fill')){
+    films.splice(page, 1);
+    iconeRef.classList.remove('bi-x-circle-fill');
+    iconeRef.classList.add('bi-x-circle');
+    bouttonSendListFav.disabled = false;
   }
 
          page ++;
@@ -205,9 +225,9 @@ endblock %} {% block main %}
 
 
 
-   bouttonSendList.addEventListener('click', () => {
+   bouttonSendListFav.addEventListener('click', () => {
         // Désactiver le bouton pendant l'envoi pour éviter double-clic
-        bouttonSendList.disabled = true;
+        bouttonSendListFav.disabled = true;
 
 
                       // Récuperation des données
@@ -247,7 +267,7 @@ endblock %} {% block main %}
                               iconeHeart.classList.remove('bi-heart'); // Enlever l'ancienne classe
                               iconeHeart.classList.add('bi-heart-fill'); // Ajouter nouvelle classe (ex: Bootstrap vert)=
                               // Optionnel: Garder le bouton désactivé ou le réactiver après un délai
-                              bouttonSendList.disabled = false; // Réactiver si besoin
+                              bouttonSendListFav.disabled = false; // Réactiver si besoin
                           } else {
                               // Gérer le cas où le serveur retourne un statut 'error' même avec HTTP 200 (moins courant)
                                throw new Error(data.message || 'Une erreur logique est survenue.');
@@ -260,7 +280,7 @@ endblock %} {% block main %}
 
 
                           // Réactiver le bouton en cas d'erreur pour permettre une nouvelle tentative
-                          bouttonSendList.disabled = false;
+                          bouttonSendListFav.disabled = false;
                           iconeHeart.classList.remove('bi-heart-fill'); // Assurer qu'il n'est pas vert
                           iconeHeart.classList.add('bi-heart'); // Mettre en rouge par exemple
                       });
@@ -294,7 +314,7 @@ endblock %} {% block main %}
                               iconeHeart.classList.remove('bi-heart-fill'); // Enlever l'ancienne classe
                               iconeHeart.classList.add('bi-heart'); // Ajouter nouvelle classe (ex: Bootstrap vert)=
                               // Optionnel: Garder le bouton désactivé ou le réactiver après un délai
-                              bouttonSendList.disabled = false; // Réactiver si besoin
+                              bouttonSendListFav.disabled = false; // Réactiver si besoin
                           } else {
                               // Gérer le cas où le serveur retourne un statut 'error' même avec HTTP 200 (moins courant)
                                throw new Error(data.message || 'Une erreur logique est survenue.');
@@ -307,7 +327,7 @@ endblock %} {% block main %}
 
 
                           // Réactiver le bouton en cas d'erreur pour permettre une nouvelle tentative
-                          bouttonSendList.disabled = false;
+                          bouttonSendListFav.disabled = false;
                           iconeHeart.classList.remove('bi-heart'); // Assurer qu'il n'est pas vert
                           iconeHeart.classList.add('bi-heart-fill'); // Mettre en rouge par exemple
                       });
@@ -315,6 +335,118 @@ endblock %} {% block main %}
                     }
 
                   });
+
+                  bouttonSendListRef.addEventListener('click', () => {
+        // Désactiver le bouton pendant l'envoi pour éviter double-clic
+                  bouttonSendListRef.disabled = true;
+
+
+                      // Récuperation des données
+                      let dataToSend = filmToList;
+
+                      console.log('Donnees envoyees :', dataToSend);
+
+
+                    if(iconeRef.classList.contains('bi-x-circle')){
+
+
+                      // --- Requête AJAX avec Fetch API (JavaScript moderne) ---
+                      fetch('{{ path('app_save_data_refusal') }}', { // Utilise la route Symfony
+                          method: 'POST',
+                          headers: {
+                              'Content-Type': 'application/json', // Indique qu'on envoie du JSON
+                              'Accept': 'application/json' // Indique qu'on attend du JSON en retour
+                          },
+                          body: JSON.stringify(dataToSend)
+                      })
+                      .then(response => {
+                        console.log('Réponse brute :', response);
+                          // Vérifie si la réponse HTTP est OK (status 2xx)
+                          if (!response.ok) {
+                               // Si le serveur retourne une erreur (4xx, 5xx), on la propage
+                               return response.json().then(errorData => {
+                                  throw new Error(errorData.message || `Erreur HTTP: ${response.status}`);
+                               });
+                          }
+                          return response.json(); // Convertit la réponse JSON en objet JS
+                      })
+                      .then(data => {
+                          // Traitement en cas de succès (réponse JSON du contrôleur)
+                          if (data.status === 'success') {
+                              console.log('Succès:', data.message);
+                    // --- Changer l'apparence du bouton ---
+                              iconeRef.classList.remove('bi-x-circle'); // Enlever l'ancienne classe
+                              iconeRef.classList.add('bi-x-circle-fill'); // Ajouter nouvelle classe (ex: Bootstrap vert)=
+                              // Optionnel: Garder le bouton désactivé ou le réactiver après un délai
+                              bouttonSendListRef.disabled = false; // Réactiver si besoin
+                          } else {
+                              // Gérer le cas où le serveur retourne un statut 'error' même avec HTTP 200 (moins courant)
+                               throw new Error(data.message || 'Une erreur logique est survenue.');
+                          }
+                      })
+                      .catch(error => {
+                          // Traitement en cas d'erreur (réseau, JSON invalide, erreur serveur explicite)
+                          console.error('Erreur AJAX:', error);
+                          console.error('Erreur: ' + error.message);
+
+
+                          // Réactiver le bouton en cas d'erreur pour permettre une nouvelle tentative
+                          bouttonSendListRef.disabled = false;
+                          iconeRef.classList.remove('bi-x-circle-fill'); // Assurer qu'il n'est pas vert
+                          iconeRef.classList.add('bi-x-circle'); // Mettre en rouge par exemple
+                      });
+
+                    }else{
+
+                      fetch('{{ path('app_remove_data_refusal') }}', { // Utilise la route Symfony
+                          method: 'POST',
+                          headers: {
+                              'Content-Type': 'application/json', // Indique qu'on envoie du JSON
+                              'Accept': 'application/json' // Indique qu'on attend du JSON en retour
+                          },
+                          body: JSON.stringify(dataToSend)
+                      })
+                      .then(response => {
+                        console.log('Réponse brute :', response);
+                          // Vérifie si la réponse HTTP est OK (status 2xx)
+                          if (!response.ok) {
+                               // Si le serveur retourne une erreur (4xx, 5xx), on la propage
+                               return response.json().then(errorData => {
+                                  throw new Error(errorData.message || `Erreur HTTP: ${response.status}`);
+                               });
+                          }
+                          return response.json(); // Convertit la réponse JSON en objet JS
+                      })
+                      .then(data => {
+                          // Traitement en cas de succès (réponse JSON du contrôleur)
+                          if (data.status === 'success') {
+                              console.log('Succès:', data.message);
+                    // --- Changer l'apparence du bouton ---
+                              iconeRef.classList.remove('bi-x-circle-fill'); // Enlever l'ancienne classe
+                              iconeRef.classList.add('bi-x-circle'); // Ajouter nouvelle classe (ex: Bootstrap vert)=
+                              // Optionnel: Garder le bouton désactivé ou le réactiver après un délai
+                              bouttonSendListRef.disabled = false; // Réactiver si besoin
+                          } else {
+                              // Gérer le cas où le serveur retourne un statut 'error' même avec HTTP 200 (moins courant)
+                               throw new Error(data.message || 'Une erreur logique est survenue.');
+                          }
+                      })
+                      .catch(error => {
+                          // Traitement en cas d'erreur (réseau, JSON invalide, erreur serveur explicite)
+                          console.error('Erreur AJAX:', error);
+                          console.error('Erreur: ' + error.message);
+
+
+                          // Réactiver le bouton en cas d'erreur pour permettre une nouvelle tentative
+                          bouttonSendListRef.disabled = false;
+                          iconeRef.classList.remove('bi-x-circle'); // Assurer qu'il n'est pas vert
+                          iconeRef.classList.add('bi-x-circle-fill'); // Mettre en rouge par exemple
+                      });
+
+                    }
+
+                  });
+
 
 
       });

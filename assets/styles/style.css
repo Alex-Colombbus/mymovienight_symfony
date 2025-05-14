@@ -8,6 +8,10 @@
   /* --color-accentuationBleu: #003566; */
 }
 
+.colorJauneMoche{
+  color: var(--color-jaunemoche);
+} 
+
 *{
   margin: 0;
   padding: 0;
@@ -74,7 +78,7 @@ input[type=range]::-webkit-slider-thumb {
   appearance: none;
   width: 7px;          /* Largeur du curseur */
   height: 24px;         /* Hauteur du curseur (vertical) */
-  background-color: #000000; /* Couleur du curseur */
+  background-color: var(--color-accentuationBleu); /* Couleur du curseur */
   border-radius: 3px;
   cursor: pointer;
   pointer-events: all;  /* TRES IMPORTANT: Rend le CURSEUR cliquable/déplaçable */
@@ -88,7 +92,7 @@ input[type=range]::-moz-range-thumb {
   /* Pas besoin de -moz-appearance: none; ici */
   width: 7px;          /* Largeur du curseur */
   height: 24px;         /* Hauteur du curseur (vertical) */
-  background-color: #000000; /* Couleur du curseur */
+  background-color: var(--color-accentuationBleu); /* Couleur du curseur */
   border-radius: 3px;
   border: none;         /* Enlève la bordure par défaut de Firefox */
   cursor: pointer;
@@ -206,6 +210,7 @@ h1{
 
 .chevron{
   border: none;
+  color: var(--color-accentuationBleu);
   background-color: transparent;
   font-size: 30px;
 }
@@ -305,11 +310,24 @@ h1{
   width: 100%; /* Ensure item takes full width of its grid cell */
 }
 
-.checkbox-item input[type="checkbox"]:checked {
-  background-color: var(--color-accentuationBleu);
+.checkbox-item input[type="checkbox"]{
+  cursor : pointer;
+
 }
 
+.checkbox-item input[type="checkbox"]:checked {
+  background-color: var(--color-accentuationBleu);
+  color : var(--color-jaunemoche);
+}
+
+
 /***************** Page non index *******************/
+.logo{
+  width: 100%;
+  object-fit: contain;
+}
+
+
 .headerFilm{
   /* height: 20vh; */
   background-color: var(--color-backgroundBlanc);
@@ -405,15 +423,15 @@ nav button{
 
 
 .divScroll {
-   display: flex !important; /* Assurez-vous qu'il est flex */
-  flex-direction: column !important;
+   /* display: flex !important; */
+  /* flex-direction: column !important; */
+  overflow-y: auto;
+  height: 85vh;
+  box-shadow: 0px 0px 6px var(--color-accentuationBleu);
 }
 
 .divScroll-inner-flex-container {
-  /* `d-flex flex-column h-100` sont des classes Bootstrap.
-     `h-100` signifie `height: 100% !important;`.
-     Cela prendra 100% de la hauteur que .divScroll aura APRES avoir été étiré.
-     Ce conteneur devient le parent flex pour .divListFilm. */
+  
   overflow: hidden; /* TRÈS IMPORTANT: C'est MAINTENANT ce conteneur qui doit
                        empêcher .divListFilm de l'étirer au-delà de sa hauteur (100% de .divScroll). */
 }
@@ -424,12 +442,16 @@ nav button{
   min-height: 0; /* Toujours essentiel pour le scroll dans un parent flex */
 }
 
+#titleShow{
+  color: var(--color-accentuationBleu);
+}
+
 .filmInList {
   cursor: pointer; /* Indique que l'élément est cliquable */
 }
 
 .filmInList:hover {
-    background-color: #83b7f1; /* Effet de survol léger */
+    background-color: #83a0f18e; /* Effet de survol léger */
   }
 
 
@@ -458,6 +480,7 @@ nav button{
   display: block;
   margin-left: auto;
   margin-right: auto;
+  box-shadow: 0px 0px 10px var(--color-accentuationBleu);
 }
 
 /***************** Login *******************/
@@ -476,12 +499,9 @@ nav button{
 
 .boutonSite{
   background-color: var(--color-accentuationBleu)!important;
-  color: var(--color-backgroundBlanc)!important;
+  /* color: var(--color-backgroundBlanc)!important; */
   font-family: Roboto, serif;
-  border: none;
-  padding:1px 30px;
-  font-size: 20px;
-  border-radius: 30px;
+ 
   
 }
 
@@ -516,16 +536,7 @@ nav button{
 
 }
 
-.boutonSite{
-  background-color: var(--color-accentuationBleu);
-  color: var(--color-backgroundBlanc);
-  font-family: Roboto, serif;
-  border: none;
-  padding:1px 30px;
-  font-size: 20px;
-  border-radius: 30px;
-  
-}
+
 
 .labelFormRegister{
   color: var(--color-accentuationBleu) !important;

@@ -123,29 +123,57 @@ final class SaveDataController extends AbstractController
             // No need to persist FilmFiltre here, Doctrine manages it after find()
 
             // 3. Find the user's list or create it if it doesn't exist
-            $liste = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user]); // Use the $user entity
+            $liste = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Ma liste']); // Use the $user entity
 
+            $listeRefusal = $entityManager->getRepository(Liste::class)->findOneBy([
+                'user' => $user,
+                'name_liste' => 'Liste de refus'
+            ]); // Use the $user entity
+            $listeMain = $entityManager->getRepository(Liste::class)->findOneBy([
+                'user' => $user,
+                'name_liste' => 'Ma liste'
+            ]);
             // CONDITIONAL: Create the list ONLY if it doesn't exist
-            if (!$liste) {
+            if (!$listeRefusal) {
                 $liste = new Liste();
                 $liste->setUser($user); // Use the correct setter name
-                $liste->setNameListe('My Watchlist'); // Set a default name
+                $liste->setNameListe('Ma liste de refus'); // Set a default name
                 $entityManager->persist($liste); // Persist the new list
                 // No flush yet
             }
 
+            if (!$listeMain) {
+                $listeMain = new Liste();
+                $listeMain->setUser($user);
+                $listeMain->setNameListe('Ma liste principale');
+                $entityManager->persist($listeMain);
+            }
+
             // 4. Check if the FilmFiltre is already linked to this Liste in ListFilm
             // *** FIX FOR findOneBy CRITERIA ***
-            $existingListFilm = $entityManager->getRepository(ListFilm::class)->findOneBy([
+            $existingListFilmMain = $entityManager->getRepository(ListFilm::class)->findOneBy([
                 'tconst' => $filmFiltre, // Pass the FilmFiltre ENTITY OBJECT
-                'liste' => $liste,       // Pass the Liste ENTITY OBJECT
+                'liste' => $listeMain,       // Pass the Liste ENTITY OBJECT
             ]);
-            // *** END FIX ***
+
+            $existingListFilmRefusal = $entityManager->getRepository(ListFilm::class)->findOneBy([
+                'tconst' => $filmFiltre, // Pass the FilmFiltre ENTITY OBJECT
+                'liste' => $listeRefusal,       // Pass the Liste ENTITY OBJECT
+            ]);
+
+
 
             // 5. If the link already exists, return a conflict response
-            if ($existingListFilm) {
-                return new JsonResponse(['status' => 'info', 'message' => 'Film is already in your list!'], Response::HTTP_CONFLICT); // 409 Conflict
+            if ($existingListFilmMain !== null) {
+                return new JsonResponse(['status' => 'info', 'message' => 'Film est déjà dans votre liste de favoris!'], Response::HTTP_CONFLICT); // 409 Conflict
             }
+
+            if ($existingListFilmRefusal !== null) {
+                return new JsonResponse(['status' => 'info', 'message' => 'Film est deja dans votre liste de refus!'], Response::HTTP_CONFLICT); // 409 Conflict
+            }
+
+            // 5. If the link already exists, return a conflict response
+
 
             // 6. If the link doesn't exist, create a new ListFilm entry
             $listFilm = new ListFilm();
@@ -164,7 +192,118 @@ final class SaveDataController extends AbstractController
             $entityManager->flush();
 
             // 9. Return success response
-            return new JsonResponse(['status' => 'success', 'message' => 'Film added to list!'], Response::HTTP_OK);
+            return new JsonResponse(['status' => 'success', 'message' => 'Film ajouté dans votre liste!'], Response::HTTP_OK);
+        } catch (\Exception $e) {
+            // Log the error for debugging in development
+            // In production, consider logging to a file or service and returning a generic error message
+            error_log('Error in SaveDataController: ' . $e->getMessage() . ' - ' . $e->getTraceAsString());
+
+            // 10. Return a JSON error response
+            return new JsonResponse([
+                'status' => 'error',
+                // Provide the exception message for debugging in development.
+                // In production, return a more generic message like 'An internal error occurred.'
+                'message' => 'Une erreur est survenue lors de la sauvegarde: ' . $e->getMessage(),
+                // WARNING: Exposing the full trace in a production API response is a security risk.
+                // Remove 'trace' => $e->getTraceAsString() for production.
+                'trace' => $e->getTraceAsString()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    #[Route('/save/data_refusal', name: 'app_save_data_refusal')]
+    public function saveRefusal(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $user = $this->getUser();
+
+        $content = $request->getContent(); // Get the raw request body
+
+        // *** Add logging here to see the raw content ***
+        error_log('SaveDataController: Raw Content Received: ' . $content);
+
+        // Ensure the user is authenticated
+        if (!$user) {
+            return new JsonResponse(['status' => 'error', 'message' => 'Authentication required.'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        // Basic validation: check if required data (like tconst) is present
+        if (!isset($data['tconst']) || empty($data['tconst'])) {
+            return new JsonResponse(['status' => 'error', 'message' => 'Invalid or missing "tconst" in request data.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        // --- Logique de sauvegarde ---
+        try {
+
+            $filmFiltre = $entityManager->getRepository(FilmFiltre::class)->find($data['tconst']);
+
+            // 3. Find the user's list or create it if it doesn't exist
+            $listeRefusal = $entityManager->getRepository(Liste::class)->findOneBy([
+                'user' => $user,
+                'name_liste' => 'Liste de refus'
+            ]); // Use the $user entity
+            $listeMain = $entityManager->getRepository(Liste::class)->findOneBy([
+                'user' => $user,
+                'name_liste' => 'Ma liste'
+            ]);
+            // CONDITIONAL: Create the list ONLY if it doesn't exist
+            if (!$listeRefusal) {
+                $liste = new Liste();
+                $liste->setUser($user); // Use the correct setter name
+                $liste->setNameListe('Ma liste de refus'); // Set a default name
+                $entityManager->persist($liste); // Persist the new list
+                // No flush yet
+            }
+
+            if (!$listeMain) {
+                $listeMain = new Liste();
+                $listeMain->setUser($user);
+                $listeMain->setNameListe('Ma liste principale');
+                $entityManager->persist($listeMain);
+            }
+
+            // 4. Check if the FilmFiltre is already linked to this Liste in ListFilm
+            // *** FIX FOR findOneBy CRITERIA ***
+            $existingListFilmMain = $entityManager->getRepository(ListFilm::class)->findOneBy([
+                'tconst' => $filmFiltre, // Pass the FilmFiltre ENTITY OBJECT
+                'liste' => $listeMain,       // Pass the Liste ENTITY OBJECT
+            ]);
+
+            $existingListFilmRefusal = $entityManager->getRepository(ListFilm::class)->findOneBy([
+                'tconst' => $filmFiltre, // Pass the FilmFiltre ENTITY OBJECT
+                'liste' => $listeRefusal,       // Pass the Liste ENTITY OBJECT
+            ]);
+
+
+
+            // 5. If the link already exists, return a conflict response
+            if ($existingListFilmMain !== null) {
+                return new JsonResponse(['status' => 'info', 'message' => 'Film est déjà dans votre liste de favoris!'], Response::HTTP_CONFLICT); // 409 Conflict
+            }
+
+            if ($existingListFilmRefusal !== null) {
+                return new JsonResponse(['status' => 'info', 'message' => 'Film est deja dans votre liste de refus!'], Response::HTTP_CONFLICT); // 409 Conflict
+            }
+
+
+            // 6. If the link doesn't exist, create a new ListFilm entry
+            $listFilm = new ListFilm();
+            // Use the custom setter which expects entity objects
+            $listFilm->setListFilmInfo($filmFiltre, $listeRefusal);
+
+            // Or use standard setters if you prefer:
+            // $listFilm->setTconst($filmFiltre); // setTconst expects FilmFiltre entity
+            // $listFilm->setListeId($liste);     // setListeId expects Liste entity
+
+
+            // 7. Persist the new ListFilm entity
+            $entityManager->persist($listFilm);
+
+            // 8. Flush all pending changes (FilmFiltre updates, new Liste if created, new ListFilm)
+            $entityManager->flush();
+
+            // 9. Return success response
+            return new JsonResponse(['status' => 'success', 'message' =>  "le film a bien été ajouté dans votre liste de refus"], Response::HTTP_OK);
         } catch (\Exception $e) {
             // Log the error for debugging in development
             // In production, consider logging to a file or service and returning a generic error message

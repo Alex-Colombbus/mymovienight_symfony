@@ -32,9 +32,24 @@ final class ListeController extends AbstractController
         $listFilms = $entityManager->getRepository(ListFilm::class)->findBy(['liste' => $liste]);
 
         foreach ($listFilms as $listFilm) {;
-            $Film = $entityManager->getRepository(FilmFiltre::class)->findOneBy(['tconst' => $listFilm->getTconst()]);
-            $listToDisplay[] = $Film;
+            $film = $entityManager->getRepository(FilmFiltre::class)->findOneBy(['tconst' => $listFilm->getTconst()]);
+
+            if ($film) {
+                $listToDisplay[] = [
+                    'tconst' => $film->getTconst(),
+                    'title' => $film->getTitle(),
+                    'posterPath' => $film->getPosterPath(),
+                    'synopsis' => $film->getSynopsis(),
+                    'genres' => $film->getGenres(),
+                    'runtimeMinutes' => $film->getRuntimeMinutes(),
+                    'averageRating' => $film->getAverageRating(),
+                    'addedAt' => $listFilm->getAddedAt()->format('d/m/Y'),
+                ];
+            }
         }
+
+        // dd($listToDisplay);
+
 
         // dd($listFilms, $liste, $listToDisplay);
 

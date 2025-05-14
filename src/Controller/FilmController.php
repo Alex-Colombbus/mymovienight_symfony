@@ -17,132 +17,103 @@ final class FilmController extends AbstractController
     #[Route('/film', name: 'app_film')]
     public function index(SessionInterface $session, TmdbFilmInfo $tmdbFilmInfo, EntityManagerInterface $entityManager): Response
     {
+        // Récupère la liste de 40 films depuis la session
+        $filmListFromSession = $session->get('films');
+        // Récupère l'utilisateur actuellement connecté (peut être null si non connecté)
+        $user = $this->getUser();
 
+        // Tableau pour stocker les données des films enrichies à afficher
+        $filmsForDisplay = [];
 
+        // Initialisation des tableaux pour les identifiants (tconsts) des films
+        $tconstsFromFav = [];     // tconsts des films favoris de l'utilisateur
+        $tconstsFromRefusal = []; // tconsts des films refusés par l'utilisateur
+        // dd($filmListFromSession); // Ligne de débogage commentée
 
-        // $filmList = $session->get('films');
-        // // dd($filmList);
+        // Vérifie si un utilisateur est connecté pour récupérer ses listes
+        if ($user instanceof UserInterface) { // Utilise instanceof pour une vérification de type robuste
+            // Récupère la liste de favoris de l'utilisateur
+            $userSavedFilmFav  = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Ma liste']);
+            // Récupère la liste de refus de l'utilisateur
+            $userSavedFilmRefusal  = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Liste de refus']);
+            // dd($userSavedFilmFav, $userSavedFilmRefusal); // Ligne de débogage commentée (avec une typo 'Refusale')
 
-
-        // $films = [];
-
-
-
-        // foreach ($filmList as $film) {
-
-        //     // It's crucial to either clone the service or instantiate it if it's not shared
-        //     // Since TmdbFilmInfo is likely a service, cloning is the correct approach if it's stateful.
-        //     $currentFilmInfo = clone $tmdbFilmInfo; // Clone the service instance for each film
-        //     $currentFilmInfo->setTconst($film['tconst']);
-        //     $currentFilmInfo->setFilmInfos();
-
-
-        //     if ($currentFilmInfo->getSynopsis() == null || $currentFilmInfo->getSynopsis() == '' || $currentFilmInfo->getActors() == [] || $currentFilmInfo->getActors() == null) {
-        //         continue;
-        //     } else {
-
-        //         $jsonFilm = $currentFilmInfo->serialize();
-        //         if ($currentFilmInfo->isValid()) {
-        //             $films[] = $jsonFilm;
-        //         }
-        //     }
-
-
-
-
-        // dd($jsonFilm);
-
-        // You might want to only add valid films to the list
-
-        {
-            // Get the list of films from the session to display on the page
-            $filmListFromSession = $session->get('films');
-
-            $filmsForDisplay = []; // This array will hold the enriched film data to pass to Twig
-
-            // Process the film list from the session to enrich data and validate
-            if ($filmListFromSession) { // Check if the session list exists and is not empty
-                foreach ($filmListFromSession as $filmData) {
-                    // Ensure $filmData has 'tconst' before processing. Skip if not.
-                    if (!isset($filmData['tconst'])) {
-                        continue;
-                    }
-
-                    // It's crucial to either clone the service or ensure it's not stateful if reused.
-                    // Cloning is safer if TmdbFilmInfo holds state related to the current film.
-                    $currentFilmInfo = clone $tmdbFilmInfo;
-                    $currentFilmInfo->setTconst($filmData['tconst']);
-                    $currentFilmInfo->setFilmInfos(); // Assume this method fetches details from TMDB/elsewhere
-
-                    // Check your validity criteria (synopsis and actors)
-                    // Use strict comparison (=== null) and check if actors array is empty using empty()
-                    if ($currentFilmInfo->getSynopsis() === null || $currentFilmInfo->getSynopsis() === '' || empty($currentFilmInfo->getActors())) {
-                        continue; // Skip this film if criteria are not met
-                    }
-
-                    // Assuming serialize() returns an array or object suitable for the frontend,
-                    // and includes properties like tconst, title, posterPath, etc.
-                    $enrichedFilmData = $currentFilmInfo->serialize();
-
-                    // Assuming isValid() checks if the fetching and processing were successful
-                    if ($currentFilmInfo->isValid()) {
-                        // Add the enriched film data to the list for display
-                        $filmsForDisplay[] = $enrichedFilmData;
-                    }
-                }
+            // Si la liste de favoris existe
+            if ($userSavedFilmFav) {
+                // Récupère tous les films associés à cette liste de favoris
+                $listFilms = $entityManager->getRepository(ListFilm::class)->findBy(['liste' => $userSavedFilmFav]);
+                // Extrait les tconsts de ces films
+                $tconstsFromFav = array_map(function (ListFilm $listFilm) {
+                    return $listFilm->getTconst()->getTconst();
+                }, $listFilms);
             }
 
-            // --- FETCH USER'S SAVED FILMS FROM THE DATABASE ---
-            $userSavedFilmTconsts = []; // Initialize an empty array to store tconsts of saved films
-            $user = $this->getUser(); // Get the current logged-in user (returns User object or null)
-
-            // Check if a user is logged in
-            if ($user instanceof UserInterface) { // Use instanceof for a more robust type check
-                // Find the user's primary list (assuming one list per user for this feature)
-                // Use the EntityManager to get the repository for the Liste entity
-                $liste = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user]); // Find by the User entity
-
-                // If the user has a list
-                if ($liste) {
-                    // Find all ListFilm entries associated with this specific list
-                    // Use the EntityManager to get the repository for the ListFilm entity
-                    // Assuming ListFilm has a ManyToOne relation mappedBy 'listFilms' on Liste,
-                    // and the property name on ListFilm pointing back to Liste is 'liste'.
-                    $listFilms = $entityManager->getRepository(ListFilm::class)->findBy(['liste' => $liste]);
-
-                    // Extract the tconst string from the associated FilmFiltre entity for each ListFilm
-                    $userSavedFilmTconsts = array_map(function (ListFilm $listFilm) {
-                        // Assuming ListFilm has a ManyToOne relation named 'tconst' that points to FilmFiltre
-                        // And FilmFiltre has a method getTconst() that returns the string ID (e.g., "tt1234567")
-                        return $listFilm->getTconst()->getTconst();
-                    }, $listFilms);
-                }
+            // Si la liste de refus existe
+            if ($userSavedFilmRefusal) {
+                // Récupère tous les films associés à cette liste de refus
+                $listFilms = $entityManager->getRepository(ListFilm::class)->findBy(['liste' => $userSavedFilmRefusal]);
+                // Extrait les tconsts de ces films
+                $tconstsFromRefusal = array_map(function (ListFilm $listFilm) {
+                    return $listFilm->getTconst()->getTconst();
+                }, $listFilms);
             }
 
-            $filmsForDisplay2 = array_filter($filmsForDisplay, function ($film) use ($userSavedFilmTconsts) {
-                // Pour chaque $movie dans $movies, cette fonction est appelée.
-                // $movie est un tableau associatif représentant un film.
-
-                // Vérifier si le 'tconst' de ce film est présent dans $tconstsToExclude
-                $isExcluded = in_array($film['tconst'], $userSavedFilmTconsts, true); // Utilisez 'true' pour comparaison stricte
-
-                // array_filter garde l'élément si la callback retourne TRUE.
-                // Nous voulons garder les films qui NE SONT PAS exclus.
-                return !$isExcluded;
-            });
-
-            $filmsForDisplay2 = array_values($filmsForDisplay2);
-
-
-
-
-            // Render the Twig template
-            return $this->render('film/index.html.twig', [
-                // Pass the enriched list of films to display
-                'films' => $filmsForDisplay2,
-
-
-            ]);
+            // Fusionne les tconsts des favoris et des refus pour avoir une liste complète d'exclusion
+            $userSavedFilmTconsts = array_merge($tconstsFromFav, $tconstsFromRefusal);
+        } else {
+            // Si aucun utilisateur n'est connecté, la liste des tconsts à exclure est vide
+            $userSavedFilmTconsts = [];
         }
+
+
+        // Filtre la liste de films de la session pour exclure ceux déjà présents dans les listes de l'utilisateur
+        $filteredFilmList = array_filter((array)$filmListFromSession, function ($film) use ($userSavedFilmTconsts) {
+            // Vérifie si le film est dans la liste d'exclusion (comparaison stricte)
+            $isExcluded = in_array($film['tconst'], $userSavedFilmTconsts, true);
+            // Garde le film s'il n'est PAS exclu
+            return !$isExcluded;
+        });
+
+        // Ré-indexe le tableau filtré (pour que les clés soient 0, 1, 2...)
+        $filteredFilmList = array_values($filteredFilmList);
+        // Ne garde que les 20 premiers films de la liste filtrée
+        $filteredFilmList = array_slice($filteredFilmList, 0, 20);
+
+        // Traite la liste filtrée pour enrichir les données des films
+        if ($filteredFilmList) { // Vérifie si la liste filtrée n'est pas vide
+            foreach ($filteredFilmList as $filmData) {
+                // S'assure que $filmData contient 'tconst' avant de continuer
+                if (!isset($filmData['tconst'])) {
+                    continue; // Passe au film suivant
+                }
+
+                // Clone le service TmdbFilmInfo pour éviter les états partagés entre les itérations
+                $currentFilmInfo = clone $tmdbFilmInfo;
+                // Définit le tconst pour le film actuel
+                $currentFilmInfo->setTconst($filmData['tconst']);
+                // Récupère les informations détaillées du film (via TMDB ou autre source)
+                $currentFilmInfo->setFilmInfos();
+
+                // Vérifie les critères de validité (synopsis et acteurs)
+                if ($currentFilmInfo->getSynopsis() === null || $currentFilmInfo->getSynopsis() === '' || empty($currentFilmInfo->getActors())) {
+                    continue; // Passe au film suivant si les critères ne sont pas remplis
+                }
+
+                // Sérialise les données du film pour le template
+                $enrichedFilmData = $currentFilmInfo->serialize();
+
+                // Vérifie si la récupération et le traitement des informations ont réussi
+                if ($currentFilmInfo->isValid()) {
+                    // Ajoute les données enrichies du film à la liste pour affichage
+                    $filmsForDisplay[] = $enrichedFilmData;
+                }
+            }
+        }
+
+        // Rend le template Twig 'film/index.html.twig'
+        return $this->render('film/index.html.twig', [
+            // Passe la liste des films enrichis et validés au template
+            'films' => $filmsForDisplay,
+        ]);
     }
 }

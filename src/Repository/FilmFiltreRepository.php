@@ -43,36 +43,6 @@ class FilmFiltreRepository extends ServiceEntityRepository
 
     public function findMoviesWithGenres(array $genresArray, ?float $minRating, ?float $maxRating, ?int $minYear, ?int $maxYear): array
     {
-        // Cette fonction cherche 
-        // $conn = $this->getEntityManager()->getConnection();
-
-        // $sql = 'SELECT * FROM film_filtre f WHERE 1=1';
-
-        // if (!empty($genres)) {
-        //     $sql .= ' AND f.genres LIKE :genres';
-        // }
-        // if ($minRating !== null) {
-        //     $sql .= ' AND f.average_rating >= :minRating';
-        // }
-        // if ($maxRating !== null) {
-        //     $sql .= ' AND f.average_rating <= :maxRating';
-        // }
-        // if ($minYear !== null) {
-        //     $sql .= ' AND f.start_year >= :minYear';
-        // }
-        // if ($maxYear !== null) {
-        //     $sql .= ' AND f.start_year <= :maxYear';
-        // }
-
-        // $sql .= ' ORDER BY RAND() LIMIT 20';
-
-        // $stmt = $conn->executeQuery($sql, [
-        //     'genres' => '%' . $genres . '%',
-        //     'minRating' => $minRating,
-        //     'maxRating' => $maxRating,
-        //     'minYear' => $minYear,
-        //     'maxYear' => $maxYear,
-        // ]);
 
         // return $stmt->fetchAllAssociative();
         $conn = $this->getEntityManager()->getConnection();
@@ -130,7 +100,7 @@ class FilmFiltreRepository extends ServiceEntityRepository
         $sql .= ' AND f.num_votes > 10000';
 
         // Attention: ORDER BY RAND() peut être très lent sur de grandes tables.
-        $sql .= ' ORDER BY RAND() LIMIT 20';
+        $sql .= ' ORDER BY RAND() LIMIT 40';
 
         $stmt = $conn->executeQuery($sql, $params);
         return $stmt->fetchAllAssociative();
@@ -165,7 +135,7 @@ class FilmFiltreRepository extends ServiceEntityRepository
         $sql .= ' AND f.num_votes > 10000';
 
 
-        $sql .= ' ORDER BY RAND() LIMIT 20';
+        $sql .= ' ORDER BY RAND() LIMIT 40';
 
         $stmt = $conn->executeQuery($sql, $params);
         return $stmt->fetchAllAssociative();

@@ -20,6 +20,7 @@ final class RegisterController extends AbstractController
         // Création d'une nouvelle instance de l'entité User
         $user = new User();
         $liste = new Liste();
+        $listeRefusal = new Liste();
 
         // Création du formulaire en liant l'entité User au formulaire RegisterUserForm
         $form = $this->createForm(RegisterUserForm::class, $user);
@@ -34,6 +35,8 @@ final class RegisterController extends AbstractController
             $user->setRoles(['ROLE_USER']);
             $liste->setUser($user);
             $liste->setNameListe('Ma liste');
+            $listeRefusal->setUser($user);
+            $listeRefusal->setNameListe('Liste de refus');
 
             // Prépare l'entité User pour être sauvegardée dans la base de données
             $entityManager->persist($user);
@@ -41,8 +44,9 @@ final class RegisterController extends AbstractController
             // Exécute la requête SQL pour insérer l'utilisateur dans la base de données
             // Pas besoin de persist() car on insere pas une nouvelle entité
 
-            $entityManager->flush();
+
             $entityManager->persist($liste);
+            $entityManager->persist($listeRefusal);
             $entityManager->flush();
 
             //Message de succès de l'inscription

@@ -20,8 +20,8 @@
     <header class="headerFilm">
         <nav>
             <div class="row d-flex justify-content-between">
-                <div class="col-2">
-                    <li><a href="{{path('app_home')}}"><img src="./assets/img/MMN.svg" alt="Logo"></a></li>
+                <div class="col-2 d-flex align-items-center justify-content-center">
+                    <li><a href="{{path('app_home')}}" ><h1 class="fs-3"><span class="colorJauneMoche">My</span> Movie Night</h1></a></li>
                 </div>
 
 
@@ -39,10 +39,19 @@
                                     </button>
             
                                     <ul class="dropdown-menu row">
-                                        <li><a class="dropdown-item item-drop" href="{{path("app_register")}}">S'inscrire</a></li>
-                                        <li><a class="dropdown-item item-drop" href="{{path("app_login")}}">Connexion</a></li>
-                                        <li><a class="dropdown-item item-drop" href="{{path("app_login")}}">Backoffice</a></li>
-                                        <li><a class="dropdown-item item-drop" href="{{path("app_logout")}}">Deconnexion</a></li>
+                                        {% if not app.user %}
+                                          <li><a class="dropdown-item item-drop" href="{{path("app_register")}}">S'inscrire</a></li>
+                                          <li><a class="dropdown-item item-drop" href="{{path("app_login")}}">Connexion</a></li>
+                                                
+                                          {% endif %}
+                                        {% if app.user %}
+                                        <li><a class="dropdown-item item-drop" href="{{path("app_account")}}">Mon profil</a></li>
+                                          {% if 'ROLE_ADMIN' in app.user.roles %}
+                                          <li><a class="dropdown-item" href="{{path("app_login")}}">Backoffice</a></li>
+                                          {% endif %}
+                                        <li><a class="dropdown-item text-warning" href="{{path("app_logout")}}">Deconnexion</a></li>
+                                        {% endif %}
+                            
                                     </ul>
                                </div>
   

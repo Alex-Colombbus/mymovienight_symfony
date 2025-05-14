@@ -3,13 +3,15 @@ endblock %} {% block main %}
 
 <div class="row testo">
   <div class="col-5 d-flex flex-column divScroll">
-    <div class="divScroll-inner-flex-container d-flex flex-column h-100">
+    <div
+      class="divScroll-inner-flex-container d-flex flex-column h-100 border pt-2"
+    >
       <div class="container flex-grow-1 divListFilm">
         {% for film in listToDisplay %}
 
         <div class="container listFilm my-1">
           <div
-            class="row align-items-center justify-content-between text-center border border-1 border-dark rounded-2 filmInList"
+            class="row align-items-center justify-content-between text-center border border-1 border-primar rounded-2 filmInList"
           >
             <div class="col-2">
               <img
@@ -20,13 +22,82 @@ endblock %} {% block main %}
             </div>
             <h4 class="col-4 fs-5 title">{{ film.title }}</h4>
             <p class="d-none synopsis">{{ film.synopsis }}</p>
-            <p class="d-none addedAt">12/05/2025</p>
+            <p class="d-none addedAt">{{ film.addedAt }}</p>
             <p class="d-none genre">{{ film.genres }}</p>
             <p class="d-none duration">{{ film.runtimeMinutes }}</p>
             <h4 class="col-2 rating">
               {{ film.averageRating }}<i class="bi bi-star-fill"></i>
             </h4>
-            <i class="bi bi-trash3 col-2 fs-4"></i>
+            <!-- Button trigger modal -->
+            <div class="col-2">
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#Modal{{ film.tconst }}"
+              >
+                <i class="bi bi-trash3 col-2 fs-4"></i>
+              </button>
+
+              <!-- Modal -->
+              <div
+                class="modal fade"
+                id="Modal{{ film.tconst }}"
+                tabindex="-1"
+                aria-labelledby="ModalLabel{{ film.tconst }}"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h3
+                        class="modal-title fs-5"
+                        id="ModalLabel{{ film.tconst }}"
+                      >
+                        {{ film.title }}
+                      </h3>
+                      <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      ></button>
+                    </div>
+                    <div class="modal-body">
+                      Voulez vous supprimer {{ film.title }} de votre liste?
+                    </div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        data-bs-dismiss="modal"
+                      >
+                        Non
+                      </button>
+                      <a
+                        href="{{
+                          path('app_remove_data_get', { tconst: film.tconst })
+                        }}"
+                        class="btn btn-danger"
+                        role="button"
+                        <!--
+                        Good
+                        for
+                        accessibility
+                        when
+                        styling
+                        links
+                        as
+                        buttons
+                        --
+                      >
+                        Oui
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -39,7 +110,6 @@ endblock %} {% block main %}
       <p class="col" id="addedAtShow"></p>
       <div class="row col justify-content-end col-2 align-items-center">
         <p class="col-6 fs-5 p-0 m-0" id="ratingShow"></p>
-        <i class="col-6 bi bi-star-fill p-0 m-0"></i>
       </div>
     </div>
     <div>
@@ -67,41 +137,38 @@ endblock %} {% block main %}
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    let addedAtShow = document.getElementById("addedAtShow");
-    let ratingShow = document.getElementById("ratingShow");
-    let titleShow = document.getElementById("titleShow");
-    let posterShow = document.getElementById("posterShow");
-    let durationShow = document.getElementById("durationShow");
-    let genreShow = document.getElementById("genreShow");
-    let synopsisShow = document.getElementById("synopsisShow");
-    let filmInList = document.querySelectorAll(".listFilm");
-    const detailsFilmElement = document.querySelector(".detailsFilm");
-    const divScrollElement = document.querySelector(".divScroll");
+    let addedAtShow = document.querySelector("#addedAtShow");
+    let ratingShow = document.querySelector("#ratingShow");
+    let titleShow = document.querySelector("#titleShow");
+    let posterShow = document.querySelector("#posterShow");
+    let durationShow = document.querySelector("#durationShow");
+    let genreShow = document.querySelector("#genreShow");
+    let synopsisShow = document.querySelector("#synopsisShow");
+    let detailsFilmElement = document.querySelector(".detailsFilm");
+    let divScrollElement = document.querySelector(".divScroll");
+    const filmInList = document.querySelectorAll(".filmInList");
+    const ratings = document.querySelectorAll(".rating");
 
-    function equalizeColumnHeights() {
-      if (detailsFilmElement && divScrollElement) {
-        // Réinitialiser la hauteur de divScroll pour que detailsFilm ait sa hauteur naturelle
-        divScrollElement.style.height = "auto"; // ou '1px' si vous aviez une base pour éviter les "sauts"
-
-        const detailsHeight = detailsFilmElement.offsetHeight;
-        divScrollElement.style.height = detailsHeight + "px";
-        // console.log(`Hauteur detailsFilm: ${detailsHeight}px, Hauteur divScroll mise à jour.`);
-      }
-    }
+    ratings.forEach((rating) => {
+      changeStarColor(rating);
+    });
 
     // Appeler à différents moments clés
-    equalizeColumnHeights(); // Une première fois au chargement du DOM
-
-    window.addEventListener("load", equalizeColumnHeights); // Après le chargement de toutes les ressources (images etc.)
-    window.addEventListener("resize", equalizeColumnHeights); // Si la fenêtre est redimensionnée
+    /* equalizeColumnHeights(); // Une première fois au chargement du DOM
+    window.addEventListener("load", equalizeColumnHeights);
+    window.addEventListener("resize", equalizeColumnHeights); */
 
     addedAtShow.textContent =
-      filmInList[0].querySelector(".addedAt").textContent;
+      "Ajouté le : " + filmInList[0].querySelector(".addedAt").textContent;
     ratingShow.textContent = filmInList[0].querySelector(".rating").textContent;
+    ratingCreate = document.createElement("i");
+    ratingCreate.classList.add("bi", "bi-star-fill", "px-1");
+    ratingShow.appendChild(ratingCreate);
+    changeStarColor(document.querySelector("#ratingShow"));
     titleShow.textContent = filmInList[0].querySelector(".title").textContent;
-    posterShow.src =
-      "https://image.tmdb.org/t/p/original" +
-      filmInList[0].querySelector(".posterFilmList").src;
+    posterShow.src = filmInList[0]
+      .querySelector(".posterFilmList")
+      .getAttribute("src");
     durationShow.textContent = durationToMinutes(
       filmInList[0].querySelector(".duration").textContent
     );
@@ -113,8 +180,12 @@ endblock %} {% block main %}
 
     filmInList.forEach((film) => {
       film.addEventListener("click", () => {
-        addedAtShow.textContent = film.querySelector(".addedAt").textContent;
+        addedAtShow.textContent =
+          "Ajouté le : " + film.querySelector(".addedAt").textContent;
         ratingShow.textContent = film.querySelector(".rating").textContent;
+        ratingCreate = document.createElement("i");
+        ratingCreate.classList.add("bi", "bi-star-fill", "px-1");
+        ratingShow.appendChild(ratingCreate);
         titleShow.textContent = film.querySelector(".title").textContent;
         posterShow.src = film.querySelector(".posterFilmList").src;
         durationShow.textContent = durationToMinutes(
@@ -124,17 +195,55 @@ endblock %} {% block main %}
           .querySelector(".genre")
           .textContent.replace(/,/g, ", ");
         synopsisShow.textContent = film.querySelector(".synopsis").textContent;
-        equalizeColumnHeights();
+        //equalizeColumnHeights();
+        changeStarColor(document.querySelector("#ratingShow"));
         console.log(film);
       });
     });
-  });
+    function durationToMinutes(duration) {
+      let parsedDuration = parseInt(duration, 10);
+      if (isNaN(parsedDuration)) {
+        return "Durée inconnue";
+      }
+      let minutes = Math.floor(parsedDuration / 60);
+      let seconds = parsedDuration % 60;
+      return `${minutes}h ${seconds}min`;
+    }
 
-  function durationToMinutes(duration) {
-    let minutes = Math.floor(duration / 60);
-    let seconds = duration % 60;
-    return `${minutes}h ${seconds}min`;
-  }
+    function changeStarColor(rating) {
+      let ratingValue = parseFloat(rating.textContent);
+      if (isNaN(ratingValue)) {
+        return;
+      }
+      if (ratingValue < 5.5) {
+        rating.querySelector(".bi-star-fill").style.color = "red";
+      } else if (ratingValue < 6) {
+        rating.querySelector(".bi-star-fill").style.color = "orange";
+      } else if (ratingValue < 6.5) {
+        rating.querySelector(".bi-star-fill").style.color = "yellow";
+      } else if (ratingValue < 7) {
+        rating.querySelector(".bi-star-fill").style.color = "lightgreen";
+      } else if (ratingValue < 7.5) {
+        rating.querySelector(".bi-star-fill").style.color = "lime";
+      } else {
+        rating.querySelector(".bi-star-fill").style.color = "DeepSkyBlue";
+      }
+    }
+    /*function equalizeColumnHeights() {
+      if (detailsFilmElement && divScrollElement) {
+        const scrollTop = divScrollElement.scrollTop;
+
+        // Réinitialiser la hauteur de divScroll pour que detailsFilm ait sa hauteur naturelle
+        divScrollElement.style.height = "auto";
+
+        const detailsHeight = detailsFilmElement.offsetHeight;
+        divScrollElement.style.height = detailsHeight + "px";
+
+        // Restaurer la position de défilement
+        divScrollElement.scrollTop = scrollTop;
+      }
+    }*/
+  });
 
   // --- Début du code d'égalisation des hauteurs ---
 </script>

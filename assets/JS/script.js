@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mainIndex.style.height = "70vh";
         footer.style.height = "15vh";
         iconeNav.forEach(icone => {
-            icone.style.color = "black";
+            icone.style.color = "var(--color-accentuationBleu)";
             
         });
         sectionCachee.classList.add('visible');
@@ -191,91 +191,91 @@ document.addEventListener('DOMContentLoaded', () => {
              
      }
 
-    if (pathname === '/list') {
+    if (pathname === '/liste') {
     
-        console.log('list.php loaded');
+        // console.log('list.php loaded');
         
-        nav.classList.add('color-changed');
-        footer.classList.add('color-changed');
+        // nav.classList.add('color-changed');
+        // footer.classList.add('color-changed');
 
-        const filmInList = document.querySelectorAll('.filmInList');
-        const ratings = document.querySelectorAll('.rating');
+        // const filmInList = document.querySelectorAll('.filmInList');
+        // const ratings = document.querySelectorAll('.rating');
 
 //fonction changer la couleur des étoiles en fonction de la note
-function changeStarColor(rating) {
-    if(rating.textContent <5.5){
-        rating.querySelector('.bi-star-fill').style.color = "red";
-    }else if(rating.textContent <6){
-        rating.querySelector('.bi-star-fill').style.color = "orange";
-    }else if(rating.textContent < 6.5){
-        rating.querySelector('.bi-star-fill').style.color = "yellow";
-    }else if(rating.textContent < 7){
-        rating.querySelector('.bi-star-fill').style.color = "lightgreen";
-    }else if(rating.textContent < 7.5){
-        rating.querySelector('.bi-star-fill').style.color = "lime";
-    }else{
-        rating.querySelector('.bi-star-fill').style.color = "DeepSkyBlue";
-    }
-}
+// function changeStarColor(rating) {
+//     if(rating.textContent <5.5){
+//         rating.querySelector('.bi-star-fill').style.color = "red";
+//     }else if(rating.textContent <6){
+//         rating.querySelector('.bi-star-fill').style.color = "orange";
+//     }else if(rating.textContent < 6.5){
+//         rating.querySelector('.bi-star-fill').style.color = "yellow";
+//     }else if(rating.textContent < 7){
+//         rating.querySelector('.bi-star-fill').style.color = "lightgreen";
+//     }else if(rating.textContent < 7.5){
+//         rating.querySelector('.bi-star-fill').style.color = "lime";
+//     }else{
+//         rating.querySelector('.bi-star-fill').style.color = "DeepSkyBlue";
+//     }
+// }
 
 // change la couleur des étoiles en fonction de la note dans la liste
-        ratings.forEach(rating => {
+        // ratings.forEach(rating => {
         
-            changeStarColor(rating);
+        //     changeStarColor(rating);
         
-        });
+        // });
 
 
         
         
 
-        filmInList.forEach(film => {
-            film.addEventListener('click', () => {
-                // Récupérer les informations du film dans la liste
-                let poster = film.querySelector('.posterFilmList');
-                let title = film.querySelector('.title');
-                let synopsis = film.querySelector('.synopsis');
-                let addedAt = film.querySelector('.addedAt');
-                let genre = film.querySelector('.genre');
-                let duration = film.querySelector('.duration');
-                let rating = film.querySelector('.rating');
-                let ratings = film.querySelectorAll('.rating');
+//         filmInList.forEach(film => {
+//             film.addEventListener('click', () => {
+//                 // Récupérer les informations du film dans la liste
+//                 let poster = film.querySelector('.posterFilmList');
+//                 let title = film.querySelector('.title');
+//                 let synopsis = film.querySelector('.synopsis');
+//                 let addedAt = film.querySelector('.addedAt');
+//                 let genre = film.querySelector('.genre');
+//                 let duration = film.querySelector('.duration');
+//                 let rating = film.querySelector('.rating');
+//                 let ratings = film.querySelectorAll('.rating');
                 
 
-                // cible les emplacements de l'affichage du film
-                let posterFilm = document.querySelector('#posterShow');
-                let titleFilm = document.querySelector('#titleShow');
-                let synopsisFilm = document.querySelector('#synopsisShow');
-                let addedAtFilm = document.querySelector('#addedAtShow');
-                let genreFilm = document.querySelector('#genreShow');
-                let durationFilm = document.querySelector('#durationShow');
-                let ratingFilm = document.querySelector('#ratingShow');
+//                 // cible les emplacements de l'affichage du film
+//                 let posterFilm = document.querySelector('#posterShow');
+//                 let titleFilm = document.querySelector('#titleShow');
+//                 let synopsisFilm = document.querySelector('#synopsisShow');
+//                 let addedAtFilm = document.querySelector('#addedAtShow');
+//                 let genreFilm = document.querySelector('#genreShow');
+//                 let durationFilm = document.querySelector('#durationShow');
+//                 let ratingFilm = document.querySelector('#ratingShow');
                 
 
-                console.log(poster.src);
-                console.log(synopsisFilm.textContent);
+//                 console.log(poster.src);
+//                 console.log(synopsisFilm.textContent);
                 
-                ratingCreate = document.createElement('i')
-                ratingCreate.classList.add('bi', 'bi-star-fill', 'px-1');
-// Afficher les informations du film
-                titleFilm.textContent = title.textContent;
-                synopsisFilm.textContent = synopsis.textContent;
-                addedAtFilm.textContent = "Ajouté le : " + addedAt.textContent;
-                ratingFilm.textContent = rating.textContent;
-                ratingFilm.appendChild(ratingCreate);
-                genreFilm.textContent = genre.textContent;
-                durationFilm.textContent = duration.textContent;
-                posterFilm.src = poster.src;
+//                 ratingCreate = document.createElement('i')
+//                 ratingCreate.classList.add('bi', 'bi-star-fill', 'px-1');
+// // Afficher les informations du film
+//                 titleFilm.textContent = title.textContent;
+//                 synopsisFilm.textContent = synopsis.textContent;
+//                 addedAtFilm.textContent = "Ajouté le : " + addedAt.textContent;
+//                 ratingFilm.textContent = rating.textContent;
+//                 ratingFilm.appendChild(ratingCreate);
+//                 genreFilm.textContent = genre.textContent;
+//                 durationFilm.textContent = duration.textContent;
+//                 posterFilm.src = poster.src;
 
                 // change la couleur des étoiles en fonction de la note côté affichage du film
 
-                changeStarColor(document.querySelector('#ratingShow'));
+                
                 
                 
                
                 
-            });
-        });
+            // });
+        // });
 
 
 

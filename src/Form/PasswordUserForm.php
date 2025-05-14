@@ -73,7 +73,7 @@ class PasswordUserForm extends AbstractType
                 [
                     'label' => 'Modifier mon mot de passe',
                     'attr' => [
-                        'class' => 'boutonSite w-100 mb-3',
+                        'class' => 'boutonSite btn colorJauneMoche rounded-2 w-100 mt-3',
                     ],
                 ]
             )
