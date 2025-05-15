@@ -38,6 +38,7 @@ security:
     - { path: ^/compte, roles: ROLE_USER }
     - { path: ^/save, roles: ROLE_USER }
     - { path: ^/remove, roles: ROLE_USER }
+    - { path: ^/liste, roles: ROLE_USER }
     # - { path: ^/admin, roles: ROLE_ADMIN }
     # - { path: ^/profile, roles: ROLE_USER }
 

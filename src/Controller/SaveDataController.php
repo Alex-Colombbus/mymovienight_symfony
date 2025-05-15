@@ -247,6 +247,87 @@ final class SaveDataController extends AbstractController
 
             $filmFiltre = $entityManager->getRepository(FilmFiltre::class)->find($data['tconst']);
 
+
+            if (!$filmFiltre) {
+                // If the film doesn't exist in your FilmFiltre table, you can't add it to a list.
+                // Depending on your app, you might create it here based on $data
+                // or return an error. Let's return an error for now.
+                return new JsonResponse(['status' => 'error', 'message' => 'Film not found in the database to add to list.'], Response::HTTP_NOT_FOUND);
+            }
+
+            if (isset($data['title']) && $filmFiltre->getTitle() === null) {
+                // Ensure the incoming data for title is a non-empty string
+                if ($data['title'] !== '') { // Use strict non-empty check
+                    $filmFiltre->setTitle($data['title']);
+                }
+            }
+
+            // 2. Update FilmFiltre details if necessary (handle null checks and type conversions)
+            if (isset($data['synopsis']) && $filmFiltre->getSynopsis() === null) {
+                $filmFiltre->setSynopsis($data['synopsis']);
+            }
+
+            if (isset($data['posterPath']) && $filmFiltre->getPosterPath() === null) {
+                $filmFiltre->setPosterPath($data['posterPath']);
+            }
+
+            // Assuming 'startYear' in entity and 'releaseDate' or 'startYear' in data.
+            // Your entity mapping for startYear is INT, but frontend sends string like "2005".
+            // Need to cast to int.
+            if (isset($data['releaseDate']) && $filmFiltre->getStartYear() === null) {
+                // Assuming releaseDate is 'YYYY-MM-DD', extract year and cast
+                try {
+                    $year = (new \DateTimeImmutable($data['releaseDate']))->format('Y');
+                    $filmFiltre->setStartYear((int) $year);
+                } catch (\Exception $e) {
+                    // Handle potential date parsing errors if format isn't reliable
+                    // Log or ignore, depending on strictness
+                }
+            } else if (isset($data['startYear']) && $filmFiltre->getStartYear() === null) {
+                // If startYear is already an integer in data
+                if (is_numeric($data['startYear'])) {
+                    $filmFiltre->setStartYear((int) $data['startYear']);
+                }
+            }
+
+
+            if (isset($data['imdbRating']) && $filmFiltre->getAverageRating() === null) {
+                // Ensure the data type matches the entity's DECIMAL(3,1) property
+                $filmFiltre->setAverageRating((string) $data['imdbRating']); // Cast to string for DECIMAL
+            }
+
+            if (isset($data['tmdbRating']) && $filmFiltre->getTmdbRating() === null) {
+                if (is_numeric($data['tmdbRating'])) { // tmdbRating is float in entity
+                    $filmFiltre->setTmdbRating((float) $data['tmdbRating']);
+                }
+            }
+
+            if (isset($data['genres']) && $filmFiltre->getGenres() === null) {
+                if (is_string($data['genres'])) { // Genres is string in entity
+                    $filmFiltre->setGenres($data['genres']);
+                }
+            }
+
+            // *** FIX FOR ACTORS TYPE ERROR ***
+            if (isset($data['actors']) && $filmFiltre->getActors() === null) {
+                // Convert array of actor names to a string
+                if (is_array($data['actors'])) {
+                    $filmFiltre->setActors(implode(', ', $data['actors']));
+                } else if (is_string($data['actors'])) {
+                    // If by chance it's already a string
+                    $filmFiltre->setActors($data['actors']);
+                }
+            }
+            // *** END FIX ***
+
+            // importantCrew is defined as array in entity and is array in data - This is OK
+            if (isset($data['importantCrew']) && $filmFiltre->getImportantCrew() === null) {
+                if (is_array($data['importantCrew'])) {
+                    $filmFiltre->setImportantCrew($data['importantCrew']);
+                }
+            }
+
+
             // 3. Find the user's list or create it if it doesn't exist
             $listeRefusal = $entityManager->getRepository(Liste::class)->findOneBy([
                 'user' => $user,

@@ -110,6 +110,7 @@ final class FilmController extends AbstractController
             }
         }
 
+
         // Rend le template Twig 'film/index.html.twig'
         return $this->render('film/index.html.twig', [
             // Passe la liste des films enrichis et validés au template

@@ -2,7 +2,8 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}My Movie Night{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
         <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,15 +26,25 @@
                 </div>
 
 
-                <ul class="col-4 p-5 d-flex justify-content-around">
+                <ul class="col-8 col-sm-4 col-md-4 col-lg-4 p-5 d-flex justify-content-around">
   
-                               <button type="button">
-                                         <li><a href="{{path('app_liste')}}"><i class="bi bi-list-ul iconeNav"></i></a></li>
-                                </button>
+                               {% if app.user %}
+      
+
+                              <div class="dropdown">
+                              <button class ="dropdown-toggle" type="button"  data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-list-ul iconeNav"></i>
+                              </button>
+                              <ul class="dropdown-menu row">
+                                    <li><a class="dropdown-item item-drop text-primary" href="{{path("app_liste_favorites")}}">Mes favoris</a></li>
+                                    <li><a class="dropdown-item item-drop text-danger" href="{{path("app_liste_refusals")}}">Mes refus</a></li>
+                              </ul>
+                                    </div>
+                            {% endif %}
 
                                 
 
-                               <div class="dropdown">
+                               <div class="col-6 dropdown">
                                     <button class ="" type="button"  data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="dropdown-toggle bi bi-person-circle iconeNav"></i>
                                     </button>

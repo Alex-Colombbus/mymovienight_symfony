@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
             // Empêcher la barre MIN de dépasser la barre MAX
             // On utilise une petite marge si besoin (ex: 1) ou 0 si elles peuvent se toucher
-            const gap = 0; // Mettez une valeur > 0 si vous voulez un écart minimum obligatoire
+            const gap = 0.1; // Mettez une valeur > 0 si vous voulez un écart minimum obligatoire
             if (minValue > maxValue - gap) {
                 barreMini.value = maxValue - gap; // Ajuster la valeur de la barre min
                 minValue = parseFloat(barreMini.value); // Mettre à jour la variable locale
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let maxValue = parseFloat(barreMaxi.value);
     
             // Empêcher la barre MAX d'aller en dessous de la barre MIN
-            const gap = 0; // Doit être la même valeur que dans handleMinSlider
+            const gap = 0.1; // Doit être la même valeur que dans handleMinSlider
             if (maxValue < minValue + gap) {
                 barreMaxi.value = minValue + gap; // Ajuster la valeur de la barre max
                 maxValue = parseFloat(barreMaxi.value); // Mettre à jour la variable locale
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
     
             // Empêcher la valeur MIN de dépasser la valeur MAX actuelle
-            const gap = 0;
+            const gap = 0.1;
             if (minNumValue > maxSliderValue - gap) {
                 minNumValue = maxSliderValue - gap;
             }
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     
             // Empêcher la valeur MAX d'être inférieure à la valeur MIN actuelle
-            const gap = 0;
+            const gap = 0.1;
             if (maxNumValue < minSliderValue + gap) {
                 maxNumValue = minSliderValue + gap;
             }

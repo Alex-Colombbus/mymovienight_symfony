@@ -163,7 +163,7 @@ final class RemoveDataController extends AbstractController
     }
     // --- END NEW ACTION ---
 
-    #[Route('/remove/data/getRemove{tconst}', name: 'app_remove_data_get', methods: ['GET'])]
+    #[Route('/remove/data/getRemove{tconst}', name: 'app_remove_data_get_favorite', methods: ['GET'])]
     #[IsGranted('IS_AUTHENTICATED_FULLY')] // Ensures user is authenticated
     public function removeFromFilmListe(string $tconst, EntityManagerInterface $entityManager): Response
     {
@@ -174,7 +174,7 @@ final class RemoveDataController extends AbstractController
 
         if (!$liste) {
             $this->addFlash('error', 'Your list ("Ma liste") could not be found.');
-            return $this->redirectToRoute('app_liste'); // Or a more appropriate route
+            return $this->redirectToRoute('app_liste_favorites'); // Or a more appropriate route
         }
 
         // 1. Find the FilmFiltre entity using the tconst (which is its ID)
@@ -182,7 +182,7 @@ final class RemoveDataController extends AbstractController
 
         if (!$filmFiltre) {
             $this->addFlash('error', 'The film you are trying to remove does not exist in the database.');
-            return $this->redirectToRoute('app_liste');
+            return $this->redirectToRoute('app_liste_favorites');
         }
 
         // 2. Find the ListFilm entry using the Liste entity and the FilmFiltre entity
@@ -199,6 +199,45 @@ final class RemoveDataController extends AbstractController
             $this->addFlash('info', 'This film was not found in your list or was already removed.');
         }
 
-        return $this->redirectToRoute('app_liste');
+        return $this->redirectToRoute('app_liste_favorites');
+    }
+
+    #[Route('/remove/data//remove/data/getRemove_refusal{tconst}', name: 'app_remove_data_get_refusal', methods: ['GET'])]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')] // Ensures user is authenticated
+    public function removeFromFilmListeRefusal(string $tconst, EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser();
+        // $user will be a UserInterface object due to IsGranted. If using specific User methods, type cast or check.
+
+        $liste = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Liste de refus']);
+
+        if (!$liste) {
+            $this->addFlash('error', 'Your list ("Ma liste") could not be found.');
+            return $this->redirectToRoute('app_liste_refusals'); // Or a more appropriate route
+        }
+
+        // 1. Find the FilmFiltre entity using the tconst (which is its ID)
+        $filmFiltre = $entityManager->getRepository(FilmFiltre::class)->find($tconst);
+
+        if (!$filmFiltre) {
+            $this->addFlash('error', 'The film you are trying to remove does not exist in the database.');
+            return $this->redirectToRoute('app_liste_refusals');
+        }
+
+        // 2. Find the ListFilm entry using the Liste entity and the FilmFiltre entity
+        $listFilm = $entityManager->getRepository(ListFilm::class)->findOneBy([
+            'liste' => $liste,
+            'tconst' => $filmFiltre // Use the FilmFiltre entity instance here
+        ]);
+
+        if ($listFilm) {
+            $entityManager->remove($listFilm);
+            $entityManager->flush();
+            $this->addFlash('success', sprintf('Film "%s" removed from your list.', $filmFiltre->getTitle())); // Assuming FilmFiltre has getTitle()
+        } else {
+            $this->addFlash('info', 'This film was not found in your list or was already removed.');
+        }
+
+        return $this->redirectToRoute('app_liste_refusals');
     }
 }

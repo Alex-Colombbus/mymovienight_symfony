@@ -23,13 +23,15 @@ body{
   font-family: Roboto, serif;
 }
  
-
+.label-slider{
+  font-size: 0.8rem !important;
+}
 /* --- Styles pour le conteneur des sliders --- */
-.range_container {
-  display: flex;
+.range-container {
+  /* display: flex;
   flex-direction: column;
   /* width: 80%;  */
-   margin: 0 auto; /* Un peu moins de marge verticale peut-être?  */
+   /* margin: 0 auto; */
    
 }
 
@@ -311,8 +313,14 @@ h1{
 }
 
 .labelFont{
-  font-size: 10px; /* Taille du texte de la case à cocher */
+  font-size: 0.8rem; /* Taille du texte de la case à cocher */
+  color: var(--color-accentuationBleu);
   font-weight: 500;
+}
+
+.form-check-input{
+  height: 1.2rem !important;
+  width: 1.2rem !important;
 }
 
 
@@ -403,6 +411,11 @@ nav button{
 .btn-changement{
   background-color: var(--color-jaunemoche);
   color: var(--color-accentuationBleu);
+}
+
+.btn-changement:hover{
+  background-color: var(--color-accentuationBleu);
+  color: var(--color-jaunemoche);
 }
 
 .icone-dynamique{

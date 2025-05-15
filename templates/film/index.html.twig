@@ -1,10 +1,12 @@
 {% extends 'base2.html.twig' %} {% block title %}Hello FilmController!{%
 endblock %} {% block main %}
 
-<div class="container-fluid col-12">
+<div class="container-fluid">
   <div class="container">
     <div class="row justify-content-evenly align-items-center">
-      <div class="col-sm-12 col-md-6 d-flex flex-column justify-content-center">
+      <div
+        class="col-sm-12 col-md-12 col-lg-6 d-flex flex-column justify-content-center"
+      >
         <div class="container d-flex justify-content-center">
           <img
             src=""
@@ -12,17 +14,36 @@ endblock %} {% block main %}
             class="img-film rounded-1 posterFilm"
           />
         </div>
-        <div class="container d-flex justify-content-around fs-3">
-          <button class="border border-0 bg-transparent" id="sendDataListRef">
-            <i class="bi bi-x-circle icone-dynamique" id="iconeRefusal"></i>
-          </button>
-
-          <button class="border border-0 bg-transparent" id="sendDataListFav">
-            <i class="bi bi-heart icone-dynamique" id="iconeHeart"></i>
-          </button>
+        <div class="container col-8 d-flex justify-content-around fs-3">
+          <div class="col-6 d-flex justify-content-start align-items-center">
+            <button
+              class="mx-2 border border-0 bg-transparent"
+              id="sendDataListRef"
+            >
+              <i
+                class="bi bi-x-circle icone-dynamique"
+                id="iconeRefusal"
+                title="Ajouter aux refus, ne plus jamais le voir"
+              ></i>
+            </button>
+            <p class="fs-6 text-primary m-0">Ne plus me redemander</p>
+          </div>
+          <div class="col-6 d-flex justify-content-end align-items-center">
+            <p class="fs-6 text-primary m-0">favoris</p>
+            <button
+              class="mx-2 border border-0 bg-transparent"
+              id="sendDataListFav"
+            >
+              <i
+                class="bi bi-heart icone-dynamique"
+                id="iconeHeart"
+                title="Ajouter aux favoris"
+              ></i>
+            </button>
+          </div>
         </div>
       </div>
-      <div class="col-sm-12 col-md-6 d-flex flex-column">
+      <div class="col-sm-12 col-md-12 col-lg-6 d-flex flex-column">
         <div
           class="col-12 mb-3 d-flex flex-column justify-content-center align-items-center"
         >
@@ -38,16 +59,26 @@ endblock %} {% block main %}
         <ul class="row actorsFilm"></ul>
 
         <div class="row align-items-center">
-          <button class="btn btn-changement precedent col-2 rounded-5 p-0">
+          <button
+            class="btn btn-changement precedent col-2 rounded-5 p-0"
+            title="Film prédédent"
+          >
             <i class="bi bi-arrow-left fs-3"></i>
           </button>
           <div class="col-8 row d-flex align-items-center">
-            
-            
-            <div class="imdbRating col-6 text-center fw-bold"></div>
-            <div class="tmdbRating col-6 text-center fw-bold"></div>
+            <div
+              class="imdbRating col-6 text-center fw-bold"
+              title="Note IMDb"
+            ></div>
+            <div
+              class="tmdbRating col-6 text-center fw-bold"
+              title="Note TMDB"
+            ></div>
           </div>
-          <button class="btn btn-changement suivant col-2 rounded-5 p-0">
+          <button
+            class="btn btn-changement suivant col-2 rounded-5 p-0"
+            title="Film suivant"
+          >
             <i class="bi bi-arrow-right fs-3"></i>
           </button>
         </div>
@@ -159,7 +190,7 @@ endblock %} {% block main %}
   let buttonPrecedent = document.querySelector('.precedent');
   buttonPrecedent.classList.add('invisible');
   buttonPrecedent.addEventListener('click', () => {
-    
+
   if(iconeHeart.classList.contains('bi-heart-fill')){
     films.splice(page, 1);
     iconeHeart.classList.remove('bi-heart-fill');
