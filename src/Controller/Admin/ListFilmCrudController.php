@@ -29,7 +29,8 @@ class ListFilmCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id')->hideOnForm(), // Cache l'ID dans le formulaire
+            IdField::new('id'), // Cache l'ID dans le formulaire
+            IdField::new('liste.id', 'ID de la liste'),
             AssociationField::new('tconst', 'Film') // Relation avec FilmFiltre
                 ->autocomplete() // Active le champ de recherche pour éviter une liste déroulante trop longue
                 ->setCrudController(FilmFiltreCrudController::class), // Optionnel : navigation vers le CRUD FilmFiltre

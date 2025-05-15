@@ -26,7 +26,6 @@ class ListeCrudController extends AbstractCrudController
             TextField::new('name_liste')->setLabel('Nom de la liste'),
             AssociationField::new('user')->setLabel('Utilisateur') // Affiche le nom de l'utilisateur
                 ->setCrudController(UserCrudController::class), // Optionnel : permet de naviguer vers le CRUD User
-            TextEditorField::new('description', 'Description')->hideOnIndex(),
             DateField::new('created_at', 'Date de création')->hideOnForm(),
         ];
     }

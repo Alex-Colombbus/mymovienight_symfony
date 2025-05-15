@@ -27,13 +27,13 @@ body{
   font-size: 0.8rem !important;
 }
 /* --- Styles pour le conteneur des sliders --- */
-.range-container {
-  /* display: flex;
+ /* .range-container {
+    display: flex;
   flex-direction: column;
-  /* width: 80%;  */
-   /* margin: 0 auto; */
-   
-}
+  width: 80%;  
+    margin: 0 auto; 
+    
+}  */
 
 .sliders_control {
   position: relative; /* ESSENTIEL pour positionner les sliders absolument à l'intérieur */
