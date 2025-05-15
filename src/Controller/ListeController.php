@@ -8,9 +8,11 @@ use App\Entity\ListFilm;
 use App\Entity\FilmFiltre;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use PhpParser\Node\Stmt\Return_;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Config\Framework\HttpClient\DefaultOptions\RetryFailedConfig;
 
 final class ListeController extends AbstractController
 {
@@ -52,6 +54,9 @@ final class ListeController extends AbstractController
 
 
         // dd($listFilms, $liste, $listToDisplay);
+        if (!$listToDisplay) {
+            return $this->render('liste/emptyListe.html.twig', []);
+        }
 
         return $this->render('liste/index.html.twig', [
             'listToDisplay' => $listToDisplay

@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
         nav.classList.add('color-changed');
         nav.style.height = "15vh";
         footer.classList.add('color-changed');
-        mainIndex.style.height = "70vh";
+        mainIndex.style.height = "100%";
         footer.style.height = "15vh";
         iconeNav.forEach(icone => {
             icone.style.color = "var(--color-accentuationBleu)";

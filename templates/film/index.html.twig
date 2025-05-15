@@ -4,7 +4,7 @@ endblock %} {% block main %}
 <div class="container-fluid col-12">
   <div class="container">
     <div class="row justify-content-evenly align-items-center">
-      <div class="col-6 d-flex flex-column justify-content-center">
+      <div class="col-sm-12 col-md-6 d-flex flex-column justify-content-center">
         <div class="container d-flex justify-content-center">
           <img
             src=""
@@ -14,15 +14,15 @@ endblock %} {% block main %}
         </div>
         <div class="container d-flex justify-content-around fs-3">
           <button class="border border-0 bg-transparent" id="sendDataListRef">
-            <i class="bi bi-x-circle incone-dynamique" id="iconeRefusal"></i>
+            <i class="bi bi-x-circle icone-dynamique" id="iconeRefusal"></i>
           </button>
 
           <button class="border border-0 bg-transparent" id="sendDataListFav">
-            <i class="bi bi-heart incone-dynamique" id="iconeHeart"></i>
+            <i class="bi bi-heart icone-dynamique" id="iconeHeart"></i>
           </button>
         </div>
       </div>
-      <div class="col-6 d-flex flex-column">
+      <div class="col-sm-12 col-md-6 d-flex flex-column">
         <div
           class="col-12 mb-3 d-flex flex-column justify-content-center align-items-center"
         >
@@ -41,9 +41,11 @@ endblock %} {% block main %}
           <button class="btn btn-changement precedent col-2 rounded-5 p-0">
             <i class="bi bi-arrow-left fs-3"></i>
           </button>
-          <div class="col-8 row">
-            <div class="imdbRating col-6 text-center"></div>
-            <div class="tmdbRating col-6 text-center"></div>
+          <div class="col-8 row d-flex align-items-center">
+            
+            
+            <div class="imdbRating col-6 text-center fw-bold"></div>
+            <div class="tmdbRating col-6 text-center fw-bold"></div>
           </div>
           <button class="btn btn-changement suivant col-2 rounded-5 p-0">
             <i class="bi bi-arrow-right fs-3"></i>
@@ -126,19 +128,29 @@ endblock %} {% block main %}
   }
 
 
-  let tmdbRating = document.querySelector('.tmdbRating');
   let imdbRating = document.querySelector('.imdbRating');
-  getRating(imdbRating,tmdbRating,0)
-  function getRating(imdbRating,tmdbRating,page){
+  let tmdbRating = document.querySelector('.tmdbRating');
+  getRating(imdbRating,tmdbRating,0);
 
-        imdbRating.textContent = 'IMDb : ' + films[page].imdbRating;
+  function getRating(imdbRating,tmdbRating,page){
+    iconeImdb = document.createElement('img');
+    iconeImdb.src = "{{ asset('images/imdb_icone.png') }}";
+    iconeImdb.classList.add('iconeRating');
+    iconeImdb.alt = 'icone imdb';
+    imdbRating.textContent = films[page].imdbRating;
+    imdbRating.prepend(iconeImdb);
   if (films[page].tmdbRating === null||films[page].tmdbRating === 0){
 
         tmdbRating.textContent ='';
 
   }else{
 
-  tmdbRating.textContent = 'TMDB : ' + films[page].tmdbRating;
+  iconeTmdb = document.createElement('img');
+    iconeTmdb.src = "{{ asset('images/tmdb_icone.svg') }}";
+    iconeTmdb.classList.add('iconeRating');
+    iconeTmdb.alt = 'icone tmdb';
+    tmdbRating.textContent = parseFloat(films[page].tmdbRating).toFixed(1);
+    tmdbRating.prepend(iconeTmdb);
 
   }
 

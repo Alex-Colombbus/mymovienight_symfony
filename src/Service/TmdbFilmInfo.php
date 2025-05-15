@@ -34,7 +34,6 @@ class TmdbFilmInfo
         HttpClientInterface $client,
         string $tokenKey,
         FilmFiltreRepository $filmFiltreRepository,
-        FilmRepository $filmRepository,
         LoggerInterface $logger // Add logger
     ) {
         $this->client = $client;

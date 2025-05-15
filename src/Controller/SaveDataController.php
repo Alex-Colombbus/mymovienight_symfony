@@ -15,7 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 final class SaveDataController extends AbstractController
 {
 
-    #[Route('/save/data', name: 'app_save_data')]
+    #[Route('/save/data/favorite', name: 'app_save_data')]
     public function index(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -123,12 +123,12 @@ final class SaveDataController extends AbstractController
             // No need to persist FilmFiltre here, Doctrine manages it after find()
 
             // 3. Find the user's list or create it if it doesn't exist
-            $liste = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Ma liste']); // Use the $user entity
 
             $listeRefusal = $entityManager->getRepository(Liste::class)->findOneBy([
                 'user' => $user,
                 'name_liste' => 'Liste de refus'
             ]); // Use the $user entity
+
             $listeMain = $entityManager->getRepository(Liste::class)->findOneBy([
                 'user' => $user,
                 'name_liste' => 'Ma liste'
@@ -137,16 +137,26 @@ final class SaveDataController extends AbstractController
             if (!$listeRefusal) {
                 $liste = new Liste();
                 $liste->setUser($user); // Use the correct setter name
-                $liste->setNameListe('Ma liste de refus'); // Set a default name
-                $entityManager->persist($liste); // Persist the new list
+                $liste->setNameListe('Liste de refus'); // Set a default name
+                $entityManager->persist($liste);
+                $entityManager->flush(); // Persist the new list
+                $listeRefusal = $entityManager->getRepository(Liste::class)->findOneBy([
+                    'user' => $user,
+                    'name_liste' => 'Liste de refus'
+                ]);
                 // No flush yet
             }
 
             if (!$listeMain) {
                 $listeMain = new Liste();
                 $listeMain->setUser($user);
-                $listeMain->setNameListe('Ma liste principale');
+                $listeMain->setNameListe('Ma liste');
                 $entityManager->persist($listeMain);
+                $entityManager->flush();
+                $listeMain = $entityManager->getRepository(Liste::class)->findOneBy([
+                    'user' => $user,
+                    'name_liste' => 'Ma liste'
+                ]);
             }
 
             // 4. Check if the FilmFiltre is already linked to this Liste in ListFilm
@@ -178,7 +188,7 @@ final class SaveDataController extends AbstractController
             // 6. If the link doesn't exist, create a new ListFilm entry
             $listFilm = new ListFilm();
             // Use the custom setter which expects entity objects
-            $listFilm->setListFilmInfo($filmFiltre, $liste);
+            $listFilm->setListFilmInfo($filmFiltre, $listeMain);
 
             // Or use standard setters if you prefer:
             // $listFilm->setTconst($filmFiltre); // setTconst expects FilmFiltre entity
@@ -250,17 +260,30 @@ final class SaveDataController extends AbstractController
             if (!$listeRefusal) {
                 $liste = new Liste();
                 $liste->setUser($user); // Use the correct setter name
-                $liste->setNameListe('Ma liste de refus'); // Set a default name
+                $liste->setNameListe('Liste de refus'); // Set a default name
                 $entityManager->persist($liste); // Persist the new list
-                // No flush yet
+                $entityManager->flush();
+                $listeRefusal = $entityManager->getRepository(Liste::class)->findOneBy([
+                    'user' => $user,
+                    'name_liste' => 'Liste de refus'
+                ]);
             }
 
             if (!$listeMain) {
                 $listeMain = new Liste();
                 $listeMain->setUser($user);
-                $listeMain->setNameListe('Ma liste principale');
+                $listeMain->setNameListe('Ma liste');
                 $entityManager->persist($listeMain);
+                $entityManager->flush();
+                $listeMain = $entityManager->getRepository(Liste::class)->findOneBy([
+                    'user' => $user,
+                    'name_liste' => 'Ma liste'
+                ]);
             }
+
+
+
+            // Use the $user entity
 
             // 4. Check if the FilmFiltre is already linked to this Liste in ListFilm
             // *** FIX FOR findOneBy CRITERIA ***

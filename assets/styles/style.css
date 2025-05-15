@@ -17,13 +17,18 @@
   padding: 0;
   box-sizing: border-box; /* Bonne pratique */
 }
+
+body{
+  background-color: var(--color-backgroundBlanc);
+  font-family: Roboto, serif;
+}
  
 
 /* --- Styles pour le conteneur des sliders --- */
 .range_container {
   display: flex;
   flex-direction: column;
-  width: 80%; 
+  /* width: 80%;  */
    margin: 0 auto; /* Un peu moins de marge verticale peut-être?  */
    
 }
@@ -157,8 +162,8 @@ input[type="number"] {
   width: 60px; /* Un peu plus large peut-être */
   height: 30px;
   font-size: 20px;
- border: none;
- background-color: transparent;
+  border: none;
+  background-color: transparent;
   border-radius: 4px;
   text-align: center;
   padding: 2px 5px;
@@ -195,13 +200,18 @@ h1{
 
 
 .mainIndex{
-  height: 60vh; /* min-height est souvent mieux que height */
-  display: flex; /* Ajouté pour mieux centrer le contenu si besoin */
+  height: 60vh;
+  display: flex; 
   flex-direction: column;
-  align-items: center; /* Centre .range_container horizontalement */
+  align-items: center; 
   padding-top: 20px; /* Un peu d'espace en haut */
   background-color: var(--color-backgroundBlanc);
 }
+
+
+  
+
+
 
 .accueilGlobal{
   padding-top: 5rem;
@@ -305,10 +315,6 @@ h1{
   font-weight: 500;
 }
 
-.checkbox-item {
-  text-align: center; /* Ensure content inside is centered */
-  width: 100%; /* Ensure item takes full width of its grid cell */
-}
 
 .checkbox-item input[type="checkbox"]{
   cursor : pointer;
@@ -390,7 +396,7 @@ nav button{
 
 .surlignement{
   text-decoration: underline;
-  text-decoration-color: var(--color-accentuationBleu);
+  text-decoration-color: var(--color-accentuationBleuClair);
   text-underline-position: under;
 }
 
@@ -399,8 +405,16 @@ nav button{
   color: var(--color-accentuationBleu);
 }
 
-.incone-dynamique{
-  color: -var(--color-accentuationBleu);
+.icone-dynamique{
+  color: var(--color-accentuationBleu);
+}
+
+.iconeRating{
+  width: 40px;
+  height: auto;
+}
+.imdbRating,.tmdbRating{
+  color: var(--color-accentuationBleu);
 }
 
 /***************** Page List *******************/

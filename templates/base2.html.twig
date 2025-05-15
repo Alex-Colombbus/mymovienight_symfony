@@ -47,7 +47,7 @@
                                         {% if app.user %}
                                         <li><a class="dropdown-item item-drop" href="{{path("app_account")}}">Mon profil</a></li>
                                           {% if 'ROLE_ADMIN' in app.user.roles %}
-                                          <li><a class="dropdown-item" href="{{path("app_login")}}">Backoffice</a></li>
+                                          <li><a class="dropdown-item text-success" href="{{path("admin")}}">Backoffice</a></li>
                                           {% endif %}
                                         <li><a class="dropdown-item text-warning" href="{{path("app_logout")}}">Deconnexion</a></li>
                                         {% endif %}

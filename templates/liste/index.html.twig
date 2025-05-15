@@ -1,138 +1,204 @@
 {% extends 'base2.html.twig' %} {% block title %}Hello ListeController!{%
 endblock %} {% block main %}
 
-<div class="row testo">
-  <div class="col-5 d-flex flex-column divScroll">
-    <div
-      class="divScroll-inner-flex-container d-flex flex-column h-100 border pt-2"
-    >
-      <div class="container flex-grow-1 divListFilm">
-        {% for film in listToDisplay %}
-
-        <div class="container listFilm my-1">
-          <div
-            class="row align-items-center justify-content-between text-center border border-1 border-primar rounded-2 filmInList"
-          >
-            <div class="col-2">
-              <img
-                src="https://image.tmdb.org/t/p/original{{ film.posterPath }}"
-                alt="affiche du film {{ film.title }}"
-                class="posterFilmList rounded-1"
-              />
+<div class="container-fluid">
+  <button
+                  type="button"
+                  class="btn btn-primary boutonShowDelete col-12 d-sm-block d-md-block d-lg-none"
+                  data-bs-toggle="modal"
+                  data-bs-target=""
+                >
+                  <i class="bi bi-trash3 col-2 fs-4"></i> Effacer le film 
+                </button>
+        
+        <!-- Modal -->
+        <div class="modal fade modalFadeShowDelete" id="" tabindex="-1" aria-labelledby="" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3
+                  class="modal-title fs-5 modalTitleShowDelete"
+                  id=""
+                >
+                  
+                </h3>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body modalBodyShowDelete">
+                
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  data-bs-dismiss="modal"
+                >
+                  Non
+                </button>
+                <a
+                  href=""
+                  class="btn btn-danger btnOuiDelete"
+                  role="button"
+                  <!--
+                  Good
+                  for
+                  accessibility
+                  when
+                  styling
+                  links
+                  as
+                  buttons
+                  --
+                >
+                  Oui
+                </a>
+              </div>
             </div>
-            <h4 class="col-4 fs-5 title">{{ film.title }}</h4>
-            <p class="d-none synopsis">{{ film.synopsis }}</p>
-            <p class="d-none addedAt">{{ film.addedAt }}</p>
-            <p class="d-none genre">{{ film.genres }}</p>
-            <p class="d-none duration">{{ film.runtimeMinutes }}</p>
-            <h4 class="col-2 rating">
-              {{ film.averageRating }}<i class="bi bi-star-fill"></i>
-            </h4>
-            <!-- Button trigger modal -->
-            <div class="col-2">
-              <button
-                type="button"
-                class="btn btn-primary"
-                data-bs-toggle="modal"
-                data-bs-target="#Modal{{ film.tconst }}"
-              >
-                <i class="bi bi-trash3 col-2 fs-4"></i>
-              </button>
-
-              <!-- Modal -->
-              <div
-                class="modal fade"
-                id="Modal{{ film.tconst }}"
-                tabindex="-1"
-                aria-labelledby="ModalLabel{{ film.tconst }}"
-                aria-hidden="true"
-              >
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h3
-                        class="modal-title fs-5"
-                        id="ModalLabel{{ film.tconst }}"
-                      >
-                        {{ film.title }}
-                      </h3>
-                      <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                      ></button>
-                    </div>
-                    <div class="modal-body">
-                      Voulez vous supprimer {{ film.title }} de votre liste?
-                    </div>
-                    <div class="modal-footer">
-                      <button
-                        type="button"
-                        class="btn btn-primary"
-                        data-bs-dismiss="modal"
-                      >
-                        Non
-                      </button>
-                      <a
-                        href="{{
-                          path('app_remove_data_get', { tconst: film.tconst })
-                        }}"
-                        class="btn btn-danger"
-                        role="button"
-                        <!--
-                        Good
-                        for
-                        accessibility
-                        when
-                        styling
-                        links
-                        as
-                        buttons
-                        --
-                      >
-                        Oui
-                      </a>
+          </div>
+        </div>
+ 
+  <div class="row testo">
+    <div class="col-sm-3 col-md-3 col-lg-5 d-flex flex-column divScroll">
+      <div
+        class="divScroll-inner-flex-container d-flex flex-column h-100 border pt-2"
+      >
+        <div class="container flex-grow-1 divListFilm">
+          {% for film in listToDisplay %}
+  
+          <div class="container listFilm my-1">
+            <div
+              class="row align-items-center justify-content-between text-center border border-1 border-primar rounded-2 filmInList"
+            >
+              <div class="col-2">
+                <img
+                  src="https://image.tmdb.org/t/p/original{{ film.posterPath }}"
+                  alt="affiche du film {{ film.title }}"
+                  class="posterFilmList rounded-1"
+                />
+              </div>
+              <h4 class="col-4 fs-5 title d-sm-none d-md-none d-lg-block">{{ film.title }}</h4>
+              <p class="d-none synopsis">{{ film.synopsis }}</p>
+              <p class="d-none addedAt">{{ film.addedAt }}</p>
+              <p class="d-none genre">{{ film.genres }}</p>
+              <p class="d-none duration">{{ film.runtimeMinutes }}</p>
+              <p class="d-none tconst">{{ film.tconst}}</p>
+              <h4 class="col-2 rating d-sm-none d-md-none d-lg-block">
+                {{ film.averageRating }}<i class="bi bi-star-fill"></i>
+              </h4>
+              <!-- Button trigger modal -->
+              <div class="col-2 d-sm-none d-md-none d-lg-block">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  data-bs-toggle="modal"
+                  data-bs-target="#Modal{{ film.tconst }}"
+                >
+                  <i class="bi bi-trash3 col-2 fs-4"></i>
+                </button>
+  
+                <!-- Modal -->
+                <div
+                  class="modal fade"
+                  id="Modal{{ film.tconst }}"
+                  tabindex="-1"
+                  aria-labelledby="ModalLabel{{ film.tconst }}"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h3
+                          class="modal-title fs-5"
+                          id="ModalLabel{{ film.tconst }}"
+                        >
+                          {{ film.title }}
+                        </h3>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
+                      </div>
+                      <div class="modal-body">
+                        Voulez vous supprimer {{ film.title }} de votre liste?
+                      </div>
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-primary"
+                          data-bs-dismiss="modal"
+                        >
+                          Non
+                        </button>
+                        <a
+                          href="{{
+                            path('app_remove_data_get', { tconst: film.tconst })
+                          }}"
+                          class="btn btn-danger"
+                          role="button"
+                          <!--
+                          Good
+                          for
+                          accessibility
+                          when
+                          styling
+                          links
+                          as
+                          buttons
+                          --
+                        >
+                          Oui
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+  
+          {% endfor %}
         </div>
-
-        {% endfor %}
       </div>
     </div>
-  </div>
-  <div class="container detailsFilm col-5">
-    <div class="row">
-      <p class="col" id="addedAtShow"></p>
-      <div class="row col justify-content-end col-2 align-items-center">
-        <p class="col-6 fs-5 p-0 m-0" id="ratingShow"></p>
+    <div class="col-sm-9 col-md-9 col-lg-7 container detailsFilm ">
+      
+      <div class="row">
+        <p class="col" id="addedAtShow"></p>
+        <div class="row col justify-content-end col-2 align-items-center">
+          <p class="col-6 fs-5 p-0 m-0" id="ratingShow"></p>
+        </div>
       </div>
-    </div>
-    <div>
-      <h3 class="text-center" id="titleShow"></h3>
-    </div>
-    <div class="divAfficheFilm d-flex justify-content-center">
-      <img
-        src=""
-        alt="affiche du film Le Seigneur des anneaux: La communauté de l'anneau"
-        class="rounded-1 detailsAfficheFilm"
-        id="posterShow"
-      />
-    </div>
-    <div class="text-center">
-      <p class="fs-5">
-        <b id="durationShow" class="fw-bold"></b>-
-        <span id="genreShow"></span>
-      </p>
-    </div>
-    <div>
-      <p class="fs-5" id="synopsisShow">...</p>
+      <div>
+        <h3 class="text-center" id="titleShow"></h3>
+      </div>
+      <div class="divAfficheFilm d-flex justify-content-center">
+        <img
+          src=""
+          alt="affiche du film Le Seigneur des anneaux: La communauté de l'anneau"
+          class="rounded-1 detailsAfficheFilm"
+          id="posterShow"
+        />
+      </div>
+      <div class="text-center">
+        <p class="fs-5">
+          <b id="durationShow" class="fw-bold"></b>-
+          <span id="genreShow"></span>
+        </p>
+      </div>
+      <div>
+        <p class="fs-5" id="synopsisShow">...</p>
+      </div>
+         
     </div>
   </div>
+   
 </div>
 
 <script>
@@ -144,10 +210,16 @@ endblock %} {% block main %}
     let durationShow = document.querySelector("#durationShow");
     let genreShow = document.querySelector("#genreShow");
     let synopsisShow = document.querySelector("#synopsisShow");
-    let detailsFilmElement = document.querySelector(".detailsFilm");
+    let mmElement = document.querySelector(".detailsFilm");
     let divScrollElement = document.querySelector(".divScroll");
     const filmInList = document.querySelectorAll(".filmInList");
     const ratings = document.querySelectorAll(".rating");
+    //Bouton de suppression modale coté detail Film
+    let boutonShowDelete = document.querySelector(".boutonShowDelete");
+    let modalFadeShowDelete = document.querySelector(".modalFadeShowDelete");
+    let modalBodyShowDelete = document.querySelector(".modalBodyShowDelete");
+    let modalTitleShowDelete = document.querySelector(".modalTitleShowDelete");
+    let btnOuiDelete = document.querySelector(".btnOuiDelete");
 
     ratings.forEach((rating) => {
       changeStarColor(rating);
@@ -178,6 +250,21 @@ endblock %} {% block main %}
     synopsisShow.textContent =
       filmInList[0].querySelector(".synopsis").textContent;
 
+    //attribution des valeurs pour le bouton modale coté film
+  
+       boutonShowDelete.setAttribute('data-bs-target', '#Modal'+filmInList[0].querySelector('.tconst').textContent);
+    modalFadeShowDelete.setAttribute('id', 'Modal'+filmInList[0].querySelector('.tconst').textContent);
+    modalFadeShowDelete.setAttribute('aria-labelledby', 'ModalLabel'+filmInList[0].querySelector('.tconst').textContent);
+    modalTitleShowDelete.setAttribute('id', 'ModalLabel'+filmInList[0].querySelector('.tconst').textContent);
+modalTitleShowDelete.textContent = filmInList[0].querySelector('.title').textContent;
+modalBodyShowDelete.textContent = "Voulez vous supprimer "+filmInList[0].querySelector('.title').textContent+" de votre liste?";
+btnOuiDelete.setAttribute('href', "/remove/data/getRemove"+filmInList[0].querySelector('.tconst').textContent);
+    
+   
+
+
+
+
     filmInList.forEach((film) => {
       film.addEventListener("click", () => {
         addedAtShow.textContent =
@@ -197,6 +284,16 @@ endblock %} {% block main %}
         synopsisShow.textContent = film.querySelector(".synopsis").textContent;
         //equalizeColumnHeights();
         changeStarColor(document.querySelector("#ratingShow"));
+
+       boutonShowDelete.setAttribute('data-bs-target', '#Modal'+film.querySelector('.tconst').textContent);
+    modalFadeShowDelete.setAttribute('id', 'Modal'+film.querySelector('.tconst').textContent);
+    modalFadeShowDelete.setAttribute('aria-labelledby', 'ModalLabel'+film.querySelector('.tconst').textContent);
+    modalTitleShowDelete.setAttribute('id', 'ModalLabel'+film.querySelector('.tconst').textContent);
+modalTitleShowDelete.textContent = film.querySelector('.title').textContent;
+modalBodyShowDelete.textContent = "Voulez vous supprimer "+film.querySelector('.title').textContent+" de votre liste?";
+btnOuiDelete.setAttribute('href', "/remove/data/getRemove"+film.querySelector('.tconst').textContent);
+
+
         console.log(film);
       });
     });
