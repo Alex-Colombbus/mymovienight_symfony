@@ -2,11 +2,9 @@
 endblock %} {% block main %}
 
 <div class="container-fluid">
-  <div class="row testo">
+  <div class="d-flex flex-column-reverse flex-sm-row testo">
     <div class="col-sm-3 col-md-3 col-lg-5 d-flex flex-column divScroll">
-      <div
-        class="divScroll-inner-flex-container d-flex flex-column h-100 border pt-2"
-      >
+      <div class="divScroll-inner-flex-container d-flex flex-column h-100 pt-2">
         <div class="container flex-grow-1 divListFilm">
           {% for film in listToDisplay %}
 
@@ -113,7 +111,8 @@ endblock %} {% block main %}
         </div>
       </div>
     </div>
-    <div class="col-9 col-md-9 col-lg-7 container detailsFilm">
+    <div class="middlebar d-none d-sm-none d-md-block d-lg-block"></div>
+    <div class="col-sm-8 col-md-8 col-lg-6 container detailsFilm">
       <div class="row">
         <p class="col" id="addedAtShow"></p>
         <div class="row col-3 align-items-center">
@@ -121,7 +120,7 @@ endblock %} {% block main %}
         </div>
       </div>
       <div>
-        <h3 class="text-center fs-2" id="titleShow"></h3>
+        <h3 class="text-center fs-1" id="titleShow"></h3>
       </div>
       <div class="divAfficheFilm d-flex justify-content-center">
         <img

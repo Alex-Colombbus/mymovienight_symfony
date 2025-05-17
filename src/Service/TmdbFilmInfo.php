@@ -130,7 +130,7 @@ class TmdbFilmInfo
                 $minutes = $filmBDD->getRuntimeMinutes();
                 $hours = floor($minutes / 60); // Nombre d'heures
                 $remainingMinutes = $minutes % 60;
-                $this->duration = ($hours > 0 ? $hours . 'h' . $remainingMinutes : $minutes . 'mins');
+                $this->duration = ($hours > 0 ? $hours . 'h ' . $remainingMinutes . 'min' : $minutes . 'min');
             } else {
                 $this->logger->info('TmdbFilmInfo: Film not found in local FilmRepository for tconst: ' . $this->tconst);
             }

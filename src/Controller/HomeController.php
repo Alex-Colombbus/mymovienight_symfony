@@ -36,6 +36,12 @@ final class HomeController extends AbstractController
             $minYear = $request->request->get('minAnnee');
             $maxYear = $request->request->get('maxAnnee');
 
+            $session->set('minRating', $minRating);
+            $session->set('maxRating', $maxRating);
+            $session->set('minYear', $minYear);
+            $session->set('maxYear', $maxYear);
+            $session->set('genresArray', $genresArray);
+
             if (empty($genresArray)) {
                 // dd("test");
                 $films = $filmFiltreRepository->findMoviesAllGenres($minRating, $maxRating, $minYear, $maxYear);
@@ -50,5 +56,39 @@ final class HomeController extends AbstractController
             }
         }
         return $this->render('home/index.html.twig', []);
+    }
+
+
+    #[Route('/home/more', name: 'app_home_more')]
+    public function moreFilm(FilmFiltreRepository $filmFiltreRepository, SessionInterface $session): Response
+    {
+
+        if (!$session->has('minRating') || !$session->has('maxRating') || !$session->has('minYear') || !$session->has('maxYear')) {
+            return $this->redirectToRoute('app_home');
+        }
+        
+        $genresArray = $session->get('genresArray');
+        $minRating = $session->get('minRating');
+        $maxRating = $session->get('maxRating');
+        $minYear = $session->get('minYear');
+        $maxYear = $session->get('maxYear');
+
+
+
+        if (empty($genresArray)) {
+            // dd("test");
+            $films = $filmFiltreRepository->findMoviesAllGenres($minRating, $maxRating, $minYear, $maxYear);
+            $session->set('films', $films);
+            return $this->redirectToRoute('app_film');
+        } else {
+            // $genres = implode('%', $genresArray);
+            // dd($genres);
+            $films = $filmFiltreRepository->findMoviesWithGenres($genresArray, $minRating, $maxRating, $minYear, $maxYear);
+            $session->set('films', $films);
+            return $this->redirectToRoute('app_film');
+        }
+        return $this->render('film/index.html.twig', [
+            'films' => $films,
+        ]);
     }
 }

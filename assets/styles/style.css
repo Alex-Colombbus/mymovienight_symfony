@@ -193,6 +193,7 @@ h1{
   font-size: 5rem !important;
   color: var(--color-accentuationBleu); /* Assurez-vous que la couleur du texte est définie */
   text-align: center; /* Centrer le h1 */
+  text-shadow: 0.5rem 0.5rem 0.7rem rgba(0, 0, 0, 0.2); /* Ombre sur le texte */
 }
 
 .navIndex{
@@ -409,6 +410,7 @@ nav button{
 }
 
 .btn-changement{
+  
   background-color: var(--color-jaunemoche);
   color: var(--color-accentuationBleu);
 }
@@ -454,7 +456,17 @@ nav button{
   /* flex-direction: column !important; */
   overflow-y: auto;
   height: 85vh;
-  box-shadow: 0px 0px 6px var(--color-accentuationBleu);
+  /* border-right: 2px solid var(--color-accentuationBleuClair); */
+}
+
+.middlebar{
+  padding: 0px !important;
+ background-color: var(--color-accentuationBleuClair);
+ margin: auto;
+ height: 60vh;
+  width: 5px;
+  border-radius: 10px;
+  
 }
 
 .divScroll-inner-flex-container {
