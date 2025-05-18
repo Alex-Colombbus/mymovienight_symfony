@@ -1,10 +1,11 @@
-{% extends 'base2.html.twig' %} {% block title %}Hello ListeController!{%
-endblock %} {% block main %}
+{% extends 'base2.html.twig' %} {% block title %}Favoris de
+{{ app.user.username }} - My movie night{% endblock %} {% block main %}
 
 <div class="container-fluid">
   <div class="d-flex flex-column-reverse flex-sm-row testo">
-    <div class="col-sm-3 col-md-3 col-lg-5 d-flex flex-column divScroll">
+    <div class="col-sm-3 col-md-4 col-lg-4 d-flex flex-column divScroll">
       <div class="divScroll-inner-flex-container d-flex flex-column h-100 pt-2">
+        <h2 class="text-center colorBleuSombre">Mes favoris</h2>
         <div class="container flex-grow-1 divListFilm">
           {% for film in listToDisplay %}
 
@@ -32,17 +33,87 @@ endblock %} {% block main %}
               <h4 class="col-2 rating d-none d-sm-none d-md-none d-lg-block">
                 {{ film.averageRating }}<i class="bi bi-star-fill"></i>
               </h4>
-              <!-- Button trigger modal -->
+              <!-- Button modal history -->
               <div class="col-2 d-none d-sm-none d-md-none d-lg-block">
                 <button
                   type="button"
-                  class="btn btn-primary"
+                  class="btn btn-primary my-1"
+                  data-bs-toggle="modal"
+                  data-bs-target="#ModalHistory{{ film.tconst }}"
+                  title="Ajouter à l'historique"
+                >
+                  <i class="bi bi-clock-history col-2 fs-4"></i>
+                </button>
+                <!-- Modal -->
+                <div
+                  class="modal fade"
+                  id="ModalHistory{{ film.tconst }}"
+                  tabindex="-1"
+                  aria-labelledby="ModalLabelHistory{{ film.tconst }}"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h3
+                          class="modal-title fs-5"
+                          id="ModalLabelHistory{{ film.tconst }}"
+                        >
+                          {{ film.title }}
+                        </h3>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
+                      </div>
+                      <div class="modal-body">
+                        Voulez vous ajouter {{ film.title }} à votre historique?
+                      </div>
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-primary"
+                          data-bs-dismiss="modal"
+                        >
+                          Non
+                        </button>
+                        <a
+                          href="{{
+                            path('app_save_data_history', {
+                              tconst: film.tconst
+                            })
+                          }}"
+                          class="btn btn-danger"
+                          role="button"
+                          <!--
+                          Good
+                          for
+                          accessibility
+                          when
+                          styling
+                          links
+                          as
+                          buttons
+                          --
+                        >
+                          Oui
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Button modal delete -->
+                <button
+                  type="button"
+                  class="btn btn-primary my-1"
                   data-bs-toggle="modal"
                   data-bs-target="#Modal{{ film.tconst }}"
+                  title="Supprimer des favoris"
                 >
                   <i class="bi bi-trash3 col-2 fs-4"></i>
                 </button>
-
                 <!-- Modal -->
                 <div
                   class="modal fade"
@@ -111,8 +182,8 @@ endblock %} {% block main %}
         </div>
       </div>
     </div>
-    <div class="middlebar d-none d-sm-none d-md-block d-lg-block"></div>
-    <div class="col-sm-8 col-md-8 col-lg-6 container detailsFilm">
+
+    <div class="col-sm-9 col-md-8 col-lg-8 container detailsFilm">
       <div class="row">
         <p class="col" id="addedAtShow"></p>
         <div class="row col-3 align-items-center">
@@ -139,60 +210,116 @@ endblock %} {% block main %}
       <div class="container col-11">
         <p class="" id="synopsisShow">...</p>
       </div>
-      <button
-        type="button"
-        class="btn btn-primary boutonShowDelete col-12 d-sm-block d-md-block d-lg-none"
-        data-bs-toggle="modal"
-        data-bs-target=""
-      >
-        <i class="bi bi-trash3 col-2 fs-4"></i> Effacer le film
-      </button>
-
-      <!-- Modal -->
-      <div
-        class="modal fade modalFadeShowDelete"
-        id=""
-        tabindex="-1"
-        aria-labelledby=""
-        aria-hidden="true"
-      >
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h3 class="modal-title fs-5 modalTitleShowDelete" id=""></h3>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
+      <!-- Button modal history -->
+      <div class="row col-2 d-none d-sm-none d-md-none d-lg-block">
+        <button
+          type="button"
+          class="btn btn-primary boutonShowHistoryDetails col-6 d-sm-block d-md-block d-lg-none"
+          data-bs-toggle="modal"
+          data-bs-target=""
+          title="Ajouter à l'historique"
+        >
+          <i class="bi bi-clock-history col-2 fs-4"></i>
+        </button>
+        <!-- Modal -->
+        <div
+          class="modal fade modalFadeShowHistoryDetails"
+          id=""
+          tabindex="-1"
+          aria-labelledby=""
+          aria-hidden="true"
+        >
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 class="modal-title fs-5 modalTitleShowHistoryDetails" id="">
+                  <!-- Title set by JS -->
+                </h3>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body modalBodyShowHistoryDetails">
+                <!-- Body set by JS -->
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  data-bs-dismiss="modal"
+                >
+                  Non
+                </button>
+                <a
+                  href=""
+                  class="btn btn-danger btnOuiShowHistoryDetails"
+                  role="button"
+                >
+                  Oui
+                </a>
+              </div>
             </div>
-            <div class="modal-body modalBodyShowDelete"></div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-primary"
-                data-bs-dismiss="modal"
-              >
-                Non
-              </button>
-              <a
-                href=""
-                class="btn btn-danger btnOuiDelete"
-                role="button"
-                <!--
-                Good
-                for
-                accessibility
-                when
-                styling
-                links
-                as
-                buttons
-                --
-              >
-                Oui
-              </a>
+          </div>
+        </div>
+        <!-- Button modal delete -->
+        <button
+          type="button"
+          class="btn btn-primary boutonShowDelete col-6 d-sm-block d-md-block d-lg-none"
+          data-bs-toggle="modal"
+          data-bs-target=""
+        >
+          <i class="bi bi-trash3 col-2 fs-4"></i> Effacer le film
+        </button>
+
+        <!-- Modal -->
+        <div
+          class="modal fade modalFadeShowDelete"
+          id=""
+          tabindex="-1"
+          aria-labelledby=""
+          aria-hidden="true"
+        >
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 class="modal-title fs-5 modalTitleShowDelete" id=""></h3>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body modalBodyShowDelete"></div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  data-bs-dismiss="modal"
+                >
+                  Non
+                </button>
+                <a
+                  href=""
+                  class="btn btn-danger btnOuiDelete"
+                  role="button"
+                  <!--
+                  Good
+                  for
+                  accessibility
+                  when
+                  styling
+                  links
+                  as
+                  buttons
+                  --
+                >
+                  Oui
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -220,6 +347,22 @@ endblock %} {% block main %}
     let modalBodyShowDelete = document.querySelector(".modalBodyShowDelete");
     let modalTitleShowDelete = document.querySelector(".modalTitleShowDelete");
     let btnOuiDelete = document.querySelector(".btnOuiDelete");
+
+    let boutonShowHistoryDetails = document.querySelector(
+      ".boutonShowHistoryDetails"
+    );
+    let modalFadeShowHistoryDetails = document.querySelector(
+      ".modalFadeShowHistoryDetails"
+    );
+    let modalBodyShowHistoryDetails = document.querySelector(
+      ".modalBodyShowHistoryDetails"
+    );
+    let modalTitleShowHistoryDetails = document.querySelector(
+      ".modalTitleShowHistoryDetails"
+    );
+    let btnOuiShowHistoryDetails = document.querySelector(
+      ".btnOuiShowHistoryDetails"
+    );
 
     ratings.forEach((rating) => {
       changeStarColor(rating);
@@ -252,7 +395,7 @@ endblock %} {% block main %}
     synopsisShow.textContent =
       filmInList[0].querySelector(".synopsis").textContent;
 
-    //attribution des valeurs pour le bouton modale coté film
+    //attribution des valeurs pour le bouton modale delete coté film
 
     boutonShowDelete.setAttribute(
       "data-bs-target",
@@ -278,8 +421,36 @@ endblock %} {% block main %}
       " de votre liste?";
     btnOuiDelete.setAttribute(
       "href",
-      "/remove/data/getRemove" +
+      "/remove/data/getRemove/" +
         filmInList[0].querySelector(".tconst").textContent
+    );
+
+    //attribution des valeurs pour le bouton modale coté historique
+    boutonShowHistoryDetails.setAttribute(
+      "data-bs-target",
+      "#ModalHistory" + filmInList[0].querySelector(".tconst").textContent
+    );
+    modalFadeShowHistoryDetails.setAttribute(
+      "id",
+      "ModalHistory" + filmInList[0].querySelector(".tconst").textContent
+    );
+    modalFadeShowHistoryDetails.setAttribute(
+      "aria-labelledby",
+      "ModalLabelHistory" + filmInList[0].querySelector(".tconst").textContent
+    );
+    modalTitleShowHistoryDetails.setAttribute(
+      "id",
+      "ModalLabelHistory" + filmInList[0].querySelector(".tconst").textContent
+    );
+    modalTitleShowHistoryDetails.textContent =
+      filmInList[0].querySelector(".title").textContent;
+    modalBodyShowHistoryDetails.textContent =
+      "Voulez vous supprimer " +
+      filmInList[0].querySelector(".title").textContent +
+      " de votre liste?";
+    btnOuiShowHistoryDetails.setAttribute(
+      "href",
+      "/save/data_history/" + filmInList[0].querySelector(".tconst").textContent
     );
 
     filmInList.forEach((film) => {
@@ -304,6 +475,7 @@ endblock %} {% block main %}
         //equalizeColumnHeights();
         changeStarColor(document.querySelector("#ratingShow"));
 
+        //attribution des valeurs pour le bouton modale delete coté film
         boutonShowDelete.setAttribute(
           "data-bs-target",
           "#Modal" + film.querySelector(".tconst").textContent
@@ -328,7 +500,35 @@ endblock %} {% block main %}
           " de votre liste?";
         btnOuiDelete.setAttribute(
           "href",
-          "/remove/data/getRemove" + film.querySelector(".tconst").textContent
+          "/remove/data/getRemove/" + film.querySelector(".tconst").textContent
+
+          //attribution des valeurs pour le bouton modale historique
+        );
+        boutonShowHistoryDetails.setAttribute(
+          "data-bs-target",
+          "#ModalHistory" + film.querySelector(".tconst").textContent
+        );
+        modalFadeShowHistoryDetails.setAttribute(
+          "id",
+          "ModalHistory" + film.querySelector(".tconst").textContent
+        );
+        modalFadeShowHistoryDetails.setAttribute(
+          "aria-labelledby",
+          "ModalLabelHistory" + film.querySelector(".tconst").textContent
+        );
+        modalTitleShowHistoryDetails.setAttribute(
+          "id",
+          "ModalLabelHistory" + film.querySelector(".tconst").textContent
+        );
+        modalTitleShowHistoryDetails.textContent =
+          film.querySelector(".title").textContent;
+        modalBodyShowHistoryDetails.textContent =
+          "Voulez vous ajouter " +
+          film.querySelector(".title").textContent +
+          " à votre historique?";
+        btnOuiShowHistoryDetails.setAttribute(
+          "href",
+          "/save/data_history/" + film.querySelector(".tconst").textContent
         );
 
         console.log(film);

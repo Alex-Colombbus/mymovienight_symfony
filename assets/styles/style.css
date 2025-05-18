@@ -1,7 +1,7 @@
 :root{
   --color-backgroundBlanc: #F8F9FA;
   --color-accentuationBleu: #055EB1 ;
-  --color-accentuationBleuClair: #007BFF;
+  --color-accentuationBleuClair: #7cbbfd;
   --color-jaunemoche : #EBBD3F;
   --color-iconeRouge: #F90A0A;
   --color-grisClair: #EBEBEB;
@@ -10,6 +10,13 @@
 
 .colorJauneMoche{
   color: var(--color-jaunemoche);
+} 
+.colorBleuSombre{
+  color: var(--color-accentuationBleu);
+} 
+
+.colorBleuClair{
+  color: var(--color-accentuationBleuClair);
 } 
 
 *{
@@ -61,6 +68,10 @@ input[type="range"] {
 }
 
 /* --- Style spécifique pour la piste de la barre MAX --- */
+#barreMin{
+  background-color: var(--color-accentuationBleuClair)!important;
+  z-index: 2; /* S'assure qu'elle est au-dessus de barreMin si jamais elles se superposent */
+}
 /* Rend la piste supérieure transparente pour voir celle du dessous */
 #barreMax{
   background-color: transparent;
@@ -72,8 +83,22 @@ input[type="range"] {
   z-index: 2; /* S'assure qu'elle est au-dessus de barreMin si jamais elles se superposent */
 }
 
+#barreAnneeMin{
+  background-color: var(--color-accentuationBleuClair)!important;
+  z-index: 2; /* S'assure qu'elle est au-dessus de barreMin si jamais elles se superposent */
+}
 
+
+#barreMin::-moz-range-track {
+  background-color: var(--color-accentuationBleuClair )!important;
+}
+#barreAnneeMin::-moz-range-track {
+  background-color: var(--color-accentuationBleuClair) !important;
+}
 #barreAnneeMax::-moz-range-track {
+  background-color: transparent !important;
+}
+#barreMax::-moz-range-track {
   background-color: transparent !important;
 }
 
@@ -85,7 +110,7 @@ input[type=range]::-webkit-slider-thumb {
   appearance: none;
   width: 7px;          /* Largeur du curseur */
   height: 24px;         /* Hauteur du curseur (vertical) */
-  background-color: var(--color-accentuationBleu); /* Couleur du curseur */
+  background-color: var(--color-jaunemoche); /* Couleur du curseur */
   border-radius: 3px;
   cursor: pointer;
   pointer-events: all;  /* TRES IMPORTANT: Rend le CURSEUR cliquable/déplaçable */
@@ -187,6 +212,11 @@ input[type=number]::-webkit-inner-spin-button {
   /* box-sizing: border-box; /* Bonne pratique */
 }
 
+a{
+  text-decoration: none;
+  
+}
+
 h1{
   font-family: Nunito Sans, serif;
   letter-spacing: -3px;
@@ -199,6 +229,10 @@ h1{
 .navIndex{
   min-height: 20vh; /* Utilisez peut-être min-height pour flexibilité */
  
+}
+
+label{
+  color: var(--color-accentuationBleuClair);
 }
 
 
@@ -315,7 +349,7 @@ h1{
 
 .labelFont{
   font-size: 0.8rem; /* Taille du texte de la case à cocher */
-  color: var(--color-accentuationBleu);
+  color: var(--color-accentuationBleuClair);
   font-weight: 500;
 }
 
@@ -418,6 +452,11 @@ nav button{
 .btn-changement:hover{
   background-color: var(--color-accentuationBleu);
   color: var(--color-jaunemoche);
+}
+
+.btn-changement:active{
+  background-color: var(--color-jaunemoche);
+  color: var(--color-accentuationBleu);
 }
 
 .icone-dynamique{
@@ -540,8 +579,11 @@ nav button{
   background-color: var(--color-accentuationBleu)!important;
   /* color: var(--color-backgroundBlanc)!important; */
   font-family: Roboto, serif;
- 
-  
+}
+
+.boutonSite:hover{
+  background-color: var(--color-jaunemoche)!important;
+  color: var(--color-accentuationBleu)!important;
 }
 
 .labelFormLogin{

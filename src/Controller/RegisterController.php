@@ -21,6 +21,7 @@ final class RegisterController extends AbstractController
         $user = new User();
         $liste = new Liste();
         $listeRefusal = new Liste();
+        $listeHistory = new Liste();
 
         // Création du formulaire en liant l'entité User au formulaire RegisterUserForm
         $form = $this->createForm(RegisterUserForm::class, $user);
@@ -37,6 +38,8 @@ final class RegisterController extends AbstractController
             $liste->setNameListe('Ma liste');
             $listeRefusal->setUser($user);
             $listeRefusal->setNameListe('Liste de refus');
+            $listeHistory->setUser($user);
+            $listeHistory->setNameListe('Historique des films');
 
             // Prépare l'entité User pour être sauvegardée dans la base de données
             $entityManager->persist($user);
@@ -47,6 +50,7 @@ final class RegisterController extends AbstractController
 
             $entityManager->persist($liste);
             $entityManager->persist($listeRefusal);
+            $entityManager->persist($listeHistory);
             $entityManager->flush();
 
             //Message de succès de l'inscription

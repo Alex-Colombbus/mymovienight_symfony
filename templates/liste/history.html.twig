@@ -1,17 +1,17 @@
-{% extends 'base2.html.twig' %} {% block title %}Refus de
+{% extends 'base2.html.twig' %} {% block title %}Historique de
 {{ app.user.username }} - My movie night{% endblock %} {% block main %}
 
 <div class="container-fluid">
-  <div class="row testo">
+  <div class="d-flex flex-column-reverse flex-sm-row testo">
     <div class="col-sm-3 col-md-3 col-lg-4 d-flex flex-column divScroll">
       <div class="divScroll-inner-flex-container d-flex flex-column h-100 pt-2">
-        <h2 class="text-center colorBleuSombre">Mes refus</h2>
+        <h2 class="text-center colorBleuSombre">Mon historique</h2>
         <div class="container flex-grow-1 divListFilm">
           {% for film in listToDisplay %}
 
           <div class="container listFilm my-1">
             <div
-              class="row align-items-center justify-content-between text-center border border-1 border-primar rounded-2 filmInList"
+              class="row align-items-center justify-content-between text-center border border-1 rounded-2 filmInList"
             >
               <div class="col-3">
                 <img
@@ -81,22 +81,12 @@
                         </button>
                         <a
                           href="{{
-                            path('app_remove_data_get_refusal', {
+                            path('app_remove_data_get_history', {
                               tconst: film.tconst
                             })
                           }}"
                           class="btn btn-danger"
                           role="button"
-                          <!--
-                          Good
-                          for
-                          accessibility
-                          when
-                          styling
-                          links
-                          as
-                          buttons
-                          --
                         >
                           Oui
                         </a>
@@ -113,7 +103,7 @@
       </div>
     </div>
 
-    <div class="col-sm-8 col-md-8 col-lg-8 container detailsFilm">
+    <div class="col-sm-9 col-md-9 col-lg-8 container detailsFilm">
       <div class="row">
         <p class="col" id="addedAtShow"></p>
         <div class="row col-3 align-items-center">
@@ -121,7 +111,7 @@
         </div>
       </div>
       <div>
-        <h3 class="text-center fs-2" id="titleShow"></h3>
+        <h3 class="text-center fs-1" id="titleShow"></h3>
       </div>
       <div class="divAfficheFilm d-flex justify-content-center">
         <img
@@ -177,21 +167,7 @@
               >
                 Non
               </button>
-              <a
-                href=""
-                class="btn btn-danger btnOuiDelete"
-                role="button"
-                <!--
-                Good
-                for
-                accessibility
-                when
-                styling
-                links
-                as
-                buttons
-                --
-              >
+              <a href="" class="btn btn-danger btnOuiDelete" role="button">
                 Oui
               </a>
             </div>
@@ -279,7 +255,7 @@
       " de votre liste?";
     btnOuiDelete.setAttribute(
       "href",
-      "/remove/data/getRemove_refusal/" +
+      "/remove/data/getRemove_history/" +
         filmInList[0].querySelector(".tconst").textContent
     );
 
@@ -329,7 +305,8 @@
           " de votre liste?";
         btnOuiDelete.setAttribute(
           "href",
-          "/remove/data/getRemove/" + film.querySelector(".tconst").textContent
+          "/remove/data/getRemove_history/" +
+            film.querySelector(".tconst").textContent
         );
 
         console.log(film);

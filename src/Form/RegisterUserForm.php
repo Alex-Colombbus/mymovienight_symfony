@@ -97,11 +97,12 @@ class RegisterUserForm extends AbstractType
             ])
 
             ->add(
-                'submit',
+                'Inscription',
                 SubmitType::class,
                 [
+
                     'attr' => [
-                        'class' => 'boutonSite w-100 mb-3',
+                        'class' => 'boutonSite w-100 mb-3 btn btn-primary',
                     ],
                 ]
             )

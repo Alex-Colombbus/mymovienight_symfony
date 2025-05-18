@@ -1,11 +1,14 @@
-{% extends 'base2.html.twig' %}
-
-{% block title %}Hello RemoveDataController!{% endblock %}
-
-{% block main %}
-<section class="container-fluid d-flex flex-column align-items-center justify-content-center">
-      <h1 class="">Votre liste est vide</h1>
-      <h3 class=" colorJauneMoche">{{app.user.username}}, Pensez à ajouter un film</h3>
-      <a href="{{ path('app_home') }}" class="btn btn-primary">Retourner à l'accueil</a>
+{% extends 'base2.html.twig' %} {% block title %}Liste Vide - My movie night{%
+endblock %} {% block main %}
+<section
+  class="container-fluid d-flex flex-column align-items-center justify-content-center"
+>
+  <h1 class="">Votre liste est vide</h1>
+  <h3 class="colorJauneMoche">
+    {{ app.user.username }}, Pensez à ajouter un film
+  </h3>
+  <a href="{{ path('app_home') }}" class="btn btn-primary"
+    >Retourner à l'accueil</a
+  >
 </section>
 {% endblock %}

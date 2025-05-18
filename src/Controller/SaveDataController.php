@@ -15,39 +15,58 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 final class SaveDataController extends AbstractController
 {
 
+    /**
+     * Gère l'ajout d'un film à la liste des favoris de l'utilisateur.
+     * Récupère les données du film via une requête POST JSON, valide le token CSRF,
+     * met à jour les informations du film si nécessaire, et l'ajoute à la liste "Ma liste".
+     * Crée les listes "Ma liste" et "Liste de refus" pour l'utilisateur si elles n'existent pas.
+     * Vérifie si le film est déjà dans l'une des listes avant de l'ajouter.
+     */
     #[Route('/save/data/favorite', name: 'app_save_data')]
     public function index(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
+        // Décodage des données JSON de la requête
         $data = json_decode($request->getContent(), true);
         $user = $this->getUser();
+
+        // Récupérer le token CSRF depuis l'en-tête de la requête
+        $submittedToken = $request->headers->get('X-CSRF-TOKEN');
+
+        // Valider le token CSRF
+        // L'identifiant 'save_favorite' doit correspondre à celui utilisé dans Twig
+        if (!$this->isCsrfTokenValid('save_favorite', $submittedToken)) {
+            return new JsonResponse(['status' => 'error', 'message' => 'Invalid CSRF token.'], Response::HTTP_FORBIDDEN);
+        }
 
         $content = $request->getContent(); // Get the raw request body
 
         // *** Add logging here to see the raw content ***
         error_log('SaveDataController: Raw Content Received: ' . $content);
 
-        // Ensure the user is authenticated
+        // S'assurer que l'utilisateur est authentifié
         if (!$user) {
             return new JsonResponse(['status' => 'error', 'message' => 'Authentication required.'], Response::HTTP_UNAUTHORIZED);
         }
 
-        // Basic validation: check if required data (like tconst) is present
+        // Validation de base : vérifier si les données requises (comme tconst) sont présentes
         if (!isset($data['tconst']) || empty($data['tconst'])) {
             return new JsonResponse(['status' => 'error', 'message' => 'Invalid or missing "tconst" in request data.'], Response::HTTP_BAD_REQUEST);
         }
 
         // --- Logique de sauvegarde ---
         try {
-            // 1. Find the FilmFiltre entity. Handle if not found.
+            // 1. Rechercher l'entité FilmFiltre. Gérer si non trouvée.
             $filmFiltre = $entityManager->getRepository(FilmFiltre::class)->find($data['tconst']);
 
             if (!$filmFiltre) {
-                // If the film doesn't exist in your FilmFiltre table, you can't add it to a list.
-                // Depending on your app, you might create it here based on $data
-                // or return an error. Let's return an error for now.
+                // Si le film n'existe pas dans la table FilmFiltre, il ne peut pas être ajouté à une liste.
+                // Selon l'application, on pourrait le créer ici à partir de $data ou retourner une erreur.
                 return new JsonResponse(['status' => 'error', 'message' => 'Film not found in the database to add to list.'], Response::HTTP_NOT_FOUND);
             }
 
+            // Mise à jour des détails de FilmFiltre si nécessaire (gestion des vérifications null et conversions de type)
+            // Ces blocs vérifient si une propriété du film est nulle dans la base de données
+            // et si des données correspondantes sont fournies dans la requête, puis mettent à jour l'entité.
             if (isset($data['title']) && $filmFiltre->getTitle() === null) {
                 // Ensure the incoming data for title is a non-empty string
                 if ($data['title'] !== '') { // Use strict non-empty check
@@ -64,9 +83,7 @@ final class SaveDataController extends AbstractController
                 $filmFiltre->setPosterPath($data['posterPath']);
             }
 
-            // Assuming 'startYear' in entity and 'releaseDate' or 'startYear' in data.
-            // Your entity mapping for startYear is INT, but frontend sends string like "2005".
-            // Need to cast to int.
+            // Gestion de la date de sortie (startYear)
             if (isset($data['releaseDate']) && $filmFiltre->getStartYear() === null) {
                 // Assuming releaseDate is 'YYYY-MM-DD', extract year and cast
                 try {
@@ -101,7 +118,7 @@ final class SaveDataController extends AbstractController
                 }
             }
 
-            // *** FIX FOR ACTORS TYPE ERROR ***
+            // Correction pour le type des acteurs : conversion d'un tableau en chaîne de caractères
             if (isset($data['actors']) && $filmFiltre->getActors() === null) {
                 // Convert array of actor names to a string
                 if (is_array($data['actors'])) {
@@ -113,38 +130,38 @@ final class SaveDataController extends AbstractController
             }
             // *** END FIX ***
 
-            // importantCrew is defined as array in entity and is array in data - This is OK
+            // importantCrew est défini comme tableau dans l'entité et est un tableau dans les données - C'est OK
             if (isset($data['importantCrew']) && $filmFiltre->getImportantCrew() === null) {
                 if (is_array($data['importantCrew'])) {
                     $filmFiltre->setImportantCrew($data['importantCrew']);
                 }
             }
 
-            // No need to persist FilmFiltre here, Doctrine manages it after find()
+            // Pas besoin de persister FilmFiltre ici, Doctrine le gère après find()
 
-            // 3. Find the user's list or create it if it doesn't exist
-
+            // 3. Rechercher la liste de l'utilisateur ou la créer si elle n'existe pas
+            // Recherche ou création de la "Liste de refus"
             $listeRefusal = $entityManager->getRepository(Liste::class)->findOneBy([
                 'user' => $user,
                 'name_liste' => 'Liste de refus'
-            ]); // Use the $user entity
+            ]);
 
+            // Recherche ou création de "Ma liste" (liste principale des favoris)
             $listeMain = $entityManager->getRepository(Liste::class)->findOneBy([
                 'user' => $user,
                 'name_liste' => 'Ma liste'
             ]);
-            // CONDITIONAL: Create the list ONLY if it doesn't exist
+            // Conditionnel : Créer la liste UNIQUEMENT si elle n'existe pas
             if (!$listeRefusal) {
                 $liste = new Liste();
-                $liste->setUser($user); // Use the correct setter name
-                $liste->setNameListe('Liste de refus'); // Set a default name
+                $liste->setUser($user);
+                $liste->setNameListe('Liste de refus');
                 $entityManager->persist($liste);
-                $entityManager->flush(); // Persist the new list
+                $entityManager->flush(); // Persister la nouvelle liste immédiatement pour la récupérer ensuite
                 $listeRefusal = $entityManager->getRepository(Liste::class)->findOneBy([
                     'user' => $user,
                     'name_liste' => 'Liste de refus'
                 ]);
-                // No flush yet
             }
 
             if (!$listeMain) {
@@ -152,109 +169,109 @@ final class SaveDataController extends AbstractController
                 $listeMain->setUser($user);
                 $listeMain->setNameListe('Ma liste');
                 $entityManager->persist($listeMain);
-                $entityManager->flush();
+                $entityManager->flush(); // Persister la nouvelle liste immédiatement
                 $listeMain = $entityManager->getRepository(Liste::class)->findOneBy([
                     'user' => $user,
                     'name_liste' => 'Ma liste'
                 ]);
             }
 
-            // 4. Check if the FilmFiltre is already linked to this Liste in ListFilm
-            // *** FIX FOR findOneBy CRITERIA ***
+            // 4. Vérifier si le FilmFiltre est déjà lié à cette Liste dans ListFilm
+            // Vérification pour "Ma liste"
             $existingListFilmMain = $entityManager->getRepository(ListFilm::class)->findOneBy([
-                'tconst' => $filmFiltre, // Pass the FilmFiltre ENTITY OBJECT
-                'liste' => $listeMain,       // Pass the Liste ENTITY OBJECT
+                'tconst' => $filmFiltre, // Passer l'OBJET ENTITÉ FilmFiltre
+                'liste' => $listeMain,       // Passer l'OBJET ENTITÉ Liste
             ]);
 
+            // Vérification pour "Liste de refus"
             $existingListFilmRefusal = $entityManager->getRepository(ListFilm::class)->findOneBy([
-                'tconst' => $filmFiltre, // Pass the FilmFiltre ENTITY OBJECT
-                'liste' => $listeRefusal,       // Pass the Liste ENTITY OBJECT
+                'tconst' => $filmFiltre, // Passer l'OBJET ENTITÉ FilmFiltre
+                'liste' => $listeRefusal,       // Passer l'OBJET ENTITÉ Liste
             ]);
 
 
-
-            // 5. If the link already exists, return a conflict response
+            // 5. Si le lien existe déjà, retourner une réponse de conflit
             if ($existingListFilmMain !== null) {
-                return new JsonResponse(['status' => 'info', 'message' => 'Film est déjà dans votre liste de favoris!'], Response::HTTP_CONFLICT); // 409 Conflict
+                return new JsonResponse(['status' => 'info', 'message' => 'Film est déjà dans votre liste de favoris!'], Response::HTTP_CONFLICT);
             }
 
             if ($existingListFilmRefusal !== null) {
-                return new JsonResponse(['status' => 'info', 'message' => 'Film est deja dans votre liste de refus!'], Response::HTTP_CONFLICT); // 409 Conflict
+                return new JsonResponse(['status' => 'info', 'message' => 'Film est deja dans votre liste de refus!'], Response::HTTP_CONFLICT);
             }
 
-            // 5. If the link already exists, return a conflict response
-
-
-            // 6. If the link doesn't exist, create a new ListFilm entry
+            // 6. Si le lien n'existe pas, créer une nouvelle entrée ListFilm pour "Ma liste"
             $listFilm = new ListFilm();
-            // Use the custom setter which expects entity objects
-            $listFilm->setListFilmInfo($filmFiltre, $listeMain);
+            $listFilm->setListFilmInfo($filmFiltre, $listeMain); // Utilise le setter personnalisé
 
-            // Or use standard setters if you prefer:
-            // $listFilm->setTconst($filmFiltre); // setTconst expects FilmFiltre entity
-            // $listFilm->setListeId($liste);     // setListeId expects Liste entity
-
-
-            // 7. Persist the new ListFilm entity
+            // 7. Persister la nouvelle entité ListFilm
             $entityManager->persist($listFilm);
 
-            // 8. Flush all pending changes (FilmFiltre updates, new Liste if created, new ListFilm)
+            // 8. Flusher tous les changements en attente (mises à jour de FilmFiltre, nouvelle Liste si créée, nouveau ListFilm)
             $entityManager->flush();
 
-            // 9. Return success response
+            // 9. Retourner une réponse de succès
             return new JsonResponse(['status' => 'success', 'message' => 'Film ajouté dans votre liste!'], Response::HTTP_OK);
         } catch (\Exception $e) {
-            // Log the error for debugging in development
-            // In production, consider logging to a file or service and returning a generic error message
+            // Enregistrement de l'erreur pour le débogage en développement
             error_log('Error in SaveDataController: ' . $e->getMessage() . ' - ' . $e->getTraceAsString());
 
-            // 10. Return a JSON error response
+            // 10. Retourner une réponse d'erreur JSON
             return new JsonResponse([
                 'status' => 'error',
-                // Provide the exception message for debugging in development.
-                // In production, return a more generic message like 'An internal error occurred.'
                 'message' => 'Une erreur est survenue lors de la sauvegarde: ' . $e->getMessage(),
-                // WARNING: Exposing the full trace in a production API response is a security risk.
-                // Remove 'trace' => $e->getTraceAsString() for production.
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString() // ATTENTION: Ne pas exposer la trace en production
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
+    /**
+     * Gère l'ajout d'un film à la liste de refus de l'utilisateur.
+     * Similaire à la méthode `index`, mais ajoute le film à "Liste de refus".
+     * Récupère les données du film via une requête POST JSON, valide le token CSRF,
+     * met à jour les informations du film si nécessaire.
+     * Crée les listes "Ma liste" et "Liste de refus" pour l'utilisateur si elles n'existent pas.
+     * Vérifie si le film est déjà dans l'une des listes avant de l'ajouter.
+     */
     #[Route('/save/data_refusal', name: 'app_save_data_refusal')]
     public function saveRefusal(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
+        // Décodage des données JSON de la requête
         $data = json_decode($request->getContent(), true);
         $user = $this->getUser();
 
-        $content = $request->getContent(); // Get the raw request body
+        $content = $request->getContent();
+
+        // Récupérer le token CSRF depuis l'en-tête de la requête
+        $submittedToken = $request->headers->get('X-CSRF-TOKEN');
+
+        // Valider le token CSRF pour l'action 'save_refusal'
+        if (!$this->isCsrfTokenValid('save_refusal', $submittedToken)) {
+            return new JsonResponse(['status' => 'error', 'message' => 'Invalid CSRF token.'], Response::HTTP_FORBIDDEN);
+        }
 
         // *** Add logging here to see the raw content ***
         error_log('SaveDataController: Raw Content Received: ' . $content);
 
-        // Ensure the user is authenticated
+        // S'assurer que l'utilisateur est authentifié
         if (!$user) {
             return new JsonResponse(['status' => 'error', 'message' => 'Authentication required.'], Response::HTTP_UNAUTHORIZED);
         }
 
-        // Basic validation: check if required data (like tconst) is present
+        // Validation de base : vérifier si 'tconst' est présent
         if (!isset($data['tconst']) || empty($data['tconst'])) {
             return new JsonResponse(['status' => 'error', 'message' => 'Invalid or missing "tconst" in request data.'], Response::HTTP_BAD_REQUEST);
         }
 
         // --- Logique de sauvegarde ---
         try {
-
+            // Rechercher l'entité FilmFiltre
             $filmFiltre = $entityManager->getRepository(FilmFiltre::class)->find($data['tconst']);
 
-
             if (!$filmFiltre) {
-                // If the film doesn't exist in your FilmFiltre table, you can't add it to a list.
-                // Depending on your app, you might create it here based on $data
-                // or return an error. Let's return an error for now.
                 return new JsonResponse(['status' => 'error', 'message' => 'Film not found in the database to add to list.'], Response::HTTP_NOT_FOUND);
             }
 
+            // Mise à jour des détails de FilmFiltre si nécessaire (similaire à la méthode index)
             if (isset($data['title']) && $filmFiltre->getTitle() === null) {
                 // Ensure the incoming data for title is a non-empty string
                 if ($data['title'] !== '') { // Use strict non-empty check
@@ -271,9 +288,7 @@ final class SaveDataController extends AbstractController
                 $filmFiltre->setPosterPath($data['posterPath']);
             }
 
-            // Assuming 'startYear' in entity and 'releaseDate' or 'startYear' in data.
-            // Your entity mapping for startYear is INT, but frontend sends string like "2005".
-            // Need to cast to int.
+            // Gestion de la date de sortie (startYear)
             if (isset($data['releaseDate']) && $filmFiltre->getStartYear() === null) {
                 // Assuming releaseDate is 'YYYY-MM-DD', extract year and cast
                 try {
@@ -308,7 +323,7 @@ final class SaveDataController extends AbstractController
                 }
             }
 
-            // *** FIX FOR ACTORS TYPE ERROR ***
+            // Correction pour le type des acteurs
             if (isset($data['actors']) && $filmFiltre->getActors() === null) {
                 // Convert array of actor names to a string
                 if (is_array($data['actors'])) {
@@ -320,29 +335,27 @@ final class SaveDataController extends AbstractController
             }
             // *** END FIX ***
 
-            // importantCrew is defined as array in entity and is array in data - This is OK
             if (isset($data['importantCrew']) && $filmFiltre->getImportantCrew() === null) {
                 if (is_array($data['importantCrew'])) {
                     $filmFiltre->setImportantCrew($data['importantCrew']);
                 }
             }
 
-
-            // 3. Find the user's list or create it if it doesn't exist
+            // Rechercher ou créer les listes de l'utilisateur ("Liste de refus" et "Ma liste")
             $listeRefusal = $entityManager->getRepository(Liste::class)->findOneBy([
                 'user' => $user,
                 'name_liste' => 'Liste de refus'
-            ]); // Use the $user entity
+            ]);
             $listeMain = $entityManager->getRepository(Liste::class)->findOneBy([
                 'user' => $user,
                 'name_liste' => 'Ma liste'
             ]);
-            // CONDITIONAL: Create the list ONLY if it doesn't exist
+
             if (!$listeRefusal) {
                 $liste = new Liste();
-                $liste->setUser($user); // Use the correct setter name
-                $liste->setNameListe('Liste de refus'); // Set a default name
-                $entityManager->persist($liste); // Persist the new list
+                $liste->setUser($user);
+                $liste->setNameListe('Liste de refus');
+                $entityManager->persist($liste);
                 $entityManager->flush();
                 $listeRefusal = $entityManager->getRepository(Liste::class)->findOneBy([
                     'user' => $user,
@@ -362,67 +375,136 @@ final class SaveDataController extends AbstractController
                 ]);
             }
 
-
-
-            // Use the $user entity
-
-            // 4. Check if the FilmFiltre is already linked to this Liste in ListFilm
-            // *** FIX FOR findOneBy CRITERIA ***
+            // Vérifier si le film est déjà lié à "Ma liste" ou "Liste de refus"
             $existingListFilmMain = $entityManager->getRepository(ListFilm::class)->findOneBy([
-                'tconst' => $filmFiltre, // Pass the FilmFiltre ENTITY OBJECT
-                'liste' => $listeMain,       // Pass the Liste ENTITY OBJECT
+                'tconst' => $filmFiltre,
+                'liste' => $listeMain,
             ]);
 
             $existingListFilmRefusal = $entityManager->getRepository(ListFilm::class)->findOneBy([
-                'tconst' => $filmFiltre, // Pass the FilmFiltre ENTITY OBJECT
-                'liste' => $listeRefusal,       // Pass the Liste ENTITY OBJECT
+                'tconst' => $filmFiltre,
+                'liste' => $listeRefusal,
             ]);
 
-
-
-            // 5. If the link already exists, return a conflict response
+            // Si le lien existe déjà, retourner une réponse de conflit
             if ($existingListFilmMain !== null) {
-                return new JsonResponse(['status' => 'info', 'message' => 'Film est déjà dans votre liste de favoris!'], Response::HTTP_CONFLICT); // 409 Conflict
+                return new JsonResponse(['status' => 'info', 'message' => 'Film est déjà dans votre liste de favoris!'], Response::HTTP_CONFLICT);
             }
 
             if ($existingListFilmRefusal !== null) {
-                return new JsonResponse(['status' => 'info', 'message' => 'Film est deja dans votre liste de refus!'], Response::HTTP_CONFLICT); // 409 Conflict
+                return new JsonResponse(['status' => 'info', 'message' => 'Film est deja dans votre liste de refus!'], Response::HTTP_CONFLICT);
             }
 
-
-            // 6. If the link doesn't exist, create a new ListFilm entry
+            // Si le lien n'existe pas, créer une nouvelle entrée ListFilm pour "Liste de refus"
             $listFilm = new ListFilm();
-            // Use the custom setter which expects entity objects
             $listFilm->setListFilmInfo($filmFiltre, $listeRefusal);
 
-            // Or use standard setters if you prefer:
-            // $listFilm->setTconst($filmFiltre); // setTconst expects FilmFiltre entity
-            // $listFilm->setListeId($liste);     // setListeId expects Liste entity
-
-
-            // 7. Persist the new ListFilm entity
             $entityManager->persist($listFilm);
-
-            // 8. Flush all pending changes (FilmFiltre updates, new Liste if created, new ListFilm)
             $entityManager->flush();
 
-            // 9. Return success response
+            // Retourner une réponse de succès
             return new JsonResponse(['status' => 'success', 'message' =>  "le film a bien été ajouté dans votre liste de refus"], Response::HTTP_OK);
         } catch (\Exception $e) {
-            // Log the error for debugging in development
-            // In production, consider logging to a file or service and returning a generic error message
             error_log('Error in SaveDataController: ' . $e->getMessage() . ' - ' . $e->getTraceAsString());
-
-            // 10. Return a JSON error response
             return new JsonResponse([
                 'status' => 'error',
-                // Provide the exception message for debugging in development.
-                // In production, return a more generic message like 'An internal error occurred.'
                 'message' => 'Une erreur est survenue lors de la sauvegarde: ' . $e->getMessage(),
-                // WARNING: Exposing the full trace in a production API response is a security risk.
-                // Remove 'trace' => $e->getTraceAsString() for production.
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString() // ATTENTION: Ne pas exposer la trace en production
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /**
+     * Gère le déplacement d'un film de la liste des favoris vers l'historique.
+     * Récupère le `tconst` du film depuis l'URL.
+     * Crée la liste "Historique des films" si elle n'existe pas.
+     * Supprime le film de "Ma liste" (favoris) s'il s'y trouve.
+     * Ajoute le film à "Historique des films" s'il n'y est pas déjà.
+     * Affiche des messages flash pour informer l'utilisateur et redirige vers la liste des favoris.
+     */
+    #[Route('/save/data_history/{tconst}', name: 'app_save_data_history', methods: ['GET'])]
+    public function addToFilmListeHistory(string $tconst, EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser();
+
+        // Recherche ou création de la liste "Historique des films"
+        $listeHistory = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Historique des films']);
+        // Recherche de la liste "Ma liste" (favoris)
+        $listeFavorites = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Ma liste']);
+
+        if (!$listeHistory) {
+            $listeHistory = new Liste();
+            $listeHistory->setUser($user);
+            $listeHistory->setNameListe('Historique des films');
+            $entityManager->persist($listeHistory);
+            $entityManager->flush(); // Persister immédiatement pour pouvoir l'utiliser
+            // Récupérer l'entité fraîchement créée pour s'assurer qu'elle est managée par l'EM
+            $listeHistory = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Historique des films']);
+        }
+
+        // 1. Rechercher l'entité FilmFiltre en utilisant le tconst
+        $filmFiltre = $entityManager->getRepository(FilmFiltre::class)->find($tconst);
+
+        if (!$filmFiltre) {
+            $this->addFlash('error', 'Le film que vous essayez d\'ajouter n\'existe pas.');
+            return $this->redirectToRoute('app_liste_history'); // Rediriger vers une page appropriée
+        }
+
+        // S'assurer que la liste des favoris existe avant de chercher un film dedans
+        // Bien que la logique de création des listes soit dans les autres méthodes,
+        // il est plus sûr de vérifier ici aussi, ou de s'assurer que $listeFavorites ne peut pas être null.
+        // Pour cet exemple, on suppose que si on arrive ici, $listeFavorites devrait exister si l'utilisateur a des favoris.
+        // Si $listeFavorites est null et qu'on essaie de l'utiliser dans findOneBy, cela causera une erreur.
+        // Une gestion plus robuste pourrait être nécessaire si $listeFavorites peut légitimement être null.
+
+        // 2. Rechercher l'entrée ListFilm dans la liste des favoris
+        $listFilmFavorites = null;
+        if ($listeFavorites) { // Vérifier que la liste des favoris existe
+            $listFilmFavorites = $entityManager->getRepository(ListFilm::class)->findOneBy([
+                'liste' => $listeFavorites,
+                'tconst' => $filmFiltre // Utiliser l'instance de l'entité FilmFiltre ici
+            ]);
+        }
+
+        // Rechercher l'entrée ListFilm dans l'historique
+        $listFilmHistory = $entityManager->getRepository(ListFilm::class)->findOneBy([
+            'liste' => $listeHistory,
+            'tconst' => $filmFiltre // Utiliser l'instance de l'entité FilmFiltre ici
+        ]);
+
+        // Si le film est dans les favoris, le supprimer
+        if ($listFilmFavorites) {
+            $entityManager->remove($listFilmFavorites);
+            // Le flush sera fait plus bas ou après l'ajout à l'historique pour regrouper les opérations DB
+            $this->addFlash('success', sprintf('Film "%s" enlevé de votre liste des favoris.', $filmFiltre->getTitle()));
+        }
+
+        // Si le film n'est pas déjà dans l'historique, l'ajouter
+        if (!$listFilmHistory) {
+            $listFilm = new ListFilm();
+            $listFilm->setListFilmInfo($filmFiltre, $listeHistory);
+            $entityManager->persist($listFilm);
+            // Message de succès pour l'ajout à l'historique
+            // Le message précédent "enlevé de votre liste des favoris" est déjà là si applicable.
+            // On peut ajouter un message spécifique pour l'historique si on le souhaite,
+            // ou considérer que le message de suppression des favoris implique son déplacement.
+            // Pour plus de clarté, on peut ajouter un message distinct si le film n'était pas dans les favoris mais est ajouté à l'historique.
+            if (!$listFilmFavorites) { // Si le film n'était pas dans les favoris (donc pas de message de suppression)
+                $this->addFlash('success', sprintf('Film "%s" ajouté à votre historique.', $filmFiltre->getTitle()));
+            } else {
+                // Si déjà enlevé des favoris, on peut ajouter un message confirmant l'ajout à l'historique
+                $this->addFlash('info', sprintf('Film "%s" également ajouté à votre historique.', $filmFiltre->getTitle()));
+            }
+        } else {
+            // Si le film est déjà dans l'historique et n'a pas été supprimé des favoris (car il n'y était pas)
+            if (!$listFilmFavorites) {
+                $this->addFlash('info', 'Film déjà dans votre historique.');
+            }
+        }
+
+        // Flusher toutes les modifications (suppression et/ou ajout)
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_liste_favorites');
     }
 }

@@ -1,15 +1,16 @@
-{% extends 'base2.html.twig' %}
-
-{% block title %}Mon compte{% endblock %}
-
-{% block main %}
-<div class="container-fluid d-flex flex-column align-items-center justify-content-center loginMain bgSite">
-<h1> Profil de {{app.user.username}}</h1>
-    <div class="card-border col-6">
-          <div class="cardBody p-4">
-               <a href="{{path('app_account_modify_pwd')}}">Modifier le mot de passe</a>
-          </div>
+{% extends 'base2.html.twig' %} {% block title %}Mon compte -- My movie night{%
+endblock %} {% block main %}
+<div
+  class="container-fluid d-flex flex-column align-items-center justify-content-center loginMain bgSite"
+>
+  <h1>Profil de {{ app.user.username }}</h1>
+  <div class="card-border col-6">
+    <div class="cardBody p-4">
+      <a href="{{ path('app_account_modify_pwd') }}"
+        >Modifier le mot de passe</a
+      >
     </div>
+  </div>
 </div>
 
 {% endblock %}

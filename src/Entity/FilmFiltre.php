@@ -9,16 +9,15 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: FilmFiltreRepository::class)]
-#[ORM\Table(name: 'film_filtre', indexes: [ // Déclaration des index ici
-    new ORM\Index(name: 'idx_title', columns: ['title']),
-    new ORM\Index(name: 'idx_start_year', columns: ['start_year']),
-    new ORM\Index(name: 'idx_genres', columns: ['genres']), // Si pertinent
-    new ORM\Index(name: 'idx_average_rating', columns: ['average_rating']),
-    new ORM\Index(name: 'idx_num_votes', columns: ['num_votes']),
-    new ORM\Index(name: 'idx_title_type', columns: ['title_type']),
-    // Vous pouvez aussi créer des index composites si vous filtrez souvent sur plusieurs colonnes en même temps
-    // new ORM\Index(name: 'idx_year_rating', columns: ['start_year', 'average_rating'])
-])]
+#[ORM\Table(name: 'film_filtre')]
+#[ORM\Index(name: 'idx_title', columns: ['title'])]
+#[ORM\Index(name: 'idx_start_year', columns: ['start_year'])]
+#[ORM\Index(name: 'idx_genres', columns: ['genres'])]
+#[ORM\Index(name: 'idx_average_rating', columns: ['average_rating'])]
+#[ORM\Index(name: 'idx_num_votes', columns: ['num_votes'])]
+#[ORM\Index(name: 'idx_title_type', columns: ['title_type'])]
+// Vous pouvez aussi créer des index composites si vous filtrez souvent sur plusieurs colonnes en même temps
+// #[ORM\Index(name: 'idx_year_rating', columns: ['start_year', 'average_rating'])]
 class FilmFiltre
 {
     #[ORM\Id]

@@ -26,6 +26,15 @@ final class RemoveDataController extends AbstractController
         $user = $this->getUser();
         $tconst = $data['tconst'];
 
+        // Récupérer le token CSRF depuis l'en-tête de la requête
+        $submittedToken = $request->headers->get('X-CSRF-TOKEN');
+
+        // Valider le token CSRF
+        // L'identifiant 'save_favorite' doit correspondre à celui utilisé dans Twig
+        if (!$this->isCsrfTokenValid('remove_favorite', $submittedToken)) {
+            return new JsonResponse(['status' => 'error', 'message' => 'Invalid CSRF token.'], Response::HTTP_FORBIDDEN);
+        }
+
 
 
         // Ensure user is authenticated
@@ -98,6 +107,15 @@ final class RemoveDataController extends AbstractController
         $user = $this->getUser();
         $tconst = $data['tconst'];
 
+        // Récupérer le token CSRF depuis l'en-tête de la requête
+        $submittedToken = $request->headers->get('X-CSRF-TOKEN');
+
+        // Valider le token CSRF
+        // L'identifiant 'save_favorite' doit correspondre à celui utilisé dans Twig
+        if (!$this->isCsrfTokenValid('remove_refusal', $submittedToken)) {
+            return new JsonResponse(['status' => 'error', 'message' => 'Invalid CSRF token.'], Response::HTTP_FORBIDDEN);
+        }
+
 
 
         // Ensure user is authenticated
@@ -163,8 +181,7 @@ final class RemoveDataController extends AbstractController
     }
     // --- END NEW ACTION ---
 
-    #[Route('/remove/data/getRemove{tconst}', name: 'app_remove_data_get_favorite', methods: ['GET'])]
-    #[IsGranted('IS_AUTHENTICATED_FULLY')] // Ensures user is authenticated
+    #[Route('/remove/data/getRemove/{tconst}', name: 'app_remove_data_get_favorite', methods: ['GET'])]
     public function removeFromFilmListe(string $tconst, EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();
@@ -202,8 +219,9 @@ final class RemoveDataController extends AbstractController
         return $this->redirectToRoute('app_liste_favorites');
     }
 
-    #[Route('/remove/data//remove/data/getRemove_refusal{tconst}', name: 'app_remove_data_get_refusal', methods: ['GET'])]
-    #[IsGranted('IS_AUTHENTICATED_FULLY')] // Ensures user is authenticated
+
+
+    #[Route('/remove/data/remove/data/getRemove_refusal/{tconst}', name: 'app_remove_data_get_refusal', methods: ['GET'])]
     public function removeFromFilmListeRefusal(string $tconst, EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();
@@ -212,7 +230,7 @@ final class RemoveDataController extends AbstractController
         $liste = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Liste de refus']);
 
         if (!$liste) {
-            $this->addFlash('error', 'Your list ("Ma liste") could not be found.');
+            $this->addFlash('error', 'Votre liste ("Liste de refus") n\'a pas pu être trouvée.');
             return $this->redirectToRoute('app_liste_refusals'); // Or a more appropriate route
         }
 
@@ -239,5 +257,44 @@ final class RemoveDataController extends AbstractController
         }
 
         return $this->redirectToRoute('app_liste_refusals');
+    }
+
+
+    #[Route('/remove/data/getRemove_history/{tconst}', name: 'app_remove_data_get_history', methods: ['GET'])]
+    public function removeFromFilmListeHistory(string $tconst, EntityManagerInterface $entityManager): Response
+    {
+
+        $user = $this->getUser();
+        // $user will be a UserInterface object due to IsGranted. If using specific User methods, type cast or check.
+
+        $liste = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Historique des films']);
+
+        if (!$liste) {
+            return $this->redirectToRoute('app_liste_history');
+        }
+
+        // 1. Find the FilmFiltre entity using the tconst (which is its ID)
+        $filmFiltre = $entityManager->getRepository(FilmFiltre::class)->find($tconst);
+
+        if (!$filmFiltre) {
+            $this->addFlash('error', 'Le film que vous essayez de supprimer n\'existe pas dans la base de données.');
+            return $this->redirectToRoute('app_liste_history');
+        }
+
+        // 2. Find the ListFilm entry using the Liste entity and the FilmFiltre entity
+        $listFilm = $entityManager->getRepository(ListFilm::class)->findOneBy([
+            'liste' => $liste,
+            'tconst' => $filmFiltre // Use the FilmFiltre entity instance here
+        ]);
+
+        if ($listFilm) {
+            $entityManager->remove($listFilm);
+            $entityManager->flush();
+            $this->addFlash('success', sprintf('Le film "%s" à été supprimé de votre liste.', $filmFiltre->getTitle())); // Assuming FilmFiltre has getTitle()
+        } else {
+            $this->addFlash('info', 'Ce film n\'a pas été trouvé dans votre liste ou a déjà été supprimé.');
+        }
+
+        return $this->redirectToRoute('app_liste_history');
     }
 }
