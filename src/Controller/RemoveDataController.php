@@ -32,21 +32,21 @@ final class RemoveDataController extends AbstractController
         // Valider le token CSRF
         // L'identifiant 'save_favorite' doit correspondre à celui utilisé dans Twig
         if (!$this->isCsrfTokenValid('remove_favorite', $submittedToken)) {
-            return new JsonResponse(['status' => 'error', 'message' => 'Invalid CSRF token.'], Response::HTTP_FORBIDDEN);
+            return new JsonResponse(['status' => 'error', 'message' => 'CSRF token invalide.'], Response::HTTP_FORBIDDEN);
         }
 
 
 
         // Ensure user is authenticated
         if (!$user instanceof UserInterface) {
-            return new JsonResponse(['status' => 'error', 'message' => 'Authentication required.'], Response::HTTP_UNAUTHORIZED); // 401 Unauthorized
+            return new JsonResponse(['status' => 'error', 'message' => 'Veuillez vous authentifier.'], Response::HTTP_UNAUTHORIZED); // 401 Unauthorized
         }
 
         // Basic validation for tconst (route parameter guarantees it exists, but check content)
         if (empty($tconst)) {
             // This shouldn't happen if the route is configured correctly, but defensive check
             error_log('SaveDataController REMOVE failed: tconst route parameter is empty.');
-            return new JsonResponse(['status' => 'error', 'message' => 'Missing film identifier (tconst) for deletion.'], Response::HTTP_BAD_REQUEST); // 400 Bad Request
+            return new JsonResponse(['status' => 'error', 'message' => 'Tconst est non valide ou manquant.'], Response::HTTP_BAD_REQUEST); // 400 Bad Request
         }
 
 
@@ -64,7 +64,7 @@ final class RemoveDataController extends AbstractController
             if (!$filmFiltre) {
                 // FilmFiltre entity not found for this tconst. Cannot remove if the master film doesn't exist.
                 error_log('SaveDataController REMOVE info: FilmFiltre not found for tconst ' . $tconst . ' for user ' . $user->getId());
-                return new JsonResponse(['status' => 'info', 'message' => 'Film not found in master database.'], Response::HTTP_NOT_FOUND); // 404 Not Found
+                return new JsonResponse(['status' => 'info', 'message' => 'Film non trouvé dans la base de données.'], Response::HTTP_NOT_FOUND); // 404 Not Found
             }
 
             // Now find the ListFilm linking this user's list and this specific film entity
@@ -80,12 +80,12 @@ final class RemoveDataController extends AbstractController
                 $entityManager->flush(); // Execute the removal
 
                 error_log('SaveDataController REMOVE success: Film removed for user ' . $user->getId() . ' tconst ' . $tconst);
-                return new JsonResponse(['status' => 'success', 'message' => 'Film removed from list!'], Response::HTTP_OK); // 200 OK or 204 No Content
+                return new JsonResponse(['status' => 'success', 'message' => 'Film retiré de votre liste de favoris.'], Response::HTTP_OK); // 200 OK or 204 No Content
 
             } else {
                 // The ListFilm entry was not found (film wasn't in the list)
                 error_log('SaveDataController REMOVE info: ListFilm not found for user ' . $user->getId() . ' tconst ' . $tconst . ' (was not in list?)');
-                return new JsonResponse(['status' => 'info', 'message' => 'Film was not found in your list.'], Response::HTTP_NOT_FOUND); // 404 Not Found
+                return new JsonResponse(['status' => 'info', 'message' => 'Film non trouvé dans votre liste.'], Response::HTTP_NOT_FOUND); // 404 Not Found
             }
         } catch (\Exception $e) {
             // Log unexpected errors
@@ -113,21 +113,21 @@ final class RemoveDataController extends AbstractController
         // Valider le token CSRF
         // L'identifiant 'save_favorite' doit correspondre à celui utilisé dans Twig
         if (!$this->isCsrfTokenValid('remove_refusal', $submittedToken)) {
-            return new JsonResponse(['status' => 'error', 'message' => 'Invalid CSRF token.'], Response::HTTP_FORBIDDEN);
+            return new JsonResponse(['status' => 'error', 'message' => 'Token CSRF invalide.'], Response::HTTP_FORBIDDEN);
         }
 
 
 
         // Ensure user is authenticated
         if (!$user instanceof UserInterface) {
-            return new JsonResponse(['status' => 'error', 'message' => 'Authentication required.'], Response::HTTP_UNAUTHORIZED); // 401 Unauthorized
+            return new JsonResponse(['status' => 'error', 'message' => 'Veuillez vous connnecter.'], Response::HTTP_UNAUTHORIZED); // 401 Unauthorized
         }
 
         // Basic validation for tconst (route parameter guarantees it exists, but check content)
         if (empty($tconst)) {
             // This shouldn't happen if the route is configured correctly, but defensive check
             error_log('SaveDataController REMOVE failed: tconst route parameter is empty.');
-            return new JsonResponse(['status' => 'error', 'message' => 'Missing film identifier (tconst) for deletion.'], Response::HTTP_BAD_REQUEST); // 400 Bad Request
+            return new JsonResponse(['status' => 'error', 'message' => 'Tconst est non valide ou manquant.'], Response::HTTP_BAD_REQUEST); // 400 Bad Request
         }
 
 
@@ -145,7 +145,7 @@ final class RemoveDataController extends AbstractController
             if (!$filmFiltre) {
                 // FilmFiltre entity not found for this tconst. Cannot remove if the master film doesn't exist.
                 error_log('SaveDataController REMOVE info: FilmFiltre not found for tconst ' . $tconst . ' for user ' . $user->getId());
-                return new JsonResponse(['status' => 'info', 'message' => 'Film not found in master database.'], Response::HTTP_NOT_FOUND); // 404 Not Found
+                return new JsonResponse(['status' => 'info', 'message' => 'Film non trouvé dans la base de données.'], Response::HTTP_NOT_FOUND); // 404 Not Found
             }
 
             // Now find the ListFilm linking this user's list and this specific film entity
@@ -161,12 +161,12 @@ final class RemoveDataController extends AbstractController
                 $entityManager->flush(); // Execute the removal
 
                 error_log('SaveDataController REMOVE success: Film removed for user ' . $user->getId() . ' tconst ' . $tconst);
-                return new JsonResponse(['status' => 'success', 'message' => 'Film removed from list!'], Response::HTTP_OK); // 200 OK or 204 No Content
+                return new JsonResponse(['status' => 'success', 'message' => 'Film retirer de votre liste de refus.'], Response::HTTP_OK); // 200 OK or 204 No Content
 
             } else {
                 // The ListFilm entry was not found (film wasn't in the list)
                 error_log('SaveDataController REMOVE info: ListFilm not found for user ' . $user->getId() . ' tconst ' . $tconst . ' (was not in list?)');
-                return new JsonResponse(['status' => 'info', 'message' => 'Film was not found in your list.'], Response::HTTP_NOT_FOUND); // 404 Not Found
+                return new JsonResponse(['status' => 'info', 'message' => 'Le film n\'est pas dans votre liste de refus.'], Response::HTTP_NOT_FOUND); // 404 Not Found
             }
         } catch (\Exception $e) {
             // Log unexpected errors
@@ -198,7 +198,7 @@ final class RemoveDataController extends AbstractController
         $filmFiltre = $entityManager->getRepository(FilmFiltre::class)->find($tconst);
 
         if (!$filmFiltre) {
-            $this->addFlash('error', 'The film you are trying to remove does not exist in the database.');
+            $this->addFlash('error', 'Le film que vous essayez de supprimer n\'existe pas dans la base de données.');
             return $this->redirectToRoute('app_liste_favorites');
         }
 
@@ -213,7 +213,7 @@ final class RemoveDataController extends AbstractController
             $entityManager->flush();
             $this->addFlash('success', sprintf('Film "%s" removed from your list.', $filmFiltre->getTitle())); // Assuming FilmFiltre has getTitle()
         } else {
-            $this->addFlash('info', 'This film was not found in your list or was already removed.');
+            $this->addFlash('info', 'Ce film n\'a pas été trouvé dans votre liste ou a déjà été supprimé.');
         }
 
         return $this->redirectToRoute('app_liste_favorites');
@@ -238,7 +238,7 @@ final class RemoveDataController extends AbstractController
         $filmFiltre = $entityManager->getRepository(FilmFiltre::class)->find($tconst);
 
         if (!$filmFiltre) {
-            $this->addFlash('error', 'The film you are trying to remove does not exist in the database.');
+            $this->addFlash('error', 'Le film que vous essayez de supprimer n\'existe pas dans la base de données.');
             return $this->redirectToRoute('app_liste_refusals');
         }
 
@@ -251,9 +251,9 @@ final class RemoveDataController extends AbstractController
         if ($listFilm) {
             $entityManager->remove($listFilm);
             $entityManager->flush();
-            $this->addFlash('success', sprintf('Film "%s" removed from your list.', $filmFiltre->getTitle())); // Assuming FilmFiltre has getTitle()
+            $this->addFlash('success', sprintf('Le film "%s" à été supprimé de votre liste.', $filmFiltre->getTitle())); // Assuming FilmFiltre has getTitle()
         } else {
-            $this->addFlash('info', 'This film was not found in your list or was already removed.');
+            $this->addFlash('info', 'Ce film n\'a pas été trouvé dans votre liste ou a déjà été supprimé.');
         }
 
         return $this->redirectToRoute('app_liste_refusals');

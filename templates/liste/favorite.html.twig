@@ -20,11 +20,11 @@
                   class="posterFilmList rounded-1"
                 />
               </div>
-              <h4
+              <h5
                 class="col-6 col-sm-4 col-md-4 col-lg-4 title d-sm-none d-md-none d-lg-block"
               >
                 {{ film.title }}
-              </h4>
+              </h5>
               <p class="d-none synopsis">{{ film.synopsis }}</p>
               <p class="d-none addedAt">{{ film.addedAt }}</p>
               <p class="d-none genre">{{ film.genres }}</p>
@@ -87,16 +87,7 @@
                           }}"
                           class="btn btn-danger"
                           role="button"
-                          <!--
-                          Good
-                          for
-                          accessibility
-                          when
-                          styling
-                          links
-                          as
-                          buttons
-                          --
+                         
                         >
                           Oui
                         </a>
@@ -211,10 +202,10 @@
         <p class="" id="synopsisShow">...</p>
       </div>
       <!-- Button modal history -->
-      <div class="row col-2 d-none d-sm-none d-md-none d-lg-block">
+      <div class="row d-block d-sm-block d-md-block d-lg-none d-flex justify-content-center">
         <button
           type="button"
-          class="btn btn-primary boutonShowHistoryDetails col-6 d-sm-block d-md-block d-lg-none"
+          class="btn btn-primary boutonShowHistoryDetails col-12  m-1"
           data-bs-toggle="modal"
           data-bs-target=""
           title="Ajouter à l'historique"
@@ -267,7 +258,7 @@
         <!-- Button modal delete -->
         <button
           type="button"
-          class="btn btn-primary boutonShowDelete col-6 d-sm-block d-md-block d-lg-none"
+          class="btn btn-primary boutonShowDelete col-12  m-1"
           data-bs-toggle="modal"
           data-bs-target=""
         >
@@ -306,16 +297,7 @@
                   href=""
                   class="btn btn-danger btnOuiDelete"
                   role="button"
-                  <!--
-                  Good
-                  for
-                  accessibility
-                  when
-                  styling
-                  links
-                  as
-                  buttons
-                  --
+                  
                 >
                   Oui
                 </a>

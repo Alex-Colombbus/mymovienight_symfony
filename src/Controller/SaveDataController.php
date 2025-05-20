@@ -35,7 +35,7 @@ final class SaveDataController extends AbstractController
         // Valider le token CSRF
         // L'identifiant 'save_favorite' doit correspondre à celui utilisé dans Twig
         if (!$this->isCsrfTokenValid('save_favorite', $submittedToken)) {
-            return new JsonResponse(['status' => 'error', 'message' => 'Invalid CSRF token.'], Response::HTTP_FORBIDDEN);
+            return new JsonResponse(['status' => 'error', 'message' => 'CSRF token invalide.'], Response::HTTP_FORBIDDEN);
         }
 
         $content = $request->getContent(); // Get the raw request body
@@ -45,12 +45,12 @@ final class SaveDataController extends AbstractController
 
         // S'assurer que l'utilisateur est authentifié
         if (!$user) {
-            return new JsonResponse(['status' => 'error', 'message' => 'Authentication required.'], Response::HTTP_UNAUTHORIZED);
+            return new JsonResponse(['status' => 'error', 'message' => 'Veuillez vous connnecter.'], Response::HTTP_UNAUTHORIZED);
         }
 
         // Validation de base : vérifier si les données requises (comme tconst) sont présentes
         if (!isset($data['tconst']) || empty($data['tconst'])) {
-            return new JsonResponse(['status' => 'error', 'message' => 'Invalid or missing "tconst" in request data.'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['status' => 'error', 'message' => 'Tconst est non valide ou manquant.'], Response::HTTP_BAD_REQUEST); // 400 Bad Requestonst'], Response::HTTP_BAD_REQUEST);
         }
 
         // --- Logique de sauvegarde ---
@@ -61,7 +61,7 @@ final class SaveDataController extends AbstractController
             if (!$filmFiltre) {
                 // Si le film n'existe pas dans la table FilmFiltre, il ne peut pas être ajouté à une liste.
                 // Selon l'application, on pourrait le créer ici à partir de $data ou retourner une erreur.
-                return new JsonResponse(['status' => 'error', 'message' => 'Film not found in the database to add to list.'], Response::HTTP_NOT_FOUND);
+                return new JsonResponse(['status' => 'error', 'message' => 'Film non trouvé dans la base de données.'], Response::HTTP_NOT_FOUND);
             }
 
             // Mise à jour des détails de FilmFiltre si nécessaire (gestion des vérifications null et conversions de type)
@@ -196,7 +196,7 @@ final class SaveDataController extends AbstractController
             }
 
             if ($existingListFilmRefusal !== null) {
-                return new JsonResponse(['status' => 'info', 'message' => 'Film est deja dans votre liste de refus!'], Response::HTTP_CONFLICT);
+                return new JsonResponse(['status' => 'info', 'message' => 'Film est dans votre liste de refus, retirez le si vous voulez l\'ajouter à vos favoris.'], Response::HTTP_CONFLICT);
             }
 
             // 6. Si le lien n'existe pas, créer une nouvelle entrée ListFilm pour "Ma liste"
@@ -210,7 +210,7 @@ final class SaveDataController extends AbstractController
             $entityManager->flush();
 
             // 9. Retourner une réponse de succès
-            return new JsonResponse(['status' => 'success', 'message' => 'Film ajouté dans votre liste!'], Response::HTTP_OK);
+            return new JsonResponse(['status' => 'success', 'message' => 'Film ajouté dans votre liste de favoris!'], Response::HTTP_OK);
         } catch (\Exception $e) {
             // Enregistrement de l'erreur pour le débogage en développement
             error_log('Error in SaveDataController: ' . $e->getMessage() . ' - ' . $e->getTraceAsString());
@@ -246,7 +246,7 @@ final class SaveDataController extends AbstractController
 
         // Valider le token CSRF pour l'action 'save_refusal'
         if (!$this->isCsrfTokenValid('save_refusal', $submittedToken)) {
-            return new JsonResponse(['status' => 'error', 'message' => 'Invalid CSRF token.'], Response::HTTP_FORBIDDEN);
+            return new JsonResponse(['status' => 'error', 'message' => 'Token CSRF invalide'], Response::HTTP_FORBIDDEN);
         }
 
         // *** Add logging here to see the raw content ***
@@ -254,12 +254,12 @@ final class SaveDataController extends AbstractController
 
         // S'assurer que l'utilisateur est authentifié
         if (!$user) {
-            return new JsonResponse(['status' => 'error', 'message' => 'Authentication required.'], Response::HTTP_UNAUTHORIZED);
+            return new JsonResponse(['status' => 'error', 'message' => 'Veuillez vous connecter.'], Response::HTTP_UNAUTHORIZED);
         }
 
         // Validation de base : vérifier si 'tconst' est présent
         if (!isset($data['tconst']) || empty($data['tconst'])) {
-            return new JsonResponse(['status' => 'error', 'message' => 'Invalid or missing "tconst" in request data.'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['status' => 'error', 'message' => 'Tconst est non valide ou manquant.'], Response::HTTP_BAD_REQUEST);
         }
 
         // --- Logique de sauvegarde ---
@@ -268,7 +268,7 @@ final class SaveDataController extends AbstractController
             $filmFiltre = $entityManager->getRepository(FilmFiltre::class)->find($data['tconst']);
 
             if (!$filmFiltre) {
-                return new JsonResponse(['status' => 'error', 'message' => 'Film not found in the database to add to list.'], Response::HTTP_NOT_FOUND);
+                return new JsonResponse(['status' => 'error', 'message' => 'Film non trouvé dans la base de données.'], Response::HTTP_NOT_FOUND);
             }
 
             // Mise à jour des détails de FilmFiltre si nécessaire (similaire à la méthode index)
@@ -388,7 +388,7 @@ final class SaveDataController extends AbstractController
 
             // Si le lien existe déjà, retourner une réponse de conflit
             if ($existingListFilmMain !== null) {
-                return new JsonResponse(['status' => 'info', 'message' => 'Film est déjà dans votre liste de favoris!'], Response::HTTP_CONFLICT);
+                return new JsonResponse(['status' => 'info', 'message' => 'Film est dans votre liste de favoris, retirez le si vous voulez l\'ajouter à vos refus.'], Response::HTTP_CONFLICT);
             }
 
             if ($existingListFilmRefusal !== null) {

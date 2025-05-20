@@ -55,7 +55,9 @@ final class ListeController extends AbstractController
 
         // dd($listFilms, $liste, $listToDisplay);
         if (!$listToDisplay) {
-            return $this->render('liste/emptyListe.html.twig', []);
+            return $this->render('liste/emptyListe.html.twig', [
+                'message' => 'Aucun film trouvé dans vos favoris.',
+            ]);
         }
 
         return $this->render('liste/favorite.html.twig', [
@@ -103,7 +105,9 @@ final class ListeController extends AbstractController
 
         // dd($listFilms, $liste, $listToDisplay);
         if (!$listToDisplay) {
-            return $this->render('liste/emptyListe.html.twig', []);
+            return $this->render('liste/emptyListe.html.twig', [
+                'message' => 'Aucun film trouvé dans votre liste de refus.',
+            ]);
         }
 
         return $this->render('liste/refusal.html.twig', [
@@ -152,7 +156,9 @@ final class ListeController extends AbstractController
 
         // dd($listFilms, $liste, $listToDisplay);
         if (!$listToDisplay) {
-            return $this->render('liste/emptyListe.html.twig', []);
+            return $this->render('liste/emptyListe.html.twig', [
+                'message' => 'Aucun film trouvé dans votre historique.',
+            ]);
         }
 
         return $this->render('liste/history.html.twig', [

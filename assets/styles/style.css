@@ -124,7 +124,7 @@ input[type=range]::-moz-range-thumb {
   /* Pas besoin de -moz-appearance: none; ici */
   width: 7px;          /* Largeur du curseur */
   height: 24px;         /* Hauteur du curseur (vertical) */
-  background-color: var(--color-accentuationBleu); /* Couleur du curseur */
+  background-color: var(--color-jaunemoche); /* Couleur du curseur */
   border-radius: 3px;
   border: none;         /* Enlève la bordure par défaut de Firefox */
   cursor: pointer;
@@ -224,6 +224,12 @@ h1{
   color: var(--color-accentuationBleu); /* Assurez-vous que la couleur du texte est définie */
   text-align: center; /* Centrer le h1 */
   text-shadow: 0.5rem 0.5rem 0.7rem rgba(0, 0, 0, 0.2); /* Ombre sur le texte */
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 3rem !important; /* Réduire la taille du texte sur mobile */
+  }
 }
 
 .navIndex{
@@ -474,7 +480,10 @@ nav button{
 /***************** Page List *******************/
 
 
-
+.divListFilm{
+   scrollbar-width: thin; /* Équivalent à width: 8px en WebKit */
+  scrollbar-color: rgba(0, 0, 0, 0.5) rgba(0, 162, 255, 0.397); /* Format: thumb track */
+}
 
 .divListFilm::-webkit-scrollbar-track {
   background: rgba(0, 162, 255, 0.397); /* Rend le fond de la piste transparent */

@@ -4,8 +4,11 @@ endblock %} {% block main %}
   class="container-fluid d-flex flex-column align-items-center justify-content-center"
 >
   <h1 class="">Votre liste est vide</h1>
-  <h3 class="colorJauneMoche">
-    {{ app.user.username }}, Pensez à ajouter un film
+  <h2 class="colorJauneMoche">
+    {{ app.user.username }}
+  </h2>
+  <h3 class="colorBleuClair">
+    {{message}}
   </h3>
   <a href="{{ path('app_home') }}" class="btn btn-primary"
     >Retourner à l'accueil</a
