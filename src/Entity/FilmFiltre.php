@@ -33,7 +33,7 @@ class FilmFiltre
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $synopsis = null;
 
-    #[ORM\Column(type: Types::ARRAY, nullable: true)]
+    #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $importantCrew = null;
 
     #[ORM\Column(length: 500, nullable: true)]

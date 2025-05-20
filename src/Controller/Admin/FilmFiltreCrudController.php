@@ -5,12 +5,12 @@ namespace App\Controller\Admin;
 use App\Entity\FilmFiltre;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\JsonField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CodeEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
@@ -37,7 +37,7 @@ class FilmFiltreCrudController extends AbstractCrudController
             TextField::new('title', 'Titre'),
             TextField::new('titleType', 'Type de titre'),
             TextareaField::new('synopsis', 'Synopsis')->hideOnIndex(),
-            ArrayField::new('importantCrew', 'Personnes importantes de la réalisation (metiers: nom)')->hideOnIndex(),
+            CodeEditorField::new('importantCrew', 'Personnes importantes de la réalisation (metiers: nom)')->hideOnIndex(),
             TextField::new('actors', '3 acteurs principaux (acteur,acteur,acteur)')->hideOnIndex(),
             TextField::new('posterPath', 'Chemin de l\'affiche imdb')->hideOnIndex(),
             BooleanField::new('isAdult', 'Film pour adultes'),

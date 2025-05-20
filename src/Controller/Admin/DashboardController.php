@@ -53,5 +53,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Listes', 'fa-solid fa-list', Liste::class);
         yield MenuItem::linkToCrud('Listes - Films', 'fa-solid fa-list-tree', ListFilm::class);
         yield MenuItem::linkToCrud('Films', 'fa-solid fa-film', FilmFiltre::class);
+        yield MenuItem::linkToUrl('Retour au site', 'fa-solid fa-arrow-left', '/');
     }
 }
