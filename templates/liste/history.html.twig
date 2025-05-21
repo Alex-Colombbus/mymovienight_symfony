@@ -34,10 +34,10 @@
                 {{ film.averageRating }}<i class="bi bi-star-fill"></i>
               </h4>
               <!-- Button trigger modal -->
-              <div class="col-2 d-none d-sm-none d-md-none d-lg-block">
+              <div class="col-2">
                 <button
                   type="button"
-                  class="btn btn-primary"
+                  class="btn btn-primary d-none d-sm-none d-md-none d-lg-block"
                   data-bs-toggle="modal"
                   data-bs-target="#Modal{{ film.tconst }}"
                 >
@@ -130,16 +130,16 @@
       <div class="container col-11">
         <p class="" id="synopsisShow">...</p>
       </div>
-     <div class="row d-block d-sm-block d-md-block d-lg-none d-flex justify-content-center">
+      <div class="row d-flex justify-content-center">
         <button
           type="button"
-          class="btn btn-primary boutonShowDelete col-12 d-sm-block d-md-block d-lg-none"
+          class="btn btn-primary boutonShowDelete col-12 d-block d-sm-block d-md-block d-lg-none"
           data-bs-toggle="modal"
           data-bs-target=""
         >
           <i class="bi bi-trash3 col-2 fs-4"></i> Effacer le film
         </button>
-  
+
         <!-- Modal -->
         <div
           class="modal fade modalFadeShowDelete"
@@ -175,7 +175,7 @@
             </div>
           </div>
         </div>
-     </div>
+      </div>
     </div>
   </div>
 </div>

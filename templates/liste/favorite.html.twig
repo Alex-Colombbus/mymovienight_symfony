@@ -34,10 +34,10 @@
                 {{ film.averageRating }}<i class="bi bi-star-fill"></i>
               </h4>
               <!-- Button modal history -->
-              <div class="col-2 d-none d-sm-none d-md-none d-lg-block">
+              <div class="col-2">
                 <button
                   type="button"
-                  class="btn btn-primary my-1"
+                  class="btn btn-primary my-1 d-none d-sm-none d-md-none d-lg-block"
                   data-bs-toggle="modal"
                   data-bs-target="#ModalHistory{{ film.tconst }}"
                   title="Ajouter à l'historique"
@@ -87,7 +87,6 @@
                           }}"
                           class="btn btn-danger"
                           role="button"
-                         
                         >
                           Oui
                         </a>
@@ -98,7 +97,7 @@
                 <!-- Button modal delete -->
                 <button
                   type="button"
-                  class="btn btn-primary my-1"
+                  class="btn btn-primary my-1 d-none d-sm-none d-md-none d-lg-block"
                   data-bs-toggle="modal"
                   data-bs-target="#Modal{{ film.tconst }}"
                   title="Supprimer des favoris"
@@ -202,10 +201,10 @@
         <p class="" id="synopsisShow">...</p>
       </div>
       <!-- Button modal history -->
-      <div class="row d-block d-sm-block d-md-block d-lg-none d-flex justify-content-center">
+      <div class="row d-flex justify-content-center">
         <button
           type="button"
-          class="btn btn-primary boutonShowHistoryDetails col-12  m-1"
+          class="btn btn-primary boutonShowHistoryDetails col-12 m-1 d-block d-sm-block d-md-block d-lg-none"
           data-bs-toggle="modal"
           data-bs-target=""
           title="Ajouter à l'historique"
@@ -258,7 +257,7 @@
         <!-- Button modal delete -->
         <button
           type="button"
-          class="btn btn-primary boutonShowDelete col-12  m-1"
+          class="btn btn-primary boutonShowDelete col-12 m-1 d-block d-sm-block d-md-block d-lg-none"
           data-bs-toggle="modal"
           data-bs-target=""
         >
@@ -293,12 +292,7 @@
                 >
                   Non
                 </button>
-                <a
-                  href=""
-                  class="btn btn-danger btnOuiDelete"
-                  role="button"
-                  
-                >
+                <a href="" class="btn btn-danger btnOuiDelete" role="button">
                   Oui
                 </a>
               </div>

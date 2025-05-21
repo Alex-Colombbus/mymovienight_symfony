@@ -20,7 +20,9 @@ endblock %} {% block main %}
             class="img-film rounded-1 posterFilm"
           />
         </div>
-        <div class="container col-8 d-flex justify-content-around fs-3 mt-3">
+        <div
+          class="container col-12 col-sm-12 col-md-8 d-flex justify-content-around fs-3 mt-3 mb-3 mb-md-3 mb-lg-0"
+        >
           {% if app.user %}
           <div class="col-6 d-flex justify-content-start align-items-center">
             <button
@@ -65,13 +67,13 @@ endblock %} {% block main %}
           class="col-12 mb-4 d-flex flex-column justify-content-center align-items-center"
         >
           <h2
-            class="text-center fw-bold fs-2 titleFilm color-texte-accentuation"
+            class="text-center fw-bold fs-1 titleFilm color-texte-accentuation"
           ></h2>
           <h5
             class="text-center infoFilm surlignement fw-light fw-bold fs-5"
           ></h5>
         </div>
-        <div class="row importantCrew"></div>
+        <div class="row importantCrew my-3 my-md-2"></div>
         <h4 class="fw-bold color-texte-accentuation">Synopsis</h4>
         <p class="synopsisFilm"></p>
         <h5 class="surlignement">Acteurs principaux</h5>
@@ -134,7 +136,7 @@ endblock %} {% block main %}
     synopsis.textContent = films[0].synopsis;
 
     let importantCrew = document.querySelector('.importantCrew');
-    let importantCrewObjet = films[0].importantCrew
+    let importantCrewObjet = films[0].importantCrew;
     let page = 0;
     let filmToList = films[0];
     let bouttonSendListFav = document.querySelector('#sendDataListFav');

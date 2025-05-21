@@ -3,9 +3,9 @@
 namespace App\Controller\Admin;
 
 use App\Entity\FilmFiltre;
+use App\Form\JsonCodeEditorType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\JsonField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
@@ -37,7 +37,11 @@ class FilmFiltreCrudController extends AbstractCrudController
             TextField::new('title', 'Titre'),
             TextField::new('titleType', 'Type de titre'),
             TextareaField::new('synopsis', 'Synopsis')->hideOnIndex(),
-            CodeEditorField::new('importantCrew', 'Personnes importantes de la réalisation (metiers: nom)')->hideOnIndex(),
+            CodeEditorField::new('importantCrew', 'Équipe technique (Nom: Rôle(s))')
+                ->setLanguage('javascript') // Use 'javascript' for JSON-like highlighting
+                ->hideOnIndex()
+                ->setHelp('Éditez le JSON directement. Exemple: {"Nom_Prenom": "Role1, Role2", "Autre_Nom": "Role"}')
+                ->setFormType(JsonCodeEditorType::class),
             TextField::new('actors', '3 acteurs principaux (acteur,acteur,acteur)')->hideOnIndex(),
             TextField::new('posterPath', 'Chemin de l\'affiche imdb')->hideOnIndex(),
             BooleanField::new('isAdult', 'Film pour adultes'),

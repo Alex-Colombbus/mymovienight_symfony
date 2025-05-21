@@ -20,18 +20,18 @@
 
     <header class="headerFilm">
         <nav>
-            <div class="row d-flex justify-content-between">
+            <div class="row d-flex justify-content-around justify-content-md-between">
                 <div class="col-2 d-flex align-items-center justify-content-center">
                     <li><a href="{{path('app_home')}}" ><h1 class="fs-3"><span class="colorJauneMoche">My</span> Movie Night</h1></a></li>
                 </div>
 
 
-                <ul class="col-8 col-sm-4 col-md-4 col-lg-4 p-5 d-flex justify-content-around">
+                <ul class="col-4 p-5 d-flex justify-content-around">
   
                                {% if app.user %}
       
 
-                              <div class="dropdown">
+                            <div class="col dropdown mx-4">
                               <button class ="dropdown-toggle" type="button"  data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-list-ul iconeNav"></i>
                               </button>
@@ -40,12 +40,12 @@
                                     <li><a class="dropdown-item item-drop text-primary" href="{{path("app_liste_history")}}">Mon historique</a></li>
                                     <li><a class="dropdown-item item-drop text-primary" href="{{path("app_liste_refusals")}}">Mes refus</a></li>
                               </ul>
-                                    </div>
+                            </div>
                             {% endif %}
 
                                 
 
-                               <div class="col-6 dropdown">
+                               <div class="col dropdown mx-4">
                                     <button class ="" type="button"  data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="dropdown-toggle bi bi-person-circle iconeNav"></i>
                                     </button>
