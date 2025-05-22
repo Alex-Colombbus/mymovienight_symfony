@@ -26,7 +26,7 @@ endblock %} {% block main %}
           {% if app.user %}
           <div class="col-6 d-flex justify-content-start align-items-center">
             <button
-              class="mx-2 border border-0 bg-transparent"
+              class="boutonSendData border border-0"
               id="sendDataListRef"
             >
               <i
@@ -35,12 +35,12 @@ endblock %} {% block main %}
                 title="Ajouter aux refus, ne plus jamais le voir"
               ></i>
             </button>
-            <p class="fs-6 text-primary m-0">Ne plus me redemander</p>
+            <p class="fs-6 text-primary m-2">refus</p>
           </div>
           <div class="col-6 d-flex justify-content-end align-items-center">
-            <p class="fs-6 text-primary m-0">favoris</p>
+            <p class="fs-6 text-primary m-2">favoris</p>
             <button
-              class="mx-2 border border-0 bg-transparent"
+              class=" boutonSendData pt-1 border border-0"
               id="sendDataListFav"
             >
               <i
@@ -79,26 +79,45 @@ endblock %} {% block main %}
         <h5 class="surlignement">Acteurs principaux</h5>
         <ul class="row actorsFilm"></ul>
 
-        <div class="row align-items-center">
-          <button
-            class="btn btn-changement precedent col-2 rounded-5 p-0"
-            title="Film prédédent"
-          >
-            <i class="bi bi-arrow-left fs-3"></i>
-          </button>
-          <div class="col-8 row d-flex align-items-center">
+        <div class="container">
+          
+          <div class="row d-flex align-items-center">
             <div
-              class="imdbRating col-6 text-center fw-bold"
+              class="imdbRating col-6 text-center fw-bold d-flex align-items-center justify-content-center"
               title="Note IMDb"
             ></div>
             <div
-              class="tmdbRating col-6 text-center fw-bold"
+              class="tmdbRating col-6 text-center fw-bold d-flex align-items-center justify-content-center"
               title="Note TMDB"
             ></div>
           </div>
 
+          
+        </div>
+      </div>
+    </div>
+    <div class="row d-flex justify-content-around align-items-center mt-3">
+      <button
+      type="button"
+            class="btn btn-changement bouttonPrecedent d-flex justify-content-center align-items-center p-0 col-2"
+            title="Film suivant"
+          >
+            <div
+              class="visually-hidden spinner-border text-primary mx-2"
+              role="status"
+            ></div>
+            <span class="arrowLeft"
+              ><i class="bi bi-arrow-left fs-3"></i
+            ></span>
+          </button>
+
+          <a class="col-3 text-center rounded-5" href="{{ path('app_liste_favorites') }}">
+            <button type='button' class="btn btn-film py-2 px-3 fs-5">Voir ma liste</button>
+          </a>
+
           <button
-            class="btn btn-changement bouttonSuivant col-2 rounded-5 d-flex justify-content-center align-items-center p-0"
+          type="button"
+            class="btn btn-changement bouttonSuivant d-flex justify-content-center align-items-center p-0 col-2"
             title="Film suivant"
           >
             <div
@@ -109,8 +128,7 @@ endblock %} {% block main %}
               ><i class="bi bi-arrow-right fs-3"></i
             ></span>
           </button>
-        </div>
-      </div>
+
     </div>
   </div>
   <input type="hidden" id="filmToList" name="filmList" value="" />
@@ -144,7 +162,7 @@ endblock %} {% block main %}
     let iconeHeart = document.querySelector('#iconeHeart');
     let iconeRef = document.querySelector('#iconeRefusal');
     let spinner = document.querySelector('.spinner-border');
-    let bouttonSuivant = document.querySelector('.bouttonSuivant');
+    
     let arrowRight = document.querySelector('.arrowRight');
 
 
@@ -203,7 +221,7 @@ endblock %} {% block main %}
       iconeImdb.src = "{{ asset('images/imdb_icone.png') }}";
       iconeImdb.classList.add('iconeRating');
       iconeImdb.alt = 'icone imdb';
-      lienImdb.textContent = films[page].imdbRating;
+      lienImdb.textContent = "  " + films[page].imdbRating;
       lienImdb.prepend(iconeImdb);
       imdbRating.prepend(lienImdb);
       if (films[page].tmdbRating === null || films[page].tmdbRating === 0) {
@@ -217,14 +235,16 @@ endblock %} {% block main %}
         iconeTmdb.src = "{{ asset('images/tmdb_icone.svg') }}";
         iconeTmdb.classList.add('iconeRating');
         iconeTmdb.alt = 'icone tmdb';
-        lienTmdb.textContent = parseFloat(films[page].tmdbRating).toFixed(1);
+        lienTmdb.textContent = "  " + parseFloat(films[page].tmdbRating).toFixed(1);
         lienTmdb.prepend(iconeTmdb);
         tmdbRating.prepend(lienTmdb);
       }
     }
 
-    let buttonPrecedent = document.querySelector('.precedent');
+    let buttonPrecedent = document.querySelector('.bouttonPrecedent');
     buttonPrecedent.classList.add('invisible');
+
+
 
     buttonPrecedent.addEventListener('click', () => {
       if (iconeHeart && iconeHeart.classList.contains('bi-heart-fill')) {
@@ -262,6 +282,7 @@ endblock %} {% block main %}
     });
 
 
+    let bouttonSuivant = document.querySelector('.bouttonSuivant');
 
     bouttonSuivant.addEventListener('click', () => {
       buttonPrecedent.disabled = false;

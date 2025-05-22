@@ -451,13 +451,16 @@ nav button{
 
 .btn-changement{
   
-  background-color: var(--color-jaunemoche);
-  color: var(--color-accentuationBleu);
+  background-color: var(--color-accentuationBleu);
+  color: var(--color-jaunemoche);
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
 }
 
 .btn-changement:hover{
-  background-color: var(--color-accentuationBleu);
-  color: var(--color-jaunemoche);
+  background-color: var(--color-jaunemoche);
+  color: var(--color-accentuationBleu);
 }
 
 .btn-changement:active{
@@ -475,6 +478,26 @@ nav button{
 }
 .imdbRating,.tmdbRating{
   color: var(--color-accentuationBleu);
+}
+
+.btn-film{
+  background-color: var(--color-jaunemoche);
+  color: var(--color-accentuationBleu);
+  font-family: Roboto, serif;
+  border: none;
+
+  cursor: pointer;
+
+  transition: background-color 0.3s ease, color 0.3s ease; /* Transition pour le changement de couleur */
+}
+
+.boutonSendData{
+  background-color: var(--color-jaunemoche);
+  /* border: 1px solid var(--color-accentuationBleu); */
+  width: 3rem;
+  height: 3rem;
+  /* box-shadow: 2px 2px 2px var(--color-accentuationBleu); */
+  border-radius: 50%;
 }
 
 /***************** Page List *******************/
@@ -570,6 +593,7 @@ nav button{
   box-shadow: 0px 0px 10px var(--color-accentuationBleu);
 }
 
+
 /***************** Login *******************/
 
 .loginMain{
@@ -641,4 +665,12 @@ nav button{
 .inputFormRegister::placeholder{
   color : var(--color-accentuationBleuClair) !important;
   font-weight: 300 !important;
+}
+
+
+/***************** Page de profil *******************/
+
+.borderProfil{
+  border-width: 2px !important;
+  border-color: var(--color-accentuationBleu) !important;
 }

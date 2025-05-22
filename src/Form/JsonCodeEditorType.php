@@ -14,19 +14,14 @@ class JsonCodeEditorType extends AbstractType
     {
         $builder->addModelTransformer(new CallbackTransformer(
             function ($arrayToTransform) { // Model data (array) to form data (JSON string)
-                if (null === $arrayToTransform) {
+                if ($arrayToTransform === null) {
                     return ''; // Return empty string for null array
                 }
-                if (!is_array($arrayToTransform)) {
-                    // This case should ideally not happen if the entity property is typed as array
-                    // or if the previous transformer/getter ensures it's an array.
-                    // Returning empty string or json_encode([]) might be options.
-                    return '';
-                }
+
                 return json_encode($arrayToTransform, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
             },
             function ($stringToTransform) { // Form data (JSON string) to model data (array)
-                if (null === $stringToTransform || '' === trim($stringToTransform)) {
+                if ($stringToTransform === null ||  trim($stringToTransform) === '') {
                     return null; // Or [] if your entity expects an empty array for empty JSON
                 }
                 $decoded = json_decode($stringToTransform, true);

@@ -18,8 +18,11 @@ final class AccountController extends AbstractController
     public function index(): Response
     {
 
+        $user = $this->getUser();
+
         return $this->render('account/index.html.twig', [
             'pageTitle' => 'Mon compte',
+            'user' => $user,
 
         ]);
     }
@@ -54,6 +57,7 @@ final class AccountController extends AbstractController
                 'Votre mot de passe a été modifié avec succès !'
             );
         }
+
 
         return $this->render('account/password.html.twig', [
             'modifyPwd' => $form->createView(),
