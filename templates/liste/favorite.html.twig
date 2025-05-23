@@ -340,14 +340,10 @@
       ".btnOuiShowHistoryDetails"
     );
 
+    //changement de la couleur des étoiles en fonction de la note
     ratings.forEach((rating) => {
       changeStarColor(rating);
     });
-
-    // Appeler à différents moments clés
-    /* equalizeColumnHeights(); // Une première fois au chargement du DOM
-    window.addEventListener("load", equalizeColumnHeights);
-    window.addEventListener("resize", equalizeColumnHeights); */
 
     addedAtShow.textContent =
       "Ajouté le : " + filmInList[0].querySelector(".addedAt").textContent;

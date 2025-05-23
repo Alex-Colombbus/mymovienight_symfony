@@ -65,11 +65,53 @@ class FilmFiltre
 
     #[ORM\OneToMany(targetEntity: ListFilm::class, mappedBy: 'tconst', orphanRemoval: true)]
     private Collection $listFilms;
+    #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'filmFiltres')]
+    #[ORM\JoinTable(name: 'film_genre')] // Nom de la table de jointure
+    #[ORM\JoinColumn(name: 'film_tconst', referencedColumnName: 'tconst')] // Clé étrangère vers FilmFiltre
+    #[ORM\InverseJoinColumn(name: 'genre_id', referencedColumnName: 'id')] // Clé étrangère vers Genre
+    private Collection $genresCollection; // Nouveau nom pour éviter la confusion, ou gardez 'genres'
 
     public function __construct()
     {
         $this->listFilms = new ArrayCollection();
+        $this->genresCollection = new ArrayCollection();
     }
+
+    // ... autres getters/setters ...
+
+    /**
+     * @return Collection<int, Genre>
+     */
+    public function getGenresCollection(): Collection
+    {
+        return $this->genresCollection;
+    }
+
+    public function addGenre(Genre $genre): static
+    {
+        if (!$this->genresCollection->contains($genre)) {
+            $this->genresCollection->add($genre);
+            // Si vous voulez que la relation soit bidirectionnelle et gérée ici :
+            // $genre->addFilmFiltre($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGenre(Genre $genre): static
+    {
+        if ($this->genresCollection->removeElement($genre)) {
+            // Si vous voulez que la relation soit bidirectionnelle et gérée ici :
+            // $genre->removeFilmFiltre($this);
+        }
+
+        return $this;
+    }
+
+    // Supprimez les anciens getGenres/setGenres pour la chaîne de caractères
+
+
+
 
     public function __toString(): string
     {

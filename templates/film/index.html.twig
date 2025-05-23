@@ -135,6 +135,7 @@ endblock %} {% block main %}
 </div>
 
 <script>
+
   document.addEventListener('DOMContentLoaded', function () {
     // Récupérer la variable PHP encodée en JSON par Twig
     // Le filtre |json_encode s'occupe de la conversion et de l'échappement.
@@ -142,21 +143,30 @@ endblock %} {% block main %}
     let films = [];
     films = {{ films|json_encode|raw }};
     console.log(films);
+    // films est un tableau d'objets
+    // page représente l'index du film actuellement affiché
+    let page = 0;
 
     let titleFilm = document.querySelector('.titleFilm');
-    titleFilm.textContent = films[0].title;
+    titleFilm.textContent = films[page].title;
+
+    // On remplace le src de l'image par l'url de l'affiche du film
     let posterFilm = document.querySelector('.posterFilm');
-    posterFilm.src = (films[0].posterPath !== null) ? 'https://image.tmdb.org/t/p/original' + films[0].posterPath : "{{ asset('images/pas_de_poster.jpg') }}";
+    posterFilm.src = (films[page].posterPath !== null) ? 'https://image.tmdb.org/t/p/original' + films[page].posterPath : "{{ asset('images/pas_de_poster.jpg') }}";
+
     let infoFilm = document.querySelector('.infoFilm');
     //  /,/ selectionne la virgule, g signifie toutes les occurences et ", " est le caractère qui va remplacer la virgule
-    infoFilm.textContent = films[0].releaseDate + ' - ' + films[0].genres.replace(/,/g, ", ") + ' - ' + films[0].duration;
+    infoFilm.textContent = films[page].releaseDate + ' - ' + films[page].genres.replace(/,/g, ", ") + ' - ' + films[page].duration;
+
     let synopsis = document.querySelector('.synopsisFilm');
-    synopsis.textContent = films[0].synopsis;
+    synopsis.textContent = films[page].synopsis;
 
     let importantCrew = document.querySelector('.importantCrew');
-    let importantCrewObjet = films[0].importantCrew;
-    let page = 0;
-    let filmToList = films[0];
+    let importantCrewObjet = films[page].importantCrew;
+    // On appelle la fonction getImportantCrew pour afficher les membres de l'équipe
+    getImportantCrew(importantCrewObjet);
+    
+    let filmToList = films[page];
     let bouttonSendListFav = document.querySelector('#sendDataListFav');
     let bouttonSendListRef = document.querySelector('#sendDataListRef');
     let iconeHeart = document.querySelector('#iconeHeart');
@@ -167,7 +177,7 @@ endblock %} {% block main %}
 
 
 
-    getImportantCrew(importantCrewObjet);
+    
 
     function getImportantCrew(importantCrewObjet) {
       importantCrew.innerHTML = ''
@@ -244,10 +254,8 @@ endblock %} {% block main %}
     let buttonPrecedent = document.querySelector('.bouttonPrecedent');
     buttonPrecedent.classList.add('invisible');
 
-
-
-    buttonPrecedent.addEventListener('click', () => {
-      if (iconeHeart && iconeHeart.classList.contains('bi-heart-fill')) {
+buttonPrecedent.addEventListener('click', () => {
+  if (iconeHeart && iconeHeart.classList.contains('bi-heart-fill')) {
     films.splice(page, 1);
     iconeHeart.classList.remove('bi-heart-fill');
     iconeHeart.classList.add('bi-heart');
@@ -261,25 +269,25 @@ endblock %} {% block main %}
     if (bouttonSendListFav) bouttonSendListFav.disabled = false;
   }
 
-      page--;
-      titleFilm.textContent = films[page].title;
-      infoFilm.textContent = films[page].releaseDate + ' - ' + films[page].genres.replace(/,/g, ", ") + ' - ' + films[page].duration;
-      posterFilm.src = (films[page].posterPath !== null) ? 'https://image.tmdb.org/t/p/original' + films[page].posterPath : "{{ asset('images/pas_de_poster.jpg') }}";
-      synopsis.textContent = films[page].synopsis;
-      importantCrewObjet = films[page].importantCrew;
-      actors = films[page].actors;
-      bouttonSuivant.classList.remove('invisible');
-      filmToList = films[page];
+  page--;
+  titleFilm.textContent = films[page].title;
+  infoFilm.textContent = films[page].releaseDate + ' - ' + films[page].genres.replace(/,/g, ", ") + ' - ' + films[page].duration;
+  posterFilm.src = (films[page].posterPath !== null) ? 'https://image.tmdb.org/t/p/original' + films[page].posterPath : "{{ asset('images/pas_de_poster.jpg') }}";
+  synopsis.textContent = films[page].synopsis;
+  importantCrewObjet = films[page].importantCrew;
+  actors = films[page].actors;
+  bouttonSuivant.classList.remove('invisible');
+  filmToList = films[page];
 
-      getImportantCrew(importantCrewObjet);
-      getActorsFilm(actors, actorsFilm);
+  getImportantCrew(importantCrewObjet);
+  getActorsFilm(actors, actorsFilm);
 
-      getRating(imdbRating, tmdbRating, page);
+  getRating(imdbRating, tmdbRating, page);
 
-      if (page === 0) {
-        buttonPrecedent.classList.add('invisible');
-      }
-    });
+  if (page === 0) {
+    buttonPrecedent.classList.add('invisible');
+  }
+});
 
 
     let bouttonSuivant = document.querySelector('.bouttonSuivant');
@@ -388,20 +396,19 @@ endblock %} {% block main %}
     bouttonSendListFav.addEventListener('click', () => {
       // Désactiver le bouton pendant l'envoi pour éviter double-clic
       bouttonSendListFav.disabled = true;
-
       // Récuperation des données
       let dataToSend = filmToList;
-
+      //visualisation des données envoyées pour le debug
       console.log('Donnees envoyees :', dataToSend);
 
       if (iconeHeart.classList.contains('bi-heart')) {
-        // --- Requête AJAX avec Fetch API (JavaScript moderne) ---
-        fetch('{{ path('app_save_data') }}', { // Utilise la route Symfony
+        // --- Requête AJAX avec Fetch API  ---
+        fetch('{{ path('app_save_data') }}', { 
           method: 'POST',
           headers: {
             'Content-Type': 'application/json', // Indique qu'on envoie du JSON
             'Accept': 'application/json', // Indique qu'on attend du JSON en retour
-            'X-CSRF-TOKEN': '{{ csrf_token('save_favorite') }}'
+            'X-CSRF-TOKEN': '{{ csrf_token('save_favorite') }}' // Token CSRF pour la sécurité
           },
           body: JSON.stringify(dataToSend)
         })
@@ -422,10 +429,9 @@ endblock %} {% block main %}
               showMessage('success', data.message);
               console.log('Succès:', data.message);
               // --- Changer l'apparence du bouton ---
-              iconeHeart.classList.remove('bi-heart'); // Enlever l'ancienne classe
-              iconeHeart.classList.add('bi-heart-fill'); // Ajouter nouvelle classe (ex: Bootstrap vert)=
-              // Optionnel: Garder le bouton désactivé ou le réactiver après un délai
-              bouttonSendListFav.disabled = false; // Réactiver si besoin
+              iconeHeart.classList.remove('bi-heart'); // Enlever l'ancienne classe d'incone
+              iconeHeart.classList.add('bi-heart-fill'); // Ajouter la nouvelle icone pour montrer que l'ajout a été fait
+              bouttonSendListFav.disabled = false; // Réactiver le bouton à la fin
             } else {
               // Gérer le cas où le serveur retourne un statut 'error' même avec HTTP 200 (moins courant)
               throw new Error(data.message || 'Une erreur logique est survenue.');

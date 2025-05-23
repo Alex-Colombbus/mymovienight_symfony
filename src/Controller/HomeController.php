@@ -66,7 +66,7 @@ final class HomeController extends AbstractController
         if (!$session->has('minRating') || !$session->has('maxRating') || !$session->has('minYear') || !$session->has('maxYear')) {
             return $this->redirectToRoute('app_home');
         }
-        
+
         $genresArray = $session->get('genresArray');
         $minRating = $session->get('minRating');
         $maxRating = $session->get('maxRating');

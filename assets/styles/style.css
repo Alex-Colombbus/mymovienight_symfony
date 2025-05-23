@@ -19,7 +19,9 @@
   color: var(--color-accentuationBleuClair);
 } 
 
+
 *{
+  list-style: none;
   margin: 0;
   padding: 0;
   box-sizing: border-box; /* Bonne pratique */
@@ -207,10 +209,6 @@ input[type=number]::-webkit-inner-spin-button {
 
 
 
-*{
-  list-style: none;
-  /* box-sizing: border-box; /* Bonne pratique */
-}
 
 a{
   text-decoration: none;
@@ -221,19 +219,19 @@ h1{
   font-family: Nunito Sans, serif;
   letter-spacing: -3px;
   font-size: 5rem !important;
-  color: var(--color-accentuationBleu); /* Assurez-vous que la couleur du texte est définie */
-  text-align: center; /* Centrer le h1 */
-  text-shadow: 0.5rem 0.5rem 0.7rem rgba(0, 0, 0, 0.2); /* Ombre sur le texte */
+  color: var(--color-accentuationBleu); 
+  text-align: center; 
+  text-shadow: 0.5rem 0.5rem 0.7rem rgba(0, 0, 0, 0.2); 
 }
 
 @media (max-width: 768px) {
   h1 {
-    font-size: 3rem !important; /* Réduire la taille du texte sur mobile */
+    font-size: 3rem !important;
   }
 }
 
 .navIndex{
-  min-height: 20vh; /* Utilisez peut-être min-height pour flexibilité */
+  min-height: 20vh; 
  
 }
 
@@ -241,13 +239,13 @@ label{
   color: var(--color-accentuationBleuClair);
 }
 
-
+/*  */
 .mainIndex{
   height: 60vh;
   display: flex; 
   flex-direction: column;
   align-items: center; 
-  padding-top: 20px; /* Un peu d'espace en haut */
+  padding-top: 20px; 
   background-color: var(--color-backgroundBlanc);
 }
 
