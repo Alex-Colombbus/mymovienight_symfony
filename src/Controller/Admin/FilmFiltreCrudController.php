@@ -47,7 +47,12 @@ class FilmFiltreCrudController extends AbstractCrudController
             BooleanField::new('isAdult', 'Film pour adultes'),
             NumberField::new('startYear', 'Année de début'),
             NumberField::new('runtimeMinutes', 'Durée (minutes)'),
-            TextField::new('genres', 'Genres (genre,genre,genre)')->hideOnIndex(),
+            AssociationField::new('genresCollection')
+                ->setLabel('Genres')
+                ->setFormTypeOptions([
+                    'multiple' => true,
+                    'by_reference' => false,
+                ]),
             NumberField::new('averageRating', 'Note moyenne'),
             NumberField::new('tmdbRating', 'Note TMDB')->hideOnIndex(),
             NumberField::new('numVotes', 'Nombre de votes')->hideOnIndex(),

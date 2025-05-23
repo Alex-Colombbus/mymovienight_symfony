@@ -146,7 +146,18 @@ class TmdbFilmInfo
 
             $filmFiltreBDD = $this->filmFiltreRepository->find($this->tconst);
             if ($filmFiltreBDD) {
-                $this->genres = $filmFiltreBDD->getGenres();
+                // Récupération des genres via la nouvelle relation ManyToMany
+                $genresCollection = $filmFiltreBDD->getGenresCollection();
+                if (!$genresCollection->isEmpty()) {
+                    $genreNames = [];
+                    foreach ($genresCollection as $genre) {
+                        $genreNames[] = $genre->getName();
+                    }
+                    $this->genres = implode(', ', $genreNames);
+                } else {
+                    $this->genres = null;
+                }
+
                 $this->imdbRating = $filmFiltreBDD->getAverageRating();
             } else {
                 $this->logger->info('TmdbFilmInfo: Film non trouvé dans FilmFiltreRepository pour tconst: ' . $this->tconst);

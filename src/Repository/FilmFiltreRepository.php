@@ -47,27 +47,25 @@ class FilmFiltreRepository extends ServiceEntityRepository
 
         $conn = $this->getEntityManager()->getConnection();
         $params = []; // Pour stocker les paramètres de la requête
-        // Construction de la requête de base
-        $sql = 'SELECT f.tconst FROM film_filtre f WHERE 1=1'; // 1=1 est une astuce pour simplifier l'ajout de conditions
 
-        // Gestion des genres: $genresArray est non vide à ce stade (garanti par HomeController)
-        $genreConditions = [];
-        foreach ($genresArray as $key => $genre) {
+        // Construction de la requête de base avec JOIN sur les nouvelles tables
+        $sql = 'SELECT DISTINCT f.tconst FROM film_filtre f 
+                INNER JOIN film_genre fg ON f.tconst = fg.film_tconst 
+                INNER JOIN genre g ON fg.genre_id = g.id 
+                WHERE 1=1';
 
-            $paramName = 'genre' . $key;
-            // Ajoute une condition LIKE pour ce genre.
-            // Utilisation de CONCAT(',', f.genres, ',') et '%,genre,%'
-            // pour une correspondance exacte du mot/genre.
-            // Les genres dans les films sont stockés sour forme : "Action,Aventure"
-            //pour que la recherche fonctionne, on concatène une virgule avant et après.
-            // ce qui donne : ",Action,Aventure," et non permet de chercher un genre en utilisant LIKE : "%,Action,%" alors qu'avant on aurait pas pu le trouver.
-            $genreConditions[] = "CONCAT(',', f.genres, ',') LIKE :" . $paramName;
-            $params[$paramName] = '%,' . $genre . ',%';
+        // Gestion des genres avec la nouvelle structure
+        if (!empty($genresArray)) {
+            $genreConditions = [];
+            foreach ($genresArray as $key => $genre) {
+                $paramName = 'genre' . $key;
+                $genreConditions[] = 'g.nom = :' . $paramName;
+                $params[$paramName] = $genre;
+            }
+            $sql .= ' AND (' . implode(' OR ', $genreConditions) . ')';
         }
 
-        $sql .= ' AND (' . implode(' OR ', $genreConditions) . ')';
-
-        // Ajout des autres filtres et de leurs paramètres
+        // Ajout des autres filtres
         if ($minRating !== null && $minRating !== '') {
             $sql .= ' AND f.average_rating >= :minRating';
             $params['minRating'] = (float)$minRating;
@@ -84,14 +82,14 @@ class FilmFiltreRepository extends ServiceEntityRepository
             $sql .= ' AND f.start_year <= :maxYear';
             $params['maxYear'] = (int)$maxYear;
         }
-        // Permet de selectionner les films ayant plus de 10 000 votes
+
+        // Filtre sur le nombre de votes
         $sql .= ' AND f.num_votes > 10000';
 
-        // On tire 40 films au hasard
+        // Ordre aléatoire et limite
         $sql .= ' ORDER BY RAND() LIMIT 40';
 
         $stmt = $conn->executeQuery($sql, $params);
-        // Récupération des résultats sous forme de tableau associatif
         return $stmt->fetchAllAssociative();
     }
 

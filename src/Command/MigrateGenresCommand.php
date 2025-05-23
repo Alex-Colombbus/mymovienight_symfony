@@ -62,10 +62,10 @@ class MigrateGenresCommand extends Command
         $genreMap = []; // Pour mapper nom de genre -> objet Genre ou ID
 
         foreach ($uniqueGenreNames as $originalGenreName) {
-            $existingGenre = $genreRepo->findOneBy(['nom' => $originalGenreName]);
+            $existingGenre = $genreRepo->findOneBy(['name' => $originalGenreName]);
             if (!$existingGenre) {
                 $newGenre = new Genre();
-                $newGenre->setNom($originalGenreName);
+                $newGenre->setName($originalGenreName);
                 $this->entityManager->persist($newGenre);
                 $io->writeln(sprintf('Creating genre: %s', $originalGenreName));
             } else {
@@ -79,7 +79,7 @@ class MigrateGenresCommand extends Command
         // Re-fetch tous les genres pour avoir une map nom -> id propre
         $allPersistedGenres = $genreRepo->findAll();
         foreach ($allPersistedGenres as $persistedGenre) {
-            $genreMap[strtolower(trim($persistedGenre->getNom()))] = $persistedGenre->getId();
+            $genreMap[strtolower(trim($persistedGenre->getName()))] = $persistedGenre->getId();
         }
         $io->success('`genre` table populated/checked.');
 

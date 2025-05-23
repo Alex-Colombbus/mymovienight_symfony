@@ -12,7 +12,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 #[ORM\Table(name: 'film_filtre')]
 #[ORM\Index(name: 'idx_title', columns: ['title'])]
 #[ORM\Index(name: 'idx_start_year', columns: ['start_year'])]
-#[ORM\Index(name: 'idx_genres', columns: ['genres'])]
 #[ORM\Index(name: 'idx_average_rating', columns: ['average_rating'])]
 #[ORM\Index(name: 'idx_num_votes', columns: ['num_votes'])]
 #[ORM\Index(name: 'idx_title_type', columns: ['title_type'])]
@@ -51,8 +50,6 @@ class FilmFiltre
     #[ORM\Column(nullable: true)]
     private ?int $runtimeMinutes = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $genres = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 3, scale: 1, nullable: true)]
     private ?string $averageRating = null;
@@ -87,27 +84,29 @@ class FilmFiltre
         return $this->genresCollection;
     }
 
+    public function setGenresCollection(Collection $genresCollection): static
+    {
+        $this->genresCollection = $genresCollection;
+        return $this;
+    }
+
     public function addGenre(Genre $genre): static
     {
         if (!$this->genresCollection->contains($genre)) {
             $this->genresCollection->add($genre);
-            // Si vous voulez que la relation soit bidirectionnelle et gérée ici :
-            // $genre->addFilmFiltre($this);
+            $genre->addFilmFiltre($this);
         }
-
         return $this;
     }
+
 
     public function removeGenre(Genre $genre): static
     {
         if ($this->genresCollection->removeElement($genre)) {
-            // Si vous voulez que la relation soit bidirectionnelle et gérée ici :
-            // $genre->removeFilmFiltre($this);
+            $genre->removeFilmFiltre($this);
         }
-
         return $this;
     }
-
     // Supprimez les anciens getGenres/setGenres pour la chaîne de caractères
 
 
@@ -116,6 +115,20 @@ class FilmFiltre
     public function __toString(): string
     {
         return $this->title ?? 'Film sans titre'; // Retourne le titre du film ou un texte par défaut
+    }
+
+    public function getGenresAsString(): ?string
+    {
+        if ($this->genresCollection->isEmpty()) {
+            return null;
+        }
+
+        $genreNames = [];
+        foreach ($this->genresCollection as $genre) {
+            $genreNames[] = $genre->getName();
+        }
+
+        return implode(', ', $genreNames);
     }
 
     /**
@@ -204,17 +217,6 @@ class FilmFiltre
         return $this;
     }
 
-    public function getGenres(): ?string
-    {
-        return $this->genres;
-    }
-
-    public function setGenres(string $genres): static
-    {
-        $this->genres = $genres;
-
-        return $this;
-    }
 
     public function getAverageRating(): ?string
     {

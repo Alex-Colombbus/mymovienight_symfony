@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250523125923 extends AbstractMigration
+final class Version20250523211553 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,10 +21,16 @@ final class Version20250523125923 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            ALTER TABLE film_filtre ADD PRIMARY KEY (tconst)
+            CREATE TABLE genre (id INT AUTO_INCREMENT NOT NULL, nom VARCHAR(255) NOT NULL, UNIQUE INDEX UNIQ_835033F86C6E55B5 (nom), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
         SQL);
         $this->addSql(<<<'SQL'
-            CREATE UNIQUE INDEX UNIQ_835033F86C6E55B5 ON genre (nom)
+            ALTER TABLE film_genre ADD PRIMARY KEY (film_tconst, genre_id)
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE film_genre ADD CONSTRAINT FK_1A3CCDA8E667408C FOREIGN KEY (film_tconst) REFERENCES film_filtre (tconst)
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE film_genre ADD CONSTRAINT FK_1A3CCDA84296D31F FOREIGN KEY (genre_id) REFERENCES genre (id)
         SQL);
         $this->addSql(<<<'SQL'
             ALTER TABLE list_film ADD CONSTRAINT FK_C78A61CB990DC2FF FOREIGN KEY (tconst_id) REFERENCES film_filtre (tconst)
@@ -41,7 +47,16 @@ final class Version20250523125923 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            DROP INDEX UNIQ_835033F86C6E55B5 ON genre
+            ALTER TABLE film_genre DROP FOREIGN KEY FK_1A3CCDA84296D31F
+        SQL);
+        $this->addSql(<<<'SQL'
+            DROP TABLE genre
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE film_genre DROP FOREIGN KEY FK_1A3CCDA8E667408C
+        SQL);
+        $this->addSql(<<<'SQL'
+            DROP INDEX `primary` ON film_genre
         SQL);
         $this->addSql(<<<'SQL'
             ALTER TABLE list_film DROP FOREIGN KEY FK_C78A61CB990DC2FF
@@ -51,9 +66,6 @@ final class Version20250523125923 extends AbstractMigration
         SQL);
         $this->addSql(<<<'SQL'
             DROP INDEX unique_film_in_list ON list_film
-        SQL);
-        $this->addSql(<<<'SQL'
-            DROP INDEX `primary` ON film_filtre
         SQL);
     }
 }

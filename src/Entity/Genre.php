@@ -16,9 +16,9 @@ class Genre
     private ?int $id = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    private ?string $nom = null;
+    private ?string $name = null;
 
-    #[ORM\ManyToMany(targetEntity: FilmFiltre::class, mappedBy: 'genres')]
+    #[ORM\ManyToMany(targetEntity: FilmFiltre::class, mappedBy: 'genresCollection')]
     private Collection $filmFiltres;
 
     public function __construct()
@@ -26,19 +26,24 @@ class Genre
         $this->filmFiltres = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return $this->name ?? 'Genre sans nom';
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getNom(): ?string
+    public function getName(): ?string
     {
-        return $this->nom;
+        return $this->name;
     }
 
-    public function setNom(string $nom): static
+    public function setName(string $name): static
     {
-        $this->nom = $nom;
+        $this->name = $name;
 
         return $this;
     }

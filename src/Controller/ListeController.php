@@ -33,6 +33,7 @@ final class ListeController extends AbstractController
         // Récupérer tous les ListFilm associés à cette liste
         $listFilms = $entityManager->getRepository(ListFilm::class)->findBy(['liste' => $liste]);
 
+
         foreach ($listFilms as $listFilm) {;
             $film = $entityManager->getRepository(FilmFiltre::class)->findOneBy(['tconst' => $listFilm->getTconst()]);
 
@@ -42,7 +43,7 @@ final class ListeController extends AbstractController
                     'title' => $film->getTitle(),
                     'posterPath' => $film->getPosterPath(),
                     'synopsis' => $film->getSynopsis(),
-                    'genres' => $film->getGenres(),
+                    'genres' => $film->getGenresAsString(),
                     'runtimeMinutes' => $film->getRuntimeMinutes(),
                     'averageRating' => $film->getAverageRating(),
                     'addedAt' => $listFilm->getAddedAt()->format('d/m/Y'),
@@ -92,7 +93,7 @@ final class ListeController extends AbstractController
                     'title' => $film->getTitle(),
                     'posterPath' => $film->getPosterPath(),
                     'synopsis' => $film->getSynopsis(),
-                    'genres' => $film->getGenres(),
+                    'genres' => $film->getGenresAsString(),
                     'runtimeMinutes' => $film->getRuntimeMinutes(),
                     'averageRating' => $film->getAverageRating(),
                     'addedAt' => $listFilm->getAddedAt()->format('d/m/Y'),
@@ -137,13 +138,14 @@ final class ListeController extends AbstractController
         foreach ($listFilms as $listFilm) {;
             $film = $entityManager->getRepository(FilmFiltre::class)->findOneBy(['tconst' => $listFilm->getTconst()]);
 
+
             if ($film) {
                 $listToDisplay[] = [
                     'tconst' => $film->getTconst(),
                     'title' => $film->getTitle(),
                     'posterPath' => $film->getPosterPath(),
                     'synopsis' => $film->getSynopsis(),
-                    'genres' => $film->getGenres(),
+                    'genres' => $film->getGenresAsString(),
                     'runtimeMinutes' => $film->getRuntimeMinutes(),
                     'averageRating' => $film->getAverageRating(),
                     'addedAt' => $listFilm->getAddedAt()->format('d/m/Y'),

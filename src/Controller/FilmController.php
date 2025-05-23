@@ -21,6 +21,7 @@ final class FilmController extends AbstractController
         $filmListFromSession = $session->get('films');
         // Récupère l'utilisateur actuellement connecté (peut être null si non connecté)
         $user = $this->getUser();
+        // Ligne de débogage
 
         // Tableau pour stocker les données des films enrichies à afficher
         $filmsForDisplay = [];

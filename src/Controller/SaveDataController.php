@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Liste;
+use App\Entity\Genre;
 use App\Entity\ListFilm;
 use App\Entity\FilmFiltre;
 use Doctrine\ORM\EntityManagerInterface;
@@ -112,11 +113,7 @@ final class SaveDataController extends AbstractController
                 }
             }
 
-            if (isset($data['genres']) && $filmFiltre->getGenres() === null) {
-                if (is_string($data['genres'])) { // Genres is string in entity
-                    $filmFiltre->setGenres($data['genres']);
-                }
-            }
+
 
             // Correction pour le type des acteurs : conversion d'un tableau en chaîne de caractères
             if (isset($data['actors']) && $filmFiltre->getActors() === null) {
@@ -317,11 +314,6 @@ final class SaveDataController extends AbstractController
                 }
             }
 
-            if (isset($data['genres']) && $filmFiltre->getGenres() === null) {
-                if (is_string($data['genres'])) { // Genres is string in entity
-                    $filmFiltre->setGenres($data['genres']);
-                }
-            }
 
             // Correction pour le type des acteurs
             if (isset($data['actors']) && $filmFiltre->getActors() === null) {

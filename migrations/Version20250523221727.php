@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250522102114 extends AbstractMigration
+final class Version20250523221727 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,7 +21,10 @@ final class Version20250522102114 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            CREATE UNIQUE INDEX UNIQ_8D93D649F85E0677 ON user (username)
+            DROP INDEX idx_genres ON film_filtre
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE film_filtre DROP genres
         SQL);
     }
 
@@ -29,7 +32,10 @@ final class Version20250522102114 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            DROP INDEX UNIQ_8D93D649F85E0677 ON user
+            ALTER TABLE film_filtre ADD genres VARCHAR(255) DEFAULT NULL
+        SQL);
+        $this->addSql(<<<'SQL'
+            CREATE INDEX idx_genres ON film_filtre (genres)
         SQL);
     }
 }
