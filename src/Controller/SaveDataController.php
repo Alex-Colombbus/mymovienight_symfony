@@ -29,19 +29,14 @@ final class SaveDataController extends AbstractController
         // Décodage des données JSON de la requête
         $data = json_decode($request->getContent(), true);
         $user = $this->getUser();
-
-        // Récupérer le token CSRF depuis l'en-tête de la requête
+        // Récupération du token CSRF depuis l'en-tête de la requête
         $submittedToken = $request->headers->get('X-CSRF-TOKEN');
-
         // Valider le token CSRF
         // L'identifiant 'save_favorite' doit correspondre à celui utilisé dans Twig
         if (!$this->isCsrfTokenValid('save_favorite', $submittedToken)) {
             return new JsonResponse(['status' => 'error', 'message' => 'CSRF token invalide.'], Response::HTTP_FORBIDDEN);
         }
-
         $content = $request->getContent(); // Get the raw request body
-
-        // *** Add logging here to see the raw content ***
         error_log('SaveDataController: Raw Content Received: ' . $content);
 
         // S'assurer que l'utilisateur est authentifié
@@ -414,10 +409,17 @@ final class SaveDataController extends AbstractController
      * Ajoute le film à "Historique des films" s'il n'y est pas déjà.
      * Affiche des messages flash pour informer l'utilisateur et redirige vers la liste des favoris.
      */
-    #[Route('/save/data_history/{tconst}', name: 'app_save_data_history', methods: ['GET'])]
-    public function addToFilmListeHistory(string $tconst, EntityManagerInterface $entityManager): Response
+    #[Route('/save/data_history/{tconst}', name: 'app_save_data_history', methods: ['POST'])]
+    public function addToFilmListeHistory(string $tconst, EntityManagerInterface $entityManager, Request $request): Response
     {
         $user = $this->getUser();
+
+        // Validation du token CSRF
+        $submittedToken = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('add_history_' . $tconst, $submittedToken)) {
+            $this->addFlash('error', 'Token CSRF invalide.');
+            return $this->redirectToRoute('app_liste_favorites');
+        }
 
         // Recherche ou création de la liste "Historique des films"
         $listeHistory = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Historique des films']);

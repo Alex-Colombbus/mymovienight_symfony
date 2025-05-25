@@ -22,36 +22,31 @@ final class HomeController extends AbstractController
         $genresArray = [];
         $films = null;
 
-
-
         if ($request->isMethod('POST')) {
-
-            $minRating = $request->request->get('minNote'); // 'nom_utilisateur' est la valeur de l'attribut 'name' de l'input
+            // Récupération des données du formulaire
+            $minRating = $request->request->get('minNote');
             $maxRating = $request->request->get('maxNote');
-
             $genresArray = $request->request->all('genres') ?? []; // Récupère les genres sous forme de tableau
-
-            // Convertit le tableau en chaîne de caractères séparée par des virgules
-
             $minYear = $request->request->get('minAnnee');
             $maxYear = $request->request->get('maxAnnee');
 
+            //garde les informations dans la session si l'utilisateur demande plus de films de la même recherche
             $session->set('minRating', $minRating);
             $session->set('maxRating', $maxRating);
             $session->set('minYear', $minYear);
             $session->set('maxYear', $maxYear);
             $session->set('genresArray', $genresArray);
 
+            // Choix de la requête en fonction des genres sélectionnés
             if (empty($genresArray)) {
-                // dd("test");
                 $films = $filmFiltreRepository->findMoviesAllGenres($minRating, $maxRating, $minYear, $maxYear);
                 $session->set('films', $films);
+                // envois les donnés des films sur la page des films
                 return $this->redirectToRoute('app_film');
             } else {
-                // $genres = implode('%', $genresArray);
-                // dd($genres);
                 $films = $filmFiltreRepository->findMoviesWithGenres($genresArray, $minRating, $maxRating, $minYear, $maxYear);
                 $session->set('films', $films);
+                // envois les donnés des films sur la page des films
                 return $this->redirectToRoute('app_film');
             }
         }

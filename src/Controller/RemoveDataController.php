@@ -37,63 +37,63 @@ final class RemoveDataController extends AbstractController
 
 
 
-        // Ensure user is authenticated
+        // S'assurer que l'utilisateur est authentifié
         if (!$user instanceof UserInterface) {
             return new JsonResponse(['status' => 'error', 'message' => 'Veuillez vous authentifier.'], Response::HTTP_UNAUTHORIZED); // 401 Unauthorized
         }
 
-        // Basic validation for tconst (route parameter guarantees it exists, but check content)
+        // Validation de base pour tconst (le paramètre de route garantit qu'il existe, mais vérifier le contenu)
         if (empty($tconst)) {
-            // This shouldn't happen if the route is configured correctly, but defensive check
+            // Cela ne devrait pas arriver si la route est configurée correctement, mais vérification défensive
             error_log('SaveDataController REMOVE failed: tconst route parameter is empty.');
             return new JsonResponse(['status' => 'error', 'message' => 'Tconst est non valide ou manquant.'], Response::HTTP_BAD_REQUEST); // 400 Bad Request
         }
 
 
         try {
-            // 1. Find the user's list
+            // 1. Trouver la liste de l'utilisateur
             $liste = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Ma liste']);
 
 
 
-            // 2. Find the specific ListFilm entry to remove
+            // 2. Trouver l'entrée ListFilm spécifique à supprimer
 
-            // Find the FilmFiltre entity first, as ListFilm's 'tconst' property is a relation to FilmFiltre
+            // Trouver d'abord l'entité FilmFiltre, car la propriété 'tconst' de ListFilm est une relation vers FilmFiltre
             $filmFiltre = $entityManager->getRepository(FilmFiltre::class)->find($tconst);
 
             if (!$filmFiltre) {
-                // FilmFiltre entity not found for this tconst. Cannot remove if the master film doesn't exist.
-                error_log('SaveDataController REMOVE info: FilmFiltre not found for tconst ' . $tconst . ' for user ' . $user->getId());
+                // Entité FilmFiltre non trouvée pour ce tconst. Impossible de supprimer si le film principal n'existe pas.
+                error_log('SaveDataController REMOVE info: FilmFiltre non trouvé pour ' . $tconst . '.');
                 return new JsonResponse(['status' => 'info', 'message' => 'Film non trouvé dans la base de données.'], Response::HTTP_NOT_FOUND); // 404 Not Found
             }
 
-            // Now find the ListFilm linking this user's list and this specific film entity
+            // Maintenant trouver le ListFilm qui lie la liste de cet utilisateur et cette entité film spécifique
             $listFilm = $entityManager->getRepository(ListFilm::class)->findOneBy([
-                'liste' => $liste, // Use the Liste entity
-                'tconst' => $filmFiltre, // Use the FilmFiltre entity
+                'liste' => $liste, // Utiliser l'entité Liste
+                'tconst' => $filmFiltre, // Utiliser l'entité FilmFiltre
             ]);
 
 
-            // 3. If the ListFilm entry is found, remove it
+            // 3. Si l'entrée ListFilm est trouvée, la supprimer
             if ($listFilm) {
-                $entityManager->remove($listFilm); // Mark for removal
-                $entityManager->flush(); // Execute the removal
+                $entityManager->remove($listFilm); // Marquer pour suppression
+                $entityManager->flush(); // Exécuter la suppression
 
-                error_log('SaveDataController REMOVE success: Film removed for user ' . $user->getId() . ' tconst ' . $tconst);
+                error_log('SaveDataController REMOVE success: Film retiré' . $tconst .  '.');
                 return new JsonResponse(['status' => 'success', 'message' => 'Film retiré de votre liste de favoris.'], Response::HTTP_OK); // 200 OK or 204 No Content
 
             } else {
-                // The ListFilm entry was not found (film wasn't in the list)
-                error_log('SaveDataController REMOVE info: ListFilm not found for user ' . $user->getId() . ' tconst ' . $tconst . ' (was not in list?)');
+                // L'entrée ListFilm n'a pas été trouvée (le film n'était pas dans la liste)
+                error_log('SaveDataController REMOVE info: ListFilm non trouvé ' . $tconst . '.');
                 return new JsonResponse(['status' => 'info', 'message' => 'Film non trouvé dans votre liste.'], Response::HTTP_NOT_FOUND); // 404 Not Found
             }
         } catch (\Exception $e) {
-            // Log unexpected errors
+            // Enregistrer les erreurs inattendues
             error_log('SaveDataController REMOVE unexpected error: ' . $e->getMessage() . ' - ' . $e->getTraceAsString());
             return new JsonResponse([
                 'status' => 'error',
-                'message' => 'An unexpected error occurred while trying to remove the film: ' . $e->getMessage(),
-                // Remove trace in production
+                'message' => 'Une erreur inattendue s\'est produite lors de la suppression du film : ' . $e->getMessage(),
+                // Supprimer la trace en production
                 'trace' => $e->getTraceAsString()
             ], Response::HTTP_INTERNAL_SERVER_ERROR); // 500 Internal Server Error
         }
@@ -118,83 +118,89 @@ final class RemoveDataController extends AbstractController
 
 
 
-        // Ensure user is authenticated
+        // S'assurer que l'utilisateur est authentifié
         if (!$user instanceof UserInterface) {
             return new JsonResponse(['status' => 'error', 'message' => 'Veuillez vous connnecter.'], Response::HTTP_UNAUTHORIZED); // 401 Unauthorized
         }
 
-        // Basic validation for tconst (route parameter guarantees it exists, but check content)
+        // Validation de base pour tconst (le paramètre de route garantit qu'il existe, mais vérifier le contenu)
         if (empty($tconst)) {
-            // This shouldn't happen if the route is configured correctly, but defensive check
+            // Cela ne devrait pas arriver si la route est configurée correctement, mais vérification défensive
             error_log('SaveDataController REMOVE failed: tconst route parameter is empty.');
             return new JsonResponse(['status' => 'error', 'message' => 'Tconst est non valide ou manquant.'], Response::HTTP_BAD_REQUEST); // 400 Bad Request
         }
 
 
         try {
-            // 1. Find the user's list
+            // 1. Trouver la liste de l'utilisateur
             $liste = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Liste de refus']);
 
 
 
-            // 2. Find the specific ListFilm entry to remove
+            // 2. Trouver l'entrée ListFilm spécifique à supprimer
 
-            // Find the FilmFiltre entity first, as ListFilm's 'tconst' property is a relation to FilmFiltre
+            // Trouver d'abord l'entité FilmFiltre, car la propriété 'tconst' de ListFilm est une relation vers FilmFiltre
             $filmFiltre = $entityManager->getRepository(FilmFiltre::class)->find($tconst);
 
             if (!$filmFiltre) {
-                // FilmFiltre entity not found for this tconst. Cannot remove if the master film doesn't exist.
-                error_log('SaveDataController REMOVE info: FilmFiltre not found for tconst ' . $tconst . ' for user ' . $user->getId());
+                // Entité FilmFiltre non trouvée pour ce tconst. Impossible de supprimer si le film principal n'existe pas.
+                error_log('SaveDataController REMOVE info: FilmFiltre not found for tconst ' . $tconst . '.');
                 return new JsonResponse(['status' => 'info', 'message' => 'Film non trouvé dans la base de données.'], Response::HTTP_NOT_FOUND); // 404 Not Found
             }
 
-            // Now find the ListFilm linking this user's list and this specific film entity
+            // Maintenant trouver le ListFilm qui lie la liste de cet utilisateur et cette entité film spécifique
             $listFilm = $entityManager->getRepository(ListFilm::class)->findOneBy([
-                'liste' => $liste, // Use the Liste entity
-                'tconst' => $filmFiltre, // Use the FilmFiltre entity
+                'liste' => $liste, // Utiliser l'entité Liste
+                'tconst' => $filmFiltre, // Utiliser l'entité FilmFiltre
             ]);
 
 
-            // 3. If the ListFilm entry is found, remove it
+            // 3. Si l'entrée ListFilm est trouvée, la supprimer
             if ($listFilm) {
-                $entityManager->remove($listFilm); // Mark for removal
-                $entityManager->flush(); // Execute the removal
+                $entityManager->remove($listFilm); // Marquer pour suppression
+                $entityManager->flush(); // Exécuter la suppression
 
-                error_log('SaveDataController REMOVE success: Film removed for user ' . $user->getId() . ' tconst ' . $tconst);
-                return new JsonResponse(['status' => 'success', 'message' => 'Film retirer de votre liste de refus.'], Response::HTTP_OK); // 200 OK or 204 No Content
+                error_log('SaveDataController REMOVE success: Film removed ' . $tconst . '.');
+                return new JsonResponse(['status' => 'success', 'message' => 'Film retiré de votre liste de refus.'], Response::HTTP_OK); // 200 OK or 204 No Content
 
             } else {
-                // The ListFilm entry was not found (film wasn't in the list)
-                error_log('SaveDataController REMOVE info: ListFilm not found for user ' . $user->getId() . ' tconst ' . $tconst . ' (was not in list?)');
+                // L'entrée ListFilm n'a pas été trouvée (le film n'était pas dans la liste)
+                error_log('SaveDataController REMOVE info: ListFilm not found for user ' . $tconst . '.');
                 return new JsonResponse(['status' => 'info', 'message' => 'Le film n\'est pas dans votre liste de refus.'], Response::HTTP_NOT_FOUND); // 404 Not Found
             }
         } catch (\Exception $e) {
-            // Log unexpected errors
+            // Enregistrer les erreurs inattendues
             error_log('SaveDataController REMOVE unexpected error: ' . $e->getMessage() . ' - ' . $e->getTraceAsString());
             return new JsonResponse([
                 'status' => 'error',
-                'message' => 'An unexpected error occurred while trying to remove the film: ' . $e->getMessage(),
-                // Remove trace in production
+                'message' => 'Une erreur inattendue s\'est produite lors de la suppression du film : ' . $e->getMessage(),
+                // Supprimer la trace en production
                 'trace' => $e->getTraceAsString()
             ], Response::HTTP_INTERNAL_SERVER_ERROR); // 500 Internal Server Error
         }
     }
-    // --- END NEW ACTION ---
 
-    #[Route('/remove/data/getRemove/{tconst}', name: 'app_remove_data_get_favorite', methods: ['GET'])]
-    public function removeFromFilmListe(string $tconst, EntityManagerInterface $entityManager): Response
+
+    #[Route('/remove/data/getRemove/{tconst}', name: 'app_remove_data_get_favorite', methods: ['POST'])]
+    public function removeFromFilmListe(string $tconst, EntityManagerInterface $entityManager, Request $request): Response
     {
+        //Vérification du token CSRF
+        $submittedToken = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('delete_favorite_' . $tconst, $submittedToken)) {
+            $this->addFlash('error', 'Token CSRF invalide.');
+            return $this->redirectToRoute('app_liste_favorites');
+        }
         $user = $this->getUser();
-        // $user will be a UserInterface object due to IsGranted. If using specific User methods, type cast or check.
+        // $user sera un objet UserInterface grâce à IsGranted. Si vous utilisez des méthodes User spécifiques, faites un cast ou vérifiez.
 
         $liste = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Ma liste']);
 
         if (!$liste) {
-            $this->addFlash('error', 'Your list ("Ma liste") could not be found.');
-            return $this->redirectToRoute('app_liste_favorites'); // Or a more appropriate route
+            $this->addFlash('error', 'Votre liste ("Ma liste") n\'a pas pu être trouvée.');
+            return $this->redirectToRoute('app_liste_favorites'); // Ou une route plus appropriée
         }
 
-        // 1. Find the FilmFiltre entity using the tconst (which is its ID)
+        // 1. Trouver l'entité FilmFiltre en utilisant le tconst (qui est son ID)
         $filmFiltre = $entityManager->getRepository(FilmFiltre::class)->find($tconst);
 
         if (!$filmFiltre) {
@@ -202,16 +208,16 @@ final class RemoveDataController extends AbstractController
             return $this->redirectToRoute('app_liste_favorites');
         }
 
-        // 2. Find the ListFilm entry using the Liste entity and the FilmFiltre entity
+        // 2. Trouver l'entrée ListFilm en utilisant l'entité Liste et l'entité FilmFiltre
         $listFilm = $entityManager->getRepository(ListFilm::class)->findOneBy([
             'liste' => $liste,
-            'tconst' => $filmFiltre // Use the FilmFiltre entity instance here
+            'tconst' => $filmFiltre // Utiliser l'instance de l'entité FilmFiltre ici
         ]);
 
         if ($listFilm) {
             $entityManager->remove($listFilm);
             $entityManager->flush();
-            $this->addFlash('success', sprintf('Film "%s" removed from your list.', $filmFiltre->getTitle())); // Assuming FilmFiltre has getTitle()
+            $this->addFlash('success', sprintf('Le film "%s" a été supprimé de votre liste.', $filmFiltre->getTitle()));
         } else {
             $this->addFlash('info', 'Ce film n\'a pas été trouvé dans votre liste ou a déjà été supprimé.');
         }
@@ -221,20 +227,26 @@ final class RemoveDataController extends AbstractController
 
 
 
-    #[Route('/remove/data/remove/data/getRemove_refusal/{tconst}', name: 'app_remove_data_get_refusal', methods: ['GET'])]
-    public function removeFromFilmListeRefusal(string $tconst, EntityManagerInterface $entityManager): Response
+    #[Route('/remove/data/remove/data/getRemove_refusal/{tconst}', name: 'app_remove_data_get_refusal', methods: ['POST'])]
+    public function removeFromFilmListeRefusal(string $tconst, EntityManagerInterface $entityManager, Request $request): Response
     {
+
+        $submittedToken = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('delete_refusal_' . $tconst, $submittedToken)) {
+            $this->addFlash('error', 'Token CSRF invalide.');
+            return $this->redirectToRoute('app_liste_refusals');
+        }
         $user = $this->getUser();
-        // $user will be a UserInterface object due to IsGranted. If using specific User methods, type cast or check.
+        // $user sera un objet UserInterface grâce à IsGranted. Si vous utilisez des méthodes User spécifiques, faites un cast ou vérifiez.
 
         $liste = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Liste de refus']);
 
         if (!$liste) {
             $this->addFlash('error', 'Votre liste ("Liste de refus") n\'a pas pu être trouvée.');
-            return $this->redirectToRoute('app_liste_refusals'); // Or a more appropriate route
+            return $this->redirectToRoute('app_liste_refusals'); // Ou une route plus appropriée
         }
 
-        // 1. Find the FilmFiltre entity using the tconst (which is its ID)
+        // 1. Trouver l'entité FilmFiltre en utilisant le tconst (qui est son ID)
         $filmFiltre = $entityManager->getRepository(FilmFiltre::class)->find($tconst);
 
         if (!$filmFiltre) {
@@ -242,16 +254,16 @@ final class RemoveDataController extends AbstractController
             return $this->redirectToRoute('app_liste_refusals');
         }
 
-        // 2. Find the ListFilm entry using the Liste entity and the FilmFiltre entity
+        // 2. Trouver l'entrée ListFilm en utilisant l'entité Liste et l'entité FilmFiltre
         $listFilm = $entityManager->getRepository(ListFilm::class)->findOneBy([
             'liste' => $liste,
-            'tconst' => $filmFiltre // Use the FilmFiltre entity instance here
+            'tconst' => $filmFiltre // Utiliser l'instance de l'entité FilmFiltre ici
         ]);
 
         if ($listFilm) {
             $entityManager->remove($listFilm);
             $entityManager->flush();
-            $this->addFlash('success', sprintf('Le film "%s" à été supprimé de votre liste.', $filmFiltre->getTitle())); // Assuming FilmFiltre has getTitle()
+            $this->addFlash('success', sprintf('Le film "%s" à été supprimé de votre liste.', $filmFiltre->getTitle())); // En supposant que FilmFiltre a getTitle()
         } else {
             $this->addFlash('info', 'Ce film n\'a pas été trouvé dans votre liste ou a déjà été supprimé.');
         }
@@ -260,12 +272,17 @@ final class RemoveDataController extends AbstractController
     }
 
 
-    #[Route('/remove/data/getRemove_history/{tconst}', name: 'app_remove_data_get_history', methods: ['GET'])]
-    public function removeFromFilmListeHistory(string $tconst, EntityManagerInterface $entityManager): Response
+    #[Route('/remove/data/getRemove_history/{tconst}', name: 'app_remove_data_get_history', methods: ['POST'])]
+    public function removeFromFilmListeHistory(string $tconst, EntityManagerInterface $entityManager, Request $request): Response
     {
+        $submittedToken = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('delete_history_' . $tconst, $submittedToken)) {
+            $this->addFlash('error', 'Token CSRF invalide.');
+            return $this->redirectToRoute('app_liste_history');
+        }
 
         $user = $this->getUser();
-        // $user will be a UserInterface object due to IsGranted. If using specific User methods, type cast or check.
+        // $user sera un objet UserInterface grâce à IsGranted. Si vous utilisez des méthodes User spécifiques, faites un cast ou vérifiez.
 
         $liste = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Historique des films']);
 
@@ -273,7 +290,7 @@ final class RemoveDataController extends AbstractController
             return $this->redirectToRoute('app_liste_history');
         }
 
-        // 1. Find the FilmFiltre entity using the tconst (which is its ID)
+        // 1. Trouver l'entité FilmFiltre en utilisant le tconst (qui est son ID)
         $filmFiltre = $entityManager->getRepository(FilmFiltre::class)->find($tconst);
 
         if (!$filmFiltre) {
@@ -281,16 +298,16 @@ final class RemoveDataController extends AbstractController
             return $this->redirectToRoute('app_liste_history');
         }
 
-        // 2. Find the ListFilm entry using the Liste entity and the FilmFiltre entity
+        // 2. Trouver l'entrée ListFilm en utilisant l'entité Liste et l'entité FilmFiltre
         $listFilm = $entityManager->getRepository(ListFilm::class)->findOneBy([
             'liste' => $liste,
-            'tconst' => $filmFiltre // Use the FilmFiltre entity instance here
+            'tconst' => $filmFiltre // Utiliser l'instance de l'entité FilmFiltre ici
         ]);
 
         if ($listFilm) {
             $entityManager->remove($listFilm);
             $entityManager->flush();
-            $this->addFlash('success', sprintf('Le film "%s" à été supprimé de votre liste.', $filmFiltre->getTitle())); // Assuming FilmFiltre has getTitle()
+            $this->addFlash('success', sprintf('Le film "%s" à été supprimé de votre liste.', $filmFiltre->getTitle())); // En supposant que FilmFiltre a getTitle()
         } else {
             $this->addFlash('info', 'Ce film n\'a pas été trouvé dans votre liste ou a déjà été supprimé.');
         }

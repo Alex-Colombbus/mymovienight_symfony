@@ -19,25 +19,19 @@ final class FilmController extends AbstractController
     {
         // Récupère la liste de 40 films depuis la session
         $filmListFromSession = $session->get('films');
-        // Récupère l'utilisateur actuellement connecté (peut être null si non connecté)
         $user = $this->getUser();
-        // Ligne de débogage
-
-        // Tableau pour stocker les données des films enrichies à afficher
+        // Tableau pour stocker les données des films une fois enrichies pour les afficher
         $filmsForDisplay = [];
-
         // Initialisation des tableaux pour les identifiants (tconsts) des films
         $tconstsFromFav = [];     // tconsts des films favoris de l'utilisateur
         $tconstsFromRefusal = []; // tconsts des films refusés par l'utilisateur
-        // dd($filmListFromSession); // Ligne de débogage commentée
 
         // Vérifie si un utilisateur est connecté pour récupérer ses listes
-        if ($user instanceof UserInterface) { // Utilise instanceof pour une vérification de type robuste
+        if ($user instanceof UserInterface) {
             // Récupère la liste de favoris de l'utilisateur
             $userSavedFilmFav  = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Ma liste']);
             // Récupère la liste de refus de l'utilisateur
             $userSavedFilmRefusal  = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Liste de refus']);
-            // dd($userSavedFilmFav, $userSavedFilmRefusal); // Ligne de débogage commentée (avec une typo 'Refusale')
 
             // Si la liste de favoris existe
             if ($userSavedFilmFav) {
@@ -69,7 +63,7 @@ final class FilmController extends AbstractController
 
         // Filtre la liste de films de la session pour exclure ceux déjà présents dans les listes de l'utilisateur
         $filteredFilmList = array_filter((array)$filmListFromSession, function ($film) use ($userSavedFilmTconsts) {
-            // Vérifie si le film est dans la liste d'exclusion (comparaison stricte)
+            // Vérifie si le film est dans la liste d'exclusion
             $isExcluded = in_array($film['tconst'], $userSavedFilmTconsts, true);
             // Garde le film s'il n'est PAS exclu
             return !$isExcluded;

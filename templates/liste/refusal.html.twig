@@ -79,17 +79,24 @@
                         >
                           Non
                         </button>
-                        <a
-                          href="{{
+                        <form
+                          method="POST"
+                          action="{{
                             path('app_remove_data_get_refusal', {
                               tconst: film.tconst
                             })
                           }}"
-                          class="btn btn-danger"
-                          role="button"
+                          style="display: inline"
                         >
-                          Oui
-                        </a>
+                          <input
+                            type="hidden"
+                            name="_token"
+                            value="{{ csrf_token('delete_refusal_' ~ film.tconst) }}"
+                          />
+                          <button type="submit" class="btn btn-danger">
+                            Oui
+                          </button>
+                        </form>
                       </div>
                     </div>
                   </div>
@@ -168,23 +175,15 @@
                 >
                   Non
                 </button>
-                <a
-                  href=""
-                  class="btn btn-danger btnOuiDelete"
-                  role="button"
-                  <!--
-                  Good
-                  for
-                  accessibility
-                  when
-                  styling
-                  links
-                  as
-                  buttons
-                  --
+                <form
+                  id="deleteForm"
+                  method="POST"
+                  action=""
+                  style="display: inline"
                 >
-                  Oui
-                </a>
+                  <input type="hidden" name="_token" id="csrfToken" value="" />
+                  <button type="submit" class="btn btn-danger">Oui</button>
+                </form>
               </div>
             </div>
           </div>
@@ -213,6 +212,8 @@
     let modalBodyShowDelete = document.querySelector(".modalBodyShowDelete");
     let modalTitleShowDelete = document.querySelector(".modalTitleShowDelete");
     let btnOuiDelete = document.querySelector(".btnOuiDelete");
+    let deleteForm = document.querySelector("#deleteForm");
+    let csrfTokenInput = document.querySelector("#csrfToken");
 
     ratings.forEach((rating) => {
       changeStarColor(rating);
@@ -269,11 +270,14 @@
       "Voulez vous supprimer " +
       filmInList[0].querySelector(".title").textContent +
       " de votre liste?";
-    btnOuiDelete.setAttribute(
-      "href",
-      "/remove/data/getRemove_refusal/" +
+    deleteForm.setAttribute(
+      "action",
+      "/remove/data/remove/data/getRemove_refusal/" +
         filmInList[0].querySelector(".tconst").textContent
     );
+    csrfTokenInput.value =
+      "{{ csrf_token('delete_refusal_') }}" +
+      filmInList[0].querySelector(".tconst").textContent;
 
     filmInList.forEach((film) => {
       film.addEventListener("click", () => {
@@ -319,10 +323,14 @@
           "Voulez vous supprimer " +
           film.querySelector(".title").textContent +
           " de votre liste?";
-        btnOuiDelete.setAttribute(
-          "href",
-          "/remove/data/getRemove/" + film.querySelector(".tconst").textContent
+        deleteForm.setAttribute(
+          "action",
+          "/remove/data/remove/data/getRemove_refusal/" +
+            film.querySelector(".tconst").textContent
         );
+        csrfTokenInput.value =
+          "{{ csrf_token('delete_refusal_') }}" +
+          film.querySelector(".tconst").textContent;
 
         console.log(film);
       });

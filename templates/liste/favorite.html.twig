@@ -79,17 +79,12 @@
                         >
                           Non
                         </button>
-                        <a
-                          href="{{
-                            path('app_save_data_history', {
-                              tconst: film.tconst
-                            })
-                          }}"
-                          class="btn btn-danger"
-                          role="button"
-                        >
-                          Oui
-                        </a>
+                        <form method="POST" action="{{path('app_save_data_history', {tconst: film.tconst})}}"style="display: inline">
+                          <input type="hidden" name="_token" value="{{ csrf_token('add_history_' ~ film.tconst) }}"/>
+                          <button type="submit" class="btn btn-danger">
+                            Oui
+                          </button>
+                        </form>
                       </div>
                     </div>
                   </div>
@@ -139,27 +134,12 @@
                         >
                           Non
                         </button>
-                        <a
-                          href="{{
-                            path('app_remove_data_get_favorite', {
-                              tconst: film.tconst
-                            })
-                          }}"
-                          class="btn btn-danger"
-                          role="button"
-                          <!--
-                          Good
-                          for
-                          accessibility
-                          when
-                          styling
-                          links
-                          as
-                          buttons
-                          --
-                        >
-                          Oui
-                        </a>
+                        <form method="POST" action="{{path('app_remove_data_get_favorite', {tconst: film.tconst})}}" style="display: inline">
+                          <input type="hidden" name="_token" value="{{ csrf_token('delete_favorite_' ~ film.tconst) }}"/>
+                          <button type="submit" class="btn btn-danger">
+                            Oui
+                          </button>
+                        </form>
                       </div>
                     </div>
                   </div>
@@ -243,13 +223,15 @@
                 >
                   Non
                 </button>
-                <a
-                  href=""
-                  class="btn btn-danger btnOuiShowHistoryDetails"
-                  role="button"
+                <form
+                  id="historyForm"
+                  method="POST"
+                  action=""
+                  style="display: inline"
                 >
-                  Oui
-                </a>
+                  <input type="hidden" name="_token" id="csrfToken" value="" />
+                  <button type="submit" class="btn btn-danger">Oui</button>
+                </form>
               </div>
             </div>
           </div>
@@ -292,9 +274,15 @@
                 >
                   Non
                 </button>
-                <a href="" class="btn btn-danger btnOuiDelete" role="button">
-                  Oui
-                </a>
+                <form
+                  id="deleteForm"
+                  method="POST"
+                  action=""
+                  style="display: inline"
+                >
+                  <input type="hidden" name="_token" id="csrfToken" value="" />
+                  <button type="submit" class="btn btn-danger">Oui</button>
+                </form>
               </div>
             </div>
           </div>
@@ -315,14 +303,16 @@
     let synopsisShow = document.querySelector("#synopsisShow");
     let mmElement = document.querySelector(".detailsFilm");
     let divScrollElement = document.querySelector(".divScroll");
-    const filmInList = document.querySelectorAll(".filmInList");
-    const ratings = document.querySelectorAll(".rating");
+    let filmInList = document.querySelectorAll(".filmInList");
+    let ratings = document.querySelectorAll(".rating");
     //Bouton de suppression modale coté detail Film
     let boutonShowDelete = document.querySelector(".boutonShowDelete");
     let modalFadeShowDelete = document.querySelector(".modalFadeShowDelete");
     let modalBodyShowDelete = document.querySelector(".modalBodyShowDelete");
     let modalTitleShowDelete = document.querySelector(".modalTitleShowDelete");
     let btnOuiDelete = document.querySelector(".btnOuiDelete");
+    let deleteForm = document.querySelector("#deleteForm");
+    let historyForm = document.querySelector("#historyForm");
 
     let boutonShowHistoryDetails = document.querySelector(
       ".boutonShowHistoryDetails"
@@ -368,7 +358,6 @@
       filmInList[0].querySelector(".synopsis").textContent;
 
     //attribution des valeurs pour le bouton modale delete coté film
-
     boutonShowDelete.setAttribute(
       "data-bs-target",
       "#Modal" + filmInList[0].querySelector(".tconst").textContent
@@ -391,11 +380,12 @@
       "Voulez vous supprimer " +
       filmInList[0].querySelector(".title").textContent +
       " de votre liste?";
-    btnOuiDelete.setAttribute(
-      "href",
+    deleteForm.action =
       "/remove/data/getRemove/" +
-        filmInList[0].querySelector(".tconst").textContent
-    );
+      filmInList[0].querySelector(".tconst").textContent;
+    deleteForm.querySelector('[name="_token"]').value =
+      "{{ csrf_token('delete_favorite_') }}" +
+      filmInList[0].querySelector(".tconst").textContent;
 
     //attribution des valeurs pour le bouton modale coté historique
     boutonShowHistoryDetails.setAttribute(
@@ -420,10 +410,12 @@
       "Voulez vous supprimer " +
       filmInList[0].querySelector(".title").textContent +
       " de votre liste?";
-    btnOuiShowHistoryDetails.setAttribute(
-      "href",
-      "/save/data_history/" + filmInList[0].querySelector(".tconst").textContent
-    );
+    historyForm.action =
+      "/save/data_history/" +
+      filmInList[0].querySelector(".tconst").textContent;
+    historyForm.querySelector('[name="_token"]').value =
+      "{{ csrf_token('add_history_') }}" +
+      filmInList[0].querySelector(".tconst").textContent;
 
     filmInList.forEach((film) => {
       film.addEventListener("click", () => {
@@ -470,12 +462,12 @@
           "Voulez vous supprimer " +
           film.querySelector(".title").textContent +
           " de votre liste?";
-        btnOuiDelete.setAttribute(
-          "href",
-          "/remove/data/getRemove/" + film.querySelector(".tconst").textContent
+        deleteForm.action =
+          "/remove/data/getRemove/" + film.querySelector(".tconst").textContent;
+        deleteForm.querySelector('[name="_token"]').value =
+          "{{ csrf_token('delete_favorite_') }}" +
+          filmInList[0].querySelector(".tconst").textContent;
 
-          //attribution des valeurs pour le bouton modale historique
-        );
         boutonShowHistoryDetails.setAttribute(
           "data-bs-target",
           "#ModalHistory" + film.querySelector(".tconst").textContent
@@ -498,10 +490,11 @@
           "Voulez vous ajouter " +
           film.querySelector(".title").textContent +
           " à votre historique?";
-        btnOuiShowHistoryDetails.setAttribute(
-          "href",
-          "/save/data_history/" + film.querySelector(".tconst").textContent
-        );
+        historyForm.action =
+          "/save/data_history/" + film.querySelector(".tconst").textContent;
+        historyForm.querySelector('[name="_token"]').value =
+          "{{ csrf_token('add_history_') }}" +
+          filmInList[0].querySelector(".tconst").textContent;
 
         console.log(film);
       });

@@ -48,18 +48,18 @@ class FilmFiltreRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
         $params = []; // Pour stocker les paramètres de la requête
 
-        // Construction de la requête de base avec JOIN sur les nouvelles tables
+        // Construction de la requête de base avec JOIN
         $sql = 'SELECT DISTINCT f.tconst FROM film_filtre f 
                 INNER JOIN film_genre fg ON f.tconst = fg.film_tconst 
                 INNER JOIN genre g ON fg.genre_id = g.id 
                 WHERE 1=1';
 
-        // Gestion des genres avec la nouvelle structure
+        // Gestion des genres
         if (!empty($genresArray)) {
             $genreConditions = [];
             foreach ($genresArray as $key => $genre) {
                 $paramName = 'genre' . $key;
-                $genreConditions[] = 'g.nom = :' . $paramName;
+                $genreConditions[] = 'g.name = :' . $paramName;
                 $params[$paramName] = $genre;
             }
             $sql .= ' AND (' . implode(' OR ', $genreConditions) . ')';
@@ -82,10 +82,8 @@ class FilmFiltreRepository extends ServiceEntityRepository
             $sql .= ' AND f.start_year <= :maxYear';
             $params['maxYear'] = (int)$maxYear;
         }
-
-        // Filtre sur le nombre de votes
+        // Filtre sur le nombre de votes pour sélectionner les films populaires
         $sql .= ' AND f.num_votes > 10000';
-
         // Ordre aléatoire et limite
         $sql .= ' ORDER BY RAND() LIMIT 40';
 
