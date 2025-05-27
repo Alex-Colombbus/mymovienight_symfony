@@ -190,6 +190,7 @@ final class RemoveDataController extends AbstractController
             $this->addFlash('error', 'Token CSRF invalide.');
             return $this->redirectToRoute('app_liste_favorites');
         }
+        
         $user = $this->getUser();
         // $user sera un objet UserInterface grâce à IsGranted. Si vous utilisez des méthodes User spécifiques, faites un cast ou vérifiez.
 
