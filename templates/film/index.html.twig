@@ -102,10 +102,7 @@ endblock %} {% block main %}
             class="btn btn-changement bouttonPrecedent d-flex justify-content-center align-items-center p-0 col-2"
             title="Film suivant"
           >
-            <div
-              class="visually-hidden spinner-border text-primary mx-2"
-              role="status"
-            ></div>
+            
             <span class="arrowLeft"
               ><i class="bi bi-arrow-left fs-3"></i
             ></span>
@@ -120,6 +117,10 @@ endblock %} {% block main %}
             class="btn btn-changement bouttonSuivant d-flex justify-content-center align-items-center p-0 col-2"
             title="Film suivant"
           >
+          <div
+              class="visually-hidden spinner-border text-primary mx-2"
+              role="status"
+            ></div>
             <div
               class="visually-hidden spinner-border text-primary mx-2"
               role="status"
@@ -174,6 +175,8 @@ endblock %} {% block main %}
     let spinner = document.querySelector('.spinner-border');
     
     let arrowRight = document.querySelector('.arrowRight');
+    let bouttonSuivant = document.querySelector('.bouttonSuivant');
+    let buttonPrecedent = document.querySelector('.bouttonPrecedent');
 
 
 
@@ -212,10 +215,14 @@ endblock %} {% block main %}
       });
     }
 
+    
+
     // Réactive le bouton "suivant" si la page est restaurée depuis le cache du navigateur (back/forward)
     window.addEventListener('pageshow', function () {
       bouttonSuivant.removeAttribute('disabled');
     });
+
+   
 
     let imdbRating = document.querySelector('.imdbRating');
     let tmdbRating = document.querySelector('.tmdbRating');
@@ -251,7 +258,7 @@ endblock %} {% block main %}
       }
     }
 
-    let buttonPrecedent = document.querySelector('.bouttonPrecedent');
+    
     buttonPrecedent.classList.add('invisible');
 
 buttonPrecedent.addEventListener('click', () => {
@@ -268,6 +275,9 @@ buttonPrecedent.addEventListener('click', () => {
     iconeRef.classList.add('bi-x-circle');
     if (bouttonSendListFav) bouttonSendListFav.disabled = false;
   }
+
+  bouttonSuivant.classList.remove('visually-hidden');
+  arrowRight.classList.remove('visually-hidden');
 
   page--;
   titleFilm.textContent = films[page].title;
@@ -290,10 +300,14 @@ buttonPrecedent.addEventListener('click', () => {
 });
 
 
-    let bouttonSuivant = document.querySelector('.bouttonSuivant');
+    
 
-    bouttonSuivant.addEventListener('click', () => {
-      buttonPrecedent.disabled = false;
+     if (page === films.length - 1) {
+          bouttonSuivant.classList.add('visually-hidden');
+      }
+
+    bouttonSuivant.addEventListener('click', (nextFilm) => {
+    buttonPrecedent.disabled = false;
 
       if (iconeHeart && iconeHeart.classList.contains('bi-heart-fill')) {
     films.splice(page, 1);
@@ -323,16 +337,23 @@ buttonPrecedent.addEventListener('click', () => {
       getActorsFilm(actors, actorsFilm);
       getRating(imdbRating, tmdbRating, page);
 
-      if (page === films.length - 1) {
+      if(films.length < 8 && page === films.length - 1) {
+        bouttonSuivant.classList.add('visually-hidden');
+        arrowRight.classList.add('visually-hidden');
+      } else if (page === films.length - 1 ){
+        
         bouttonSuivant.addEventListener('click', () => {
           spinner.classList.remove('visually-hidden');
           bouttonSuivant.classList.add('py-1');
           arrowRight.classList.add('visually-hidden');
-          window.location.href = '{{ path('app_home_more') }}'
-          bouttonSuivant.setAttribute('disabled');
-        })
+          window.location.href = '{{ path('app_home_more') }}';
+          bouttonSuivant.setAttribute('disabled', 'disabled');
+          bouttonSuivant.style.backgroundColor = 'var(--color-jaunemoche)';
+        })}
+        
       }
-    });
+      
+    );
 
      function showMessage(type, message) {
        alertContainer = document.getElementById('notifications-container');

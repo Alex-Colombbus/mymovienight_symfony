@@ -12,6 +12,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+use function PHPUnit\Framework\isEmpty;
+
 final class FilmController extends AbstractController
 {
     #[Route('/film', name: 'app_film')]
@@ -53,11 +55,28 @@ final class FilmController extends AbstractController
                 }, $listFilms);
             }
 
-            // Fusionne les tconsts des favoris et des refus pour avoir une liste complète d'exclusion
-            $userSavedFilmTconsts = array_merge($tconstsFromFav, $tconstsFromRefusal);
+            // PARTIE FILTRAGE DES LISTES DE FILMS --------------------------------------
+            $filmAlreadyShown = $session->get('recherche');
+            $filmAlreadyShown = array_map(function ($film) {
+                return (isset($film['tconst'])) ? $film['tconst'] : $film; // Extrait les tconsts des films déjà affichés
+            }, $filmAlreadyShown);
+
+            if (!empty($filmAlreadyShown)) {
+
+                // Fusionne les tconsts des favoris et des refus pour avoir une liste complète d'exclusion*
+                $userSavedFilmTconsts = array_merge($tconstsFromFav, $tconstsFromRefusal, $filmAlreadyShown);
+                // dd($filmAlreadyShown);
+            } else {
+                // Si la session 'recherche' est vide, on utilise uniquement les tconsts des listes de l'utilisateur
+                $userSavedFilmTconsts = array_merge($tconstsFromFav, $tconstsFromRefusal);
+            }
         } else {
             // Si aucun utilisateur n'est connecté, la liste des tconsts à exclure est vide
-            $userSavedFilmTconsts = [];
+            $filmAlreadyShown = $session->get('recherche');
+            $filmAlreadyShown = array_map(function ($film) {
+                return (isset($film['tconst'])) ? $film['tconst'] : $film; // Extrait les tconsts des films déjà affichés
+            }, $filmAlreadyShown);
+            $userSavedFilmTconsts = $filmAlreadyShown; // Utilise les films déjà affichés comme liste d'exclusion
         }
 
 
@@ -68,11 +87,17 @@ final class FilmController extends AbstractController
             // Garde le film s'il n'est PAS exclu
             return !$isExcluded;
         });
-
         // Ré-indexe le tableau filtré (pour que les clés soient 0, 1, 2...)
         $filteredFilmList = array_values($filteredFilmList);
         // Ne garde que les 20 premiers films de la liste filtrée
         $filteredFilmList = array_slice($filteredFilmList, 0, 20);
+
+
+        $filmAlreadyShown = array_merge($filmAlreadyShown, $filteredFilmList); // Fusionne la liste filtrée avec la liste de recherche
+        $session->set('recherche', $filmAlreadyShown); // Ajoute la liste filtrée à la session pour une utilisation ultérieure
+
+
+        // PARTIE TRAITEMENT DES DONNEES DES FILMS ---------------------------------------------
 
         // Traite la liste filtrée pour enrichir les données des films
         if ($filteredFilmList) { // Vérifie si la liste filtrée n'est pas vide
@@ -103,6 +128,11 @@ final class FilmController extends AbstractController
                     $filmsForDisplay[] = $enrichedFilmData;
                 }
             }
+        } else {
+
+            return $this->render('film/FilmNotFound.html.twig', [
+                'message' => 'Aucun film trouvé. Veuillez essayer une autre recherche.',
+            ]);
         }
 
 

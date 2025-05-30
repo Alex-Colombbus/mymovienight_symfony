@@ -9,10 +9,13 @@ use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Validator\Constraints\PasswordStrength;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -49,7 +52,20 @@ class PasswordUserForm extends AbstractType
                         'class' => 'form-control inputFormRegister',
                         'placeholder' => 'Entrez votre nouveau mot de passe',
                     ],
-                    'constraints' => []
+                    'constraints' => [
+                        new NotBlank([
+                            'message' => 'Veuillez entrer un mot de passe',
+                        ]),
+                        new Length([
+                            'min' => 8,
+                            'minMessage' => 'Votre mot de passe doit comporter au moins {{ limit }} caractères',
+                            'max' => 40,
+                        ]),
+                        new PasswordStrength([
+                            'minScore' => PasswordStrength::STRENGTH_MEDIUM, // Vous pouvez ajuster le niveau requis (WEAK, MEDIUM, STRONG, VERY_STRONG)
+                            'message' => 'Le mot de passe n\'est pas assez fort.',
+                        ])
+                    ]
 
                 ],
                 'second_options' => [

@@ -1,0 +1,11 @@
+{% extends 'base2.html.twig' %} {% block title %}Aucun Film trouvé - My movie night{%
+endblock %} {% block main %}
+
+<div class="container-fluid d-flex flex-column align-items-center justify-content-center bgSite">
+    <h1 class="colorJauneMoche">Aucun Film trouvé</h1>
+    <h4 class="colorBleuSombre">Il n'y a pas de film correspondant à votre recherche.</h4>
+    <p class="colorBleuSombre">Essayez d'élargir vos critères de recherche</p>
+    <a href="{{ path('app_home') }}" class="btn btn-primary">Retour à la recherche</a>
+
+
+{% endblock %}

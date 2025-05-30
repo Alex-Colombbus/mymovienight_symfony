@@ -21,6 +21,7 @@ final class HomeController extends AbstractController
     {
         $genresArray = [];
         $films = null;
+        $session->set('recherche', []);
 
         if ($request->isMethod('POST')) {
             // Récupération des données du formulaire
@@ -70,6 +71,7 @@ final class HomeController extends AbstractController
 
 
 
+
         if (empty($genresArray)) {
             // dd("test");
             $films = $filmFiltreRepository->findMoviesAllGenres($minRating, $maxRating, $minYear, $maxYear);
@@ -82,8 +84,5 @@ final class HomeController extends AbstractController
             $session->set('films', $films);
             return $this->redirectToRoute('app_film');
         }
-        return $this->render('film/index.html.twig', [
-            'films' => $films,
-        ]);
     }
 }
