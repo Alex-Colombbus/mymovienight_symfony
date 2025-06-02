@@ -179,6 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         sectionCachee.classList.add('visible');
         accueilGlobal.classList.remove('accueilGlobal'); // Add .visible class instead
+        chevron.classList.add('d-none'); // Cacher le chevron après le clic
     }, { once: true }); // L'écouteur sera automatiquement retiré après le premier clic
     }
 

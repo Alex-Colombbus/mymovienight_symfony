@@ -249,6 +249,36 @@ label{
   background-color: var(--color-backgroundBlanc);
 }
 
+.chevron {
+    margin-top: 20px;
+    display: block;
+    -webkit-animation: pulse 2s infinite;
+    animation: pulse 2s infinite;
+    color: var(--color-accentuationBleuClair);
+    }
+
+    @-webkit-keyframes pulse {
+  0% {
+    -webkit-transform: translate(0, 0);
+            transform: translate(0, 0); }
+  50% {
+    -webkit-transform: translate(0, 10px);
+            transform: translate(0, 10px); }
+  100% {
+    -webkit-transform: translate(0, 0);
+            transform: translate(0, 0); } }
+
+@keyframes pulse {
+  0% {
+    -webkit-transform: translate(0, 0);
+            transform: translate(0, 0); }
+  50% {
+    -webkit-transform: translate(0, 10px);
+            transform: translate(0, 10px); }
+  100% {
+    -webkit-transform: translate(0, 0);
+            transform: translate(0, 0); } }
+
 
   
 
@@ -259,7 +289,7 @@ label{
 
 }
 
-.chevron{
+.chevronO{
   border: none;
   color: var(--color-accentuationBleu);
   background-color: transparent;
