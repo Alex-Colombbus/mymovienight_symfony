@@ -61,6 +61,8 @@ final class ListeController extends AbstractController
             ]);
         }
 
+        $listToDisplay = array_reverse($listToDisplay); // Inverser l'ordre pour afficher les plus récents en premier
+
         return $this->render('liste/favorite.html.twig', [
             'listToDisplay' => $listToDisplay
         ]);
@@ -110,6 +112,8 @@ final class ListeController extends AbstractController
                 'message' => 'Aucun film trouvé dans votre liste de refus.',
             ]);
         }
+
+        $listToDisplay = array_reverse($listToDisplay); // Inverser l'ordre pour afficher les plus récents en premier
 
         return $this->render('liste/refusal.html.twig', [
             'listToDisplay' => $listToDisplay
@@ -162,6 +166,9 @@ final class ListeController extends AbstractController
                 'message' => 'Aucun film trouvé dans votre historique.',
             ]);
         }
+
+        $listToDisplay = array_reverse($listToDisplay); // Inverser l'ordre pour afficher les plus récents en premier
+
 
         return $this->render('liste/history.html.twig', [
             'listToDisplay' => $listToDisplay

@@ -48,26 +48,31 @@
 
                                 
 
-                               <div class="col dropdown mx-4">
-                                    <button class ="" type="button"  data-bs-toggle="dropdown" aria-expanded="false">
+                               <div class="dropdown mx-4 row">
+                                   {% if app.user %}
+                                           <p class="iconeNav my-auto mx-2 fs-6 fs-md-5 fs-lg-4 col-5">{{app.user.username}}</p>
+                                     {% endif %}
+                                   <button class ="col-5" type="button"  data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="dropdown-toggle bi bi-person-circle iconeNav"></i>
                                     </button>
             
-                                    <ul class="dropdown-menu row">
-                                        {% if not app.user %}
-                                          <li><a class="dropdown-item item-drop" href="{{path("app_register")}}">S'inscrire</a></li>
-                                          <li><a class="dropdown-item item-drop" href="{{path("app_login")}}">Connexion</a></li>
-                                                
-                                          {% endif %}
-                                        {% if app.user %}
-                                        <li><a class="dropdown-item item-drop" href="{{path("app_account")}}">Mon profil</a></li>
-                                          {% if 'ROLE_ADMIN' in app.user.roles %}
-                                          <li><a class="dropdown-item text-success" href="{{path("admin")}}">Backoffice</a></li>
-                                          {% endif %}
-                                        <li><a class="dropdown-item text-warning" href="{{path("app_logout")}}">Deconnexion</a></li>
-                                        {% endif %}
-                            
-                                    </ul>
+                                    <div>
+                                        <ul class="dropdown-menu row">
+                                            {% if not app.user %}
+                                              <li><a class="dropdown-item item-drop" href="{{path("app_register")}}">S'inscrire</a></li>
+                                              <li><a class="dropdown-item item-drop" href="{{path("app_login")}}">Connexion</a></li>
+                                                    
+                                              {% endif %}
+                                            {% if app.user %}
+                                            <li><a class="dropdown-item item-drop" href="{{path("app_account")}}">Mon profil</a></li>
+                                              {% if 'ROLE_ADMIN' in app.user.roles %}
+                                              <li><a class="dropdown-item text-success" href="{{path("admin")}}">Backoffice</a></li>
+                                              {% endif %}
+                                            <li><a class="dropdown-item text-warning" href="{{path("app_logout")}}">Deconnexion</a></li>
+                                            {% endif %}
+                                
+                                        </ul>
+                                    </div>
                                </div>
   
                 </ul>

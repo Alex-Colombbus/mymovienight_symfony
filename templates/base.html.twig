@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-         <meta name="description" content="{% block meta_description %}Découvrez et organisez vos soirées cinéma avec My Movie Night. Trouvez des films, créez des listes et plus encore.{% endblock %}">
+      <meta name="description" content="{% block meta_description %}Découvrez et organisez vos soirées cinéma avec My Movie Night. Trouvez des films, créez des listes et plus encore.{% endblock %}">
         <meta name="keywords" content="{% block meta_keywords %}films, cinéma, soirée film, My Movie Night, recommandations films{% endblock %}">
         <meta name="robots" content="index, follow">
         <title>{% block title %}My Movie Night{% endblock %}</title>
@@ -45,25 +45,30 @@
                         {% endif %}
 
                                <div class="dropend mx-4">
-                                    
+                                     
+                                     {% if app.user %}
+                                           <p class="iconeNavIndex fs-4">{{app.user.username}}</p>
+                                     {% endif %}
                                     <button class ="dropdown-toggle" type="button"  data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-person-circle iconeNavIndex"></i>
                                     </button>
             
-                                    <ul class="dropdown-menu row">
-                                          {% if not app.user %}
-                                          <li><a class="dropdown-item item-drop" href="{{path("app_register")}}">S'inscrire</a></li>
-                                          <li><a class="dropdown-item item-drop" href="{{path("app_login")}}">Connexion</a></li>
-                                                
-                                          {% endif %}
-                                        {% if app.user %}
-                                        <li><a class="dropdown-item item-drop" href="{{path("app_account")}}">Mon profil</a></li>
-                                          {% if 'ROLE_ADMIN' in app.user.roles %}
-                                          <li><a class="dropdown-item item-drop text-success" href="{{path("admin")}}">Backoffice</a></li>
-                                          {% endif %}
-                                        <li><a class="dropdown-item text-warning" href="{{path("app_logout")}}">Deconnexion</a></li>
-                                        {% endif %}
-                                    </ul>
+                                    <div>
+                                          <ul class="dropdown-menu row">
+                                                {% if not app.user %}
+                                                <li><a class="dropdown-item item-drop" href="{{path("app_register")}}">S'inscrire</a></li>
+                                                <li><a class="dropdown-item item-drop" href="{{path("app_login")}}">Connexion</a></li>
+                                                      
+                                                {% endif %}
+                                              {% if app.user %}
+                                              <li><a class="dropdown-item item-drop" href="{{path("app_account")}}">Mon profil</a></li>
+                                                {% if 'ROLE_ADMIN' in app.user.roles %}
+                                                <li><a class="dropdown-item item-drop text-success" href="{{path("admin")}}">Backoffice</a></li>
+                                                {% endif %}
+                                              <li><a class="dropdown-item text-warning" href="{{path("app_logout")}}">Deconnexion</a></li>
+                                              {% endif %}
+                                          </ul>
+                                    </div>
                                </div>
   
                           </ul>
