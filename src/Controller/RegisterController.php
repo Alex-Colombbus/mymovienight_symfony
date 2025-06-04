@@ -25,7 +25,6 @@ final class RegisterController extends AbstractController
 
         // Création du formulaire en liant l'entité User au formulaire RegisterUserForm
         $form = $this->createForm(RegisterUserForm::class, $user);
-
         // Gestion de la requête HTTP pour pré-remplir ou traiter les données soumises dans le formulaire
         $form->handleRequest($request);
 
@@ -40,14 +39,9 @@ final class RegisterController extends AbstractController
             $listeRefusal->setNameListe('Liste de refus');
             $listeHistory->setUser($user);
             $listeHistory->setNameListe('Historique des films');
-
             // Prépare l'entité User pour être sauvegardée dans la base de données
             $entityManager->persist($user);
-
-            // Exécute la requête SQL pour insérer l'utilisateur dans la base de données
-            // Pas besoin de persist() car on insere pas une nouvelle entité
-
-
+            // Prépare les entités Liste pour être sauvegardées dans la base de données
             $entityManager->persist($liste);
             $entityManager->persist($listeRefusal);
             $entityManager->persist($listeHistory);

@@ -74,31 +74,32 @@ class RegisterUserForm extends AbstractType
 
             ->add('passwordPlain', RepeatedType::class, [
                 'type' => PasswordType::class,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez entrer un mot de passe',
+                    ]),
+                    new Length([
+                        'min' => 8,
+                        'minMessage' => 'Votre mot de passe doit comporter au moins {{ limit }} caractères',
+                        'max' => 40,
+                    ]),
+                    new PasswordStrength([
+                        'minScore' => PasswordStrength::STRENGTH_MEDIUM, // Vous pouvez ajuster le niveau requis (WEAK, MEDIUM, STRONG, VERY_STRONG)
+                        'message' => 'Le mot de passe n\'est pas assez fort.',
+                    ])
+                ],
                 'first_options'  => [
                     'label' => 'Choissisez un mot de passe',
                     'label_attr' => [
                         'class' => 'form-label labelFormRegister fw-lighter',
-                    ], // Exemple d'attribut personnalisé
+                    ],
 
                     'hash_property_path' => 'password',
                     'attr' => [
                         'class' => 'form-control inputFormRegister',
                         'placeholder' => 'Entrez votre mot de passe',
                     ],
-                    'constraints' => [
-                        new NotBlank([
-                            'message' => 'Veuillez entrer un mot de passe',
-                        ]),
-                        new Length([
-                            'min' => 8,
-                            'minMessage' => 'Votre mot de passe doit comporter au moins {{ limit }} caractères',
-                            'max' => 40,
-                        ]),
-                        new PasswordStrength([
-                            'minScore' => PasswordStrength::STRENGTH_MEDIUM, // Vous pouvez ajuster le niveau requis (WEAK, MEDIUM, STRONG, VERY_STRONG)
-                            'message' => 'Le mot de passe n\'est pas assez fort.',
-                        ])
-                    ]
+
 
                 ],
                 'second_options' => [
