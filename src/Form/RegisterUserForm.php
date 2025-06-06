@@ -74,17 +74,32 @@ class RegisterUserForm extends AbstractType
 
             ->add('passwordPlain', RepeatedType::class, [
                 'type' => PasswordType::class,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez entrer un mot de passe',
+                    ]),
+                    new Length([
+                        'min' => 8,
+                        'minMessage' => 'Votre mot de passe doit comporter au moins {{ limit }} caractères',
+                        'max' => 40,
+                    ]),
+                    new PasswordStrength([
+                        'minScore' => PasswordStrength::STRENGTH_MEDIUM, // Vous pouvez ajuster le niveau requis (WEAK, MEDIUM, STRONG, VERY_STRONG)
+                        'message' => 'Le mot de passe n\'est pas assez fort.',
+                    ])
+                ],
                 'first_options'  => [
                     'label' => 'Choissisez un mot de passe',
                     'label_attr' => [
                         'class' => 'form-label labelFormRegister fw-lighter',
-                    ], // Exemple d'attribut personnalisé
+                    ],
 
                     'hash_property_path' => 'password',
                     'attr' => [
                         'class' => 'form-control inputFormRegister',
                         'placeholder' => 'Entrez votre mot de passe',
                     ],
+<<<<<<< HEAD
                     'constraints' => [
                         new NotBlank([
                             'message' => 'Veuillez entrer un mot de passe',
@@ -99,6 +114,9 @@ class RegisterUserForm extends AbstractType
                             'message' => 'Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule et un chiffre.',
                         ])
                     ]
+=======
+
+>>>>>>> 5963795e932d2c2a6fbf5f815ad4f2aa502ad78d
 
                 ],
                 'second_options' => [
