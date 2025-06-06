@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 
@@ -65,7 +66,7 @@ final class AccountController extends AbstractController
         ]);
     }
 
-    #[Route('compte/modifier-mail', name: 'app_account_modify_mail')]
+    #[Route('compte/modifier-profil', name: 'app_account_modify_profil')]
     public function modifyMail(Request $request, EntityManagerInterface $entityManager): Response
     {
 
@@ -74,6 +75,10 @@ final class AccountController extends AbstractController
 
 
         $form = $this->createForm(MailUserForm::class, $user, [
+            "data_class" => User::class,
+            // On n'utilise pas l'option userPasswordHasher car on ne modifie pas le mot de passe
+        ]);
+        $form = $this->createForm(BirthdayType::class, $user, [
             "data_class" => User::class,
             // On n'utilise pas l'option userPasswordHasher car on ne modifie pas le mot de passe
         ]);
@@ -96,7 +101,7 @@ final class AccountController extends AbstractController
 
 
         return $this->render('account/password.html.twig', [
-            'modifyPwd' => $form->createView(),
+            'modifyProfil' => $form->createView(),
         ]);
     }
 }

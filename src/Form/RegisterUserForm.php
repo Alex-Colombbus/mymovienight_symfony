@@ -15,7 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
-use Symfony\Component\Validator\Constraints\PasswordStrength;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class RegisterUserForm extends AbstractType
 {
@@ -94,9 +94,9 @@ class RegisterUserForm extends AbstractType
                             'minMessage' => 'Votre mot de passe doit comporter au moins {{ limit }} caractères',
                             'max' => 40,
                         ]),
-                        new PasswordStrength([
-                            'minScore' => PasswordStrength::STRENGTH_MEDIUM, // Vous pouvez ajuster le niveau requis (WEAK, MEDIUM, STRONG, VERY_STRONG)
-                            'message' => 'Le mot de passe n\'est pas assez fort.',
+                        new Regex([
+                            'pattern' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
+                            'message' => 'Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule et un chiffre.',
                         ])
                     ]
 

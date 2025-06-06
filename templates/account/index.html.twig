@@ -4,26 +4,33 @@ endblock %} {% block main %}
   class="container-fluid d-flex flex-column align-items-center justify-content-start loginMain bgSite"
 >
   <h2 class="colorBleuSombre">Mon profil</h2>
-  <div class="border rounded-3 shadow-sm borderProfil col-10 col-md-5">
-    <div class="">
+  <div class="border rounded-3 shadow-sm borderProfil col-10 col-md-4">
+    <div class="container">
       
-       <div class="col-10 container p-4">
+       <div class="col-10  p-4">
           <div class="p-2">
             <p class="colorBleuSombre">
-              <strong>Votre pseudonyme :</strong> {{ app.user.username }}
+              <strong>Pseudonyme :</strong> {{ app.user.username }}
             </p>
           </div>
           <div class="p-2">
             <p class="colorBleuSombre">
-              <strong>Votre email :</strong> {{ app.user.email }}
+              <strong>Email :</strong> {{ app.user.email }}
             </p>
           </div>
-        <a class="p-2" href="{{ path('app_account_modify_mail') }}"
-          >Modifier l'adresse mail</a
-        >
-        <a class="p-2" href="{{ path('app_account_modify_pwd') }}"
-          >Modifier le mot de passe</a
-        >
+          <div class="p-2">
+            <p class="colorBleuSombre">
+              <strong>Date de naissance :</strong> {{ app.user.birthday | date("d/m/Y")  }}
+            </p>
+          </div>
+        <div class="row">
+          <a class="p-2 col" href="{{ path('app_account_modify_profil') }}"
+            >Modifier les informations de profil</a
+          >
+          <a class="p-2 col" href="{{ path('app_account_modify_pwd') }}"
+            >Modifier le mot de passe</a
+          >
+        </div>
        </div>
     </div>
   </div>

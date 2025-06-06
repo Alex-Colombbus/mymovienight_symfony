@@ -4,8 +4,9 @@ endblock %} {% block main %} {% if error %}
 {% endif %}
 
 <div
-  class="container-fluid d-flex align-items-center justify-content-center loginMain bgSite"
+  class="container-fluid d-flex flex-column align-items-center justify-content-center loginMain"
 >
+<h2 class="colorBleuSombre">Connexion</h2>
   <div class="card-border col-6">
     <div class="cardBody p-4">
       <form action="{{ path('app_login') }}" method="post">
