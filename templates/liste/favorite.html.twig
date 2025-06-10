@@ -2,17 +2,23 @@
 {{ app.user.username }} - My movie night{% endblock %} {% block main %}
 
 <div class="container-fluid">
+  <!-- LAYOUT FLEXIBLE POUR LA LISTE ET LES DÉTAILS (INVERSÉ SUR PETITS ÉCRANS) -->
   <div class="d-flex flex-column-reverse flex-sm-row testo">
+    
+    <!-- SECTION: LISTE DES FILMS FAVORIS (AVEC DÉFILEMENT) -->
     <div class="col-sm-3 col-md-4 col-lg-4 d-flex flex-column divScroll">
       <div class="divScroll-inner-flex-container d-flex flex-column h-100 pt-2">
         <h2 class="text-center colorBleuSombre">Mes favoris</h2>
+        <!-- Conteneur pour les éléments de la liste de films -->
         <div class="container flex-grow-1 divListFilm">
           {% for film in listToDisplay %}
 
+          <!-- DÉBUT: ÉLÉMENT INDIVIDUEL DE FILM DANS LA LISTE -->
           <div class="container listFilm my-1">
             <div
               class="row align-items-center justify-content-between text-center border border-1 border-primar rounded-2 filmInList"
             >
+              <!-- Affiche du film -->
               <div class="col-3">
                 <img
                   src="https://image.tmdb.org/t/p/original{{ film.posterPath }}"
@@ -20,31 +26,37 @@
                   class="posterFilmList rounded-1"
                 />
               </div>
+              <!-- Titre du film (visible sur grands écrans) -->
               <h5
                 class="col-6 col-sm-4 col-md-4 col-lg-4 title d-sm-none d-md-none d-lg-block"
               >
                 {{ film.title }}
               </h5>
+              <!-- Données cachées du film utilisées par JavaScript -->
               <p class="d-none synopsis">{{ film.synopsis }}</p>
               <p class="d-none addedAt">{{ film.addedAt }}</p>
               <p class="d-none genre">{{ film.genres }}</p>
               <p class="d-none duration">{{ film.runtimeMinutes }}</p>
               <p class="d-none tconst">{{ film.tconst }}</p>
+              <!-- Note du film (visible sur grands écrans) -->
               <h4 class="col-2 rating d-none d-sm-none d-md-none d-lg-block">
                 {{ film.averageRating }}<i class="bi bi-star-fill"></i>
               </h4>
               <!-- Button modal history -->
               <div class="col-2">
+                <!-- Bouton pour ouvrir la modale d'ajout à l'historique -->
                 <button
                   type="button"
                   class="btn btn-primary my-2 d-none d-sm-none d-md-none d-lg-block"
                   data-bs-toggle="modal"
                   data-bs-target="#ModalHistory{{ film.tconst }}"
+                  aria-label="Ajouter {{ film.title }} à l'historique"
                   title="Ajouter à l'historique"
                 >
-                  <i class="bi bi-clock-history fs-5"></i>
+                  <i class="bi bi-clock-history fs-5" aria-hidden="true"></i>
                 </button>
-                <!-- Modal -->
+                
+                <!-- MODALE: Confirmation d'ajout à l'historique (pour ce film de la liste) -->
                 <div
                   class="modal fade"
                   id="ModalHistory{{ film.tconst }}"
@@ -89,17 +101,21 @@
                     </div>
                   </div>
                 </div>
-                <!-- Button modal delete -->
+                <!-- FIN MODALE: Confirmation d'ajout à l'historique -->
+
+                <!-- Bouton pour ouvrir la modale de suppression des favoris -->
                 <button
                   type="button"
                   class="btn btn-primary my-2 d-none d-sm-none d-md-none d-lg-block"
                   data-bs-toggle="modal"
                   data-bs-target="#Modal{{ film.tconst }}"
+                  aria-label="Supprimer {{ film.title }} des favoris"
                   title="Supprimer des favoris"
                 >
-                  <i class="bi bi-trash3 fs-5"></i>
+                  <i class="bi bi-trash3 fs-5" aria-hidden="true"></i>
                 </button>
-                <!-- Modal -->
+                
+                <!-- MODALE: Confirmation de suppression des favoris (pour ce film de la liste) -->
                 <div
                   class="modal fade"
                   id="Modal{{ film.tconst }}"
@@ -144,25 +160,33 @@
                     </div>
                   </div>
                 </div>
+                <!-- FIN MODALE: Confirmation de suppression des favoris -->
               </div>
+              <!-- Fin de la colonne pour les boutons d'action -->
             </div>
           </div>
-
+          <!-- FIN: ÉLÉMENT INDIVIDUEL DE FILM DANS LA LISTE -->
           {% endfor %}
         </div>
+        <!-- Fin du conteneur pour les éléments de la liste -->
       </div>
     </div>
+    <!-- FIN SECTION: LISTE DES FILMS FAVORIS -->
 
+    <!-- SECTION: DÉTAILS DU FILM SÉLECTIONNÉ (Mis à jour par JavaScript) -->
     <div class="col-sm-9 col-md-8 col-lg-8 container detailsFilm">
+      <!-- Informations sur la date d'ajout et la note -->
       <div class="row">
         <p class="col" id="addedAtShow"></p>
         <div class="row col-3 align-items-center">
           <p class="col-6 fs-5" id="ratingShow"></p>
         </div>
       </div>
+      <!-- Titre du film -->
       <div>
         <h3 class="text-center fs-1" id="titleShow"></h3>
       </div>
+      <!-- Affiche du film en grand -->
       <div class="divAfficheFilm d-flex justify-content-center">
         <img
           src=""
@@ -171,39 +195,44 @@
           id="posterShow"
         />
       </div>
+      <!-- Durée et genre(s) du film -->
       <div class="text-center">
         <p class="fs-5">
           <b id="durationShow" class="fw-bold colorJauneMoche"></b>-
           <span id="genreShow"></span>
         </p>
       </div>
+      <!-- Synopsis du film -->
       <div class="container col-11">
         <p class="" id="synopsisShow">...</p>
       </div>
       <!-- Button modal history -->
       <div class="row d-flex justify-content-center">
+        <!-- Bouton pour ouvrir la modale d'ajout à l'historique (vue détaillée) -->
         <button
           type="button"
           class="btn btn-primary boutonShowHistoryDetails col-12 m-1 d-block d-sm-block d-md-block d-lg-none"
           data-bs-toggle="modal"
-          data-bs-target=""
+          data-bs-target="" <!-- Défini dynamiquement par JS -->
+          aria-label="Ajouter le film affiché à l'historique"
           title="Ajouter à l'historique"
         >
-          <i class="bi bi-clock-history col-2 fs-4"></i>
+          <i class="bi bi-clock-history col-2 fs-4" aria-hidden="true"></i>
         </button>
-        <!-- Modal -->
+        
+        <!-- MODALE: Confirmation d'ajout à l'historique (vue détaillée) -->
         <div
           class="modal fade modalFadeShowHistoryDetails"
-          id=""
+          id="" <!-- Défini dynamiquement par JS -->
           tabindex="-1"
-          aria-labelledby=""
+          aria-labelledby="" <!-- Défini dynamiquement par JS -->
           aria-hidden="true"
         >
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
                 <h3 class="modal-title fs-5 modalTitleShowHistoryDetails" id="">
-                  <!-- Title set by JS -->
+                  <!-- Titre défini par JS -->
                 </h3>
                 <button
                   type="button"
@@ -213,7 +242,7 @@
                 ></button>
               </div>
               <div class="modal-body modalBodyShowHistoryDetails">
-                <!-- Body set by JS -->
+                <!-- Contenu du corps défini par JS -->
               </div>
               <div class="modal-footer">
                 <button
@@ -226,7 +255,7 @@
                 <form
                   id="historyForm"
                   method="POST"
-                  action=""
+                  action="" <!-- Action définie par JS -->
                   style="display: inline"
                 >
                   <input type="hidden" name="_token" id="csrfToken" value="" />
@@ -236,28 +265,34 @@
             </div>
           </div>
         </div>
-        <!-- Button modal delete -->
+        <!-- FIN MODALE: Confirmation d'ajout à l'historique (vue détaillée) -->
+
+        <!-- Bouton pour ouvrir la modale de suppression des favoris (vue détaillée) -->
         <button
           type="button"
           class="btn btn-primary boutonShowDelete col-12 m-1 d-block d-sm-block d-md-block d-lg-none"
           data-bs-toggle="modal"
-          data-bs-target=""
+          data-bs-target="" <!-- Défini dynamiquement par JS -->
+          aria-label="Supprimer le film affiché des favoris"
+          title="Supprimer le film affiché des favoris"
         >
-          <i class="bi bi-trash3 col-2 fs-4"></i> Effacer le film
+          <i class="bi bi-trash3 col-2 fs-4" aria-hidden="true"></i> Effacer le film
         </button>
 
-        <!-- Modal -->
+        <!-- MODALE: Confirmation de suppression des favoris (vue détaillée) -->
         <div
           class="modal fade modalFadeShowDelete"
-          id=""
+          id="" <!-- Défini dynamiquement par JS -->
           tabindex="-1"
-          aria-labelledby=""
+          aria-labelledby="" <!-- Défini dynamiquement par JS -->
           aria-hidden="true"
         >
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <h3 class="modal-title fs-5 modalTitleShowDelete" id=""></h3>
+                <h3 class="modal-title fs-5 modalTitleShowDelete" id="">
+                  <!-- Titre défini par JS -->
+                </h3>
                 <button
                   type="button"
                   class="btn-close"
@@ -265,7 +300,9 @@
                   aria-label="Close"
                 ></button>
               </div>
-              <div class="modal-body modalBodyShowDelete"></div>
+              <div class="modal-body modalBodyShowDelete">
+                <!-- Contenu du corps défini par JS -->
+              </div>
               <div class="modal-footer">
                 <button
                   type="button"
@@ -277,7 +314,7 @@
                 <form
                   id="deleteForm"
                   method="POST"
-                  action=""
+                  action="" <!-- Action définie par JS -->
                   style="display: inline"
                 >
                   <input type="hidden" name="_token" id="csrfToken" value="" />
@@ -287,13 +324,20 @@
             </div>
           </div>
         </div>
+        <!-- FIN MODALE: Confirmation de suppression des favoris (vue détaillée) -->
       </div>
+      <!-- Fin des boutons d'action pour la vue détaillée -->
     </div>
+    <!-- FIN SECTION: DÉTAILS DU FILM SÉLECTIONNÉ -->
   </div>
+  <!-- FIN LAYOUT FLEXIBLE -->
 </div>
+<!-- FIN CONTENEUR PRINCIPAL DE LA PAGE -->
 
+<!-- DÉBUT DU SCRIPT JAVASCRIPT -->
 <script>
   document.addEventListener("DOMContentLoaded", () => {
+    // SÉLECTION DES ÉLÉMENTS DU DOM POUR LA VUE DÉTAILLÉE
     let addedAtShow = document.querySelector("#addedAtShow");
     let ratingShow = document.querySelector("#ratingShow");
     let titleShow = document.querySelector("#titleShow");
@@ -301,19 +345,21 @@
     let durationShow = document.querySelector("#durationShow");
     let genreShow = document.querySelector("#genreShow");
     let synopsisShow = document.querySelector("#synopsisShow");
-    let mmElement = document.querySelector(".detailsFilm");
-    let divScrollElement = document.querySelector(".divScroll");
+    
+    
+    // SÉLECTION DES ÉLÉMENTS DE LA LISTE DE FILMS
     let filmInList = document.querySelectorAll(".filmInList");
-    let ratings = document.querySelectorAll(".rating");
-    //Bouton de suppression modale coté detail Film
+    let ratings = document.querySelectorAll(".rating"); // Notes des films dans la liste
+
+    // SÉLECTION DES ÉLÉMENTS POUR LA MODALE DE SUPPRESSION (VUE DÉTAILLÉE)
     let boutonShowDelete = document.querySelector(".boutonShowDelete");
     let modalFadeShowDelete = document.querySelector(".modalFadeShowDelete");
     let modalBodyShowDelete = document.querySelector(".modalBodyShowDelete");
     let modalTitleShowDelete = document.querySelector(".modalTitleShowDelete");
-    let btnOuiDelete = document.querySelector(".btnOuiDelete");
+    // let btnOuiDelete = document.querySelector(".btnOuiDelete"); // Semble non utilisé, le bouton est dans le form
     let deleteForm = document.querySelector("#deleteForm");
-    let historyForm = document.querySelector("#historyForm");
 
+    // SÉLECTION DES ÉLÉMENTS POUR LA MODALE D'AJOUT À L'HISTORIQUE (VUE DÉTAILLÉE)
     let boutonShowHistoryDetails = document.querySelector(
       ".boutonShowHistoryDetails"
     );
@@ -326,105 +372,117 @@
     let modalTitleShowHistoryDetails = document.querySelector(
       ".modalTitleShowHistoryDetails"
     );
-    let btnOuiShowHistoryDetails = document.querySelector(
-      ".btnOuiShowHistoryDetails"
-    );
+    // let btnOuiShowHistoryDetails = document.querySelector(".btnOuiShowHistoryDetails"); // Semble non utilisé
+    let historyForm = document.querySelector("#historyForm");
 
-    //changement de la couleur des étoiles en fonction de la note
-    ratings.forEach((rating) => {
-      changeStarColor(rating);
-    });
 
-    addedAtShow.textContent =
-      "Ajouté le : " + filmInList[0].querySelector(".addedAt").textContent;
-    ratingShow.textContent = filmInList[0].querySelector(".rating").textContent;
-    ratingCreate = document.createElement("i");
-    ratingCreate.classList.add("bi", "bi-star-fill", "px-1");
-    ratingShow.appendChild(ratingCreate);
-    changeStarColor(document.querySelector("#ratingShow"));
-    titleShow.textContent = filmInList[0].querySelector(".title").textContent;
-    posterShow.src = filmInList[0]
-      .querySelector(".posterFilmList")
-      .getAttribute("src");
-    posterShow.alt =
-      "Affiche du film " + filmInList[0].querySelector(".title").textContent;
-    durationShow.textContent = durationToMinutes(
-      filmInList[0].querySelector(".duration").textContent
-    );
-    genreShow.textContent = filmInList[0]
-      .querySelector(".genre")
-      .textContent.replace(/,/g, ", ");
-    synopsisShow.textContent =
-      filmInList[0].querySelector(".synopsis").textContent;
+    // INITIALISATION DE L'AFFICHAGE DES DÉTAILS AVEC LE PREMIER FILM DE LA LISTE (SI EXISTANT)
+    if (filmInList.length > 0) {
+      // Mise à jour des informations affichées dans la section détails
+      addedAtShow.textContent =
+        "Ajouté le : " + filmInList[0].querySelector(".addedAt").textContent;
+      ratingShow.textContent = filmInList[0].querySelector(".rating").textContent;
+      let ratingCreate = document.createElement("i"); // Création de l'icône étoile
+      ratingCreate.classList.add("bi", "bi-star-fill", "px-1");
+      ratingShow.appendChild(ratingCreate);
+      changeStarColor(document.querySelector("#ratingShow")); // Coloration de l'étoile
+      titleShow.textContent = filmInList[0].querySelector(".title").textContent;
+      posterShow.src = filmInList[0]
+        .querySelector(".posterFilmList")
+        .getAttribute("src");
+      posterShow.alt =
+        "Affiche du film " + filmInList[0].querySelector(".title").textContent;
+      durationShow.textContent = durationToMinutes(
+        filmInList[0].querySelector(".duration").textContent
+      );
+      genreShow.textContent = filmInList[0]
+        .querySelector(".genre")
+        .textContent.replace(/,/g, ", ");
+      synopsisShow.textContent =
+        filmInList[0].querySelector(".synopsis").textContent;
 
-    //attribution des valeurs pour le bouton modale delete coté film
-    boutonShowDelete.setAttribute(
-      "data-bs-target",
-      "#Modal" + filmInList[0].querySelector(".tconst").textContent
-    );
-    modalFadeShowDelete.setAttribute(
-      "id",
-      "Modal" + filmInList[0].querySelector(".tconst").textContent
-    );
-    modalFadeShowDelete.setAttribute(
-      "aria-labelledby",
-      "ModalLabel" + filmInList[0].querySelector(".tconst").textContent
-    );
-    modalTitleShowDelete.setAttribute(
-      "id",
-      "ModalLabel" + filmInList[0].querySelector(".tconst").textContent
-    );
-    modalTitleShowDelete.textContent =
-      filmInList[0].querySelector(".title").textContent;
-    modalBodyShowDelete.textContent =
-      "Voulez vous supprimer " +
-      filmInList[0].querySelector(".title").textContent +
-      " de votre liste?";
-    deleteForm.action =
-      "/remove/data/getRemove/" +
-      filmInList[0].querySelector(".tconst").textContent;
-    deleteForm.querySelector('[name="_token"]').value =
-      "{{ csrf_token('delete_favorite_') }}" +
-      filmInList[0].querySelector(".tconst").textContent;
+      // Configuration initiale de la modale de suppression pour le premier film
+      boutonShowDelete.setAttribute(
+        "data-bs-target",
+        "#Modal" + filmInList[0].querySelector(".tconst").textContent // Cible la modale générée dans la boucle Twig
+      );
+      
+      modalFadeShowDelete.setAttribute( // ID de la modale de la vue détaillée
+        "id",
+        "ModalDetailView" + filmInList[0].querySelector(".tconst").textContent // Nouvel ID pour éviter conflit
+      );
+      boutonShowDelete.setAttribute( // Le bouton de la vue détaillée cible cette nouvelle modale
+        "data-bs-target",
+        "#ModalDetailView" + filmInList[0].querySelector(".tconst").textContent
+      );
+      modalFadeShowDelete.setAttribute(
+        "aria-labelledby",
+        "ModalLabelDetailView" + filmInList[0].querySelector(".tconst").textContent
+      );
+      modalTitleShowDelete.setAttribute(
+        "id",
+        "ModalLabelDetailView" + filmInList[0].querySelector(".tconst").textContent
+      );
+      modalTitleShowDelete.textContent =
+        filmInList[0].querySelector(".title").textContent;
+      modalBodyShowDelete.textContent =
+        "Voulez vous supprimer " +
+        filmInList[0].querySelector(".title").textContent +
+        " de votre liste?";
+      deleteForm.action =
+        "/remove/data/getRemove/" +
+        filmInList[0].querySelector(".tconst").textContent;
+      deleteForm.querySelector('[name="_token"]').value =
+        "{{ csrf_token('delete_favorite_') }}" +
+        filmInList[0].querySelector(".tconst").textContent; // Il faudrait un token spécifique à l'action
 
-    //attribution des valeurs pour le bouton modale coté historique
-    boutonShowHistoryDetails.setAttribute(
-      "data-bs-target",
-      "#ModalHistory" + filmInList[0].querySelector(".tconst").textContent
-    );
-    modalFadeShowHistoryDetails.setAttribute(
-      "id",
-      "ModalHistory" + filmInList[0].querySelector(".tconst").textContent
-    );
-    modalFadeShowHistoryDetails.setAttribute(
-      "aria-labelledby",
-      "ModalLabelHistory" + filmInList[0].querySelector(".tconst").textContent
-    );
-    modalTitleShowHistoryDetails.setAttribute(
-      "id",
-      "ModalLabelHistory" + filmInList[0].querySelector(".tconst").textContent
-    );
-    modalTitleShowHistoryDetails.textContent =
-      filmInList[0].querySelector(".title").textContent;
-    modalBodyShowHistoryDetails.textContent =
-      "Voulez vous supprimer " +
-      filmInList[0].querySelector(".title").textContent +
-      " de votre liste?";
-    historyForm.action =
-      "/save/data_history/" +
-      filmInList[0].querySelector(".tconst").textContent;
-    historyForm.querySelector('[name="_token"]').value =
-      "{{ csrf_token('add_history_') }}" +
-      filmInList[0].querySelector(".tconst").textContent;
+      // Configuration initiale de la modale d'historique pour le premier film
+      boutonShowHistoryDetails.setAttribute(
+        "data-bs-target",
+        "#ModalHistoryDetailView" + filmInList[0].querySelector(".tconst").textContent // Cible la modale de la vue détaillée
+      );
+      modalFadeShowHistoryDetails.setAttribute(
+        "id",
+        "ModalHistoryDetailView" + filmInList[0].querySelector(".tconst").textContent
+      );
+      modalFadeShowHistoryDetails.setAttribute(
+        "aria-labelledby",
+        "ModalLabelHistoryDetailView" + filmInList[0].querySelector(".tconst").textContent
+      );
+      modalTitleShowHistoryDetails.setAttribute(
+        "id",
+        "ModalLabelHistoryDetailView" + filmInList[0].querySelector(".tconst").textContent
+      );
+      modalTitleShowHistoryDetails.textContent =
+        filmInList[0].querySelector(".title").textContent;
+      modalBodyShowHistoryDetails.textContent = 
+        "Voulez vous ajouter " +
+        filmInList[0].querySelector(".title").textContent +
+        " à votre historique?";
+      historyForm.action =
+        "/save/data_history/" +
+        filmInList[0].querySelector(".tconst").textContent;
+      historyForm.querySelector('[name="_token"]').value 
+        "{{ csrf_token('add_history_') }}" +
+        filmInList[0].querySelector(".tconst").textContent;
+    }
 
+    // AJOUT DES ÉCOUTEURS D'ÉVÉNEMENTS SUR CHAQUE FILM DE LA LISTE
     filmInList.forEach((film) => {
       film.addEventListener("click", () => {
+        // Mise à jour des détails du film affiché lors du clic sur un film de la liste
         addedAtShow.textContent =
           "Ajouté le : " + film.querySelector(".addedAt").textContent;
         ratingShow.textContent = film.querySelector(".rating").textContent;
-        ratingCreate = document.createElement("i");
-        ratingCreate.classList.add("bi", "bi-star-fill", "px-1");
-        ratingShow.appendChild(ratingCreate);
+        // Supprimer l'ancienne icône étoile si elle existe avant d'en ajouter une nouvelle
+        if(ratingShow.querySelector('.bi-star-fill')) {
+          ratingShow.querySelector('.bi-star-fill').remove();
+        }
+        let ratingCreateOnClick = document.createElement("i");
+        ratingCreateOnClick.classList.add("bi", "bi-star-fill", "px-1");
+        ratingShow.appendChild(ratingCreateOnClick);
+        changeStarColor(document.querySelector("#ratingShow"));
+
         titleShow.textContent = film.querySelector(".title").textContent;
         posterShow.src = film.querySelector(".posterFilmList").src;
         posterShow.alt =
@@ -436,114 +494,130 @@
           .querySelector(".genre")
           .textContent.replace(/,/g, ", ");
         synopsisShow.textContent = film.querySelector(".synopsis").textContent;
-        //equalizeColumnHeights();
-        changeStarColor(document.querySelector("#ratingShow"));
+        
+        // Mise à jour de la modale de suppression (vue détaillée) pour le film cliqué
+        let tconstFilmClique = film.querySelector(".tconst").textContent;
+        let titleFilmClique = film.querySelector(".title").textContent;
 
-        //attribution des valeurs pour le bouton modale delete coté film
         boutonShowDelete.setAttribute(
           "data-bs-target",
-          "#Modal" + film.querySelector(".tconst").textContent
+          "#ModalDetailView" + tconstFilmClique 
         );
         modalFadeShowDelete.setAttribute(
           "id",
-          "Modal" + film.querySelector(".tconst").textContent
+          "ModalDetailView" + tconstFilmClique
         );
         modalFadeShowDelete.setAttribute(
           "aria-labelledby",
-          "ModalLabel" + film.querySelector(".tconst").textContent
+          "ModalLabelDetailView" + tconstFilmClique
         );
         modalTitleShowDelete.setAttribute(
           "id",
-          "ModalLabel" + film.querySelector(".tconst").textContent
+          "ModalLabelDetailView" + tconstFilmClique
         );
-        modalTitleShowDelete.textContent =
-          film.querySelector(".title").textContent;
+        modalTitleShowDelete.textContent = titleFilmClique;
         modalBodyShowDelete.textContent =
           "Voulez vous supprimer " +
-          film.querySelector(".title").textContent +
+          titleFilmClique +
           " de votre liste?";
         deleteForm.action =
-          "/remove/data/getRemove/" + film.querySelector(".tconst").textContent;
+          "/remove/data/getRemove/" + tconstFilmClique;
+        // Le token CSRF pour la suppression doit être spécifique à l'action et à l'identifiant
+        // Il est préférable de le générer côté serveur pour chaque film ou d'avoir un token par action.
+        // Pour l'instant, on réutilise la logique de token, mais attention à la sécurité.
         deleteForm.querySelector('[name="_token"]').value =
-          "{{ csrf_token('delete_favorite_') }}" +
-          filmInList[0].querySelector(".tconst").textContent;
+          "{{ csrf_token('delete_favorite_') }}" + tconstFilmClique;
 
+
+        // Mise à jour de la modale d'historique (vue détaillée) pour le film cliqué
         boutonShowHistoryDetails.setAttribute(
           "data-bs-target",
-          "#ModalHistory" + film.querySelector(".tconst").textContent
+          "#ModalHistoryDetailView" + tconstFilmClique
         );
         modalFadeShowHistoryDetails.setAttribute(
           "id",
-          "ModalHistory" + film.querySelector(".tconst").textContent
+          "ModalHistoryDetailView" + tconstFilmClique
         );
         modalFadeShowHistoryDetails.setAttribute(
           "aria-labelledby",
-          "ModalLabelHistory" + film.querySelector(".tconst").textContent
+          "ModalLabelHistoryDetailView" + tconstFilmClique
         );
         modalTitleShowHistoryDetails.setAttribute(
           "id",
-          "ModalLabelHistory" + film.querySelector(".tconst").textContent
+          "ModalLabelHistoryDetailView" + tconstFilmClique
         );
-        modalTitleShowHistoryDetails.textContent =
-          film.querySelector(".title").textContent;
+        modalTitleShowHistoryDetails.textContent = titleFilmClique;
         modalBodyShowHistoryDetails.textContent =
-          "Voulez vous ajouter " +
-          film.querySelector(".title").textContent +
+          "Voulez vous ajouter " + // Corrigé: "ajouter" au lieu de "supprimer"
+          titleFilmClique +
           " à votre historique?";
         historyForm.action =
-          "/save/data_history/" + film.querySelector(".tconst").textContent;
+          "/save/data_history/" + tconstFilmClique;
         historyForm.querySelector('[name="_token"]').value =
-          "{{ csrf_token('add_history_') }}" +
-          filmInList[0].querySelector(".tconst").textContent;
+          "{{ csrf_token('add_history_') }}" + tconstFilmClique;
 
-        console.log(film);
+        // console.log(film); // Pour débogage
       });
     });
+
+    // FONCTION: Convertit une durée en secondes vers un format heures/minutes
     function durationToMinutes(duration) {
       let parsedDuration = parseInt(duration, 10);
       if (isNaN(parsedDuration)) {
         return "Durée inconnue";
       }
-      let minutes = Math.floor(parsedDuration / 60);
-      let seconds = parsedDuration % 60;
-      return `${minutes}h ${seconds}min`;
+      // La durée semble déjà être en minutes d'après le nom de la propriété 'runtimeMinutes'
+      // Si 'duration' est en secondes, la logique ci-dessous est correcte.
+      // Si 'duration' est déjà en minutes, alors :
+      // let hours = Math.floor(parsedDuration / 60);
+      // let minutes = parsedDuration % 60;
+      // return `${hours}h ${minutes}min`;
+
+      // En supposant que 'duration' est en secondes (comme l'indique le code original)
+      let totalMinutes = Math.floor(parsedDuration / 60); // Total des minutes
+      let hours = Math.floor(totalMinutes / 60); // Nombre d'heures pleines
+      let minutes = totalMinutes % 60; // Minutes restantes
+
+      if (hours > 0) {
+        return `${hours}h ${minutes}min`;
+      } else {
+        return `${minutes}min`;
+      }
     }
 
-    function changeStarColor(rating) {
-      let ratingValue = parseFloat(rating.textContent);
+    // FONCTION: Change la couleur de l'icône étoile en fonction de la note
+    function changeStarColor(ratingElement) {
+      if (!ratingElement) return;
+      let starIcon = ratingElement.querySelector(".bi-star-fill");
+      if (!starIcon) return;
+
+      let ratingValue = parseFloat(ratingElement.textContent); // Extrait la note du texte
       if (isNaN(ratingValue)) {
+        starIcon.style.color = "grey"; // Couleur par défaut si note invalide
         return;
       }
+
       if (ratingValue < 5.5) {
-        rating.querySelector(".bi-star-fill").style.color = "red";
+        starIcon.style.color = "red";
       } else if (ratingValue < 6) {
-        rating.querySelector(".bi-star-fill").style.color = "orange";
+        starIcon.style.color = "orange";
       } else if (ratingValue < 6.5) {
-        rating.querySelector(".bi-star-fill").style.color = "yellow";
+        starIcon.style.color = "gold"; // Changé de yellow pour meilleure visibilité
       } else if (ratingValue < 7) {
-        rating.querySelector(".bi-star-fill").style.color = "lightgreen";
+        starIcon.style.color = "lightgreen";
       } else if (ratingValue < 7.5) {
-        rating.querySelector(".bi-star-fill").style.color = "lime";
+        starIcon.style.color = "lime";
       } else {
-        rating.querySelector(".bi-star-fill").style.color = "DeepSkyBlue";
+        starIcon.style.color = "DeepSkyBlue";
       }
     }
-    /*function equalizeColumnHeights() {
-      if (detailsFilmElement && divScrollElement) {
-        const scrollTop = divScrollElement.scrollTop;
+    
+    // Appliquer la couleur des étoiles pour tous les films dans la liste initiale
+    ratings.forEach((ratingElement) => {
+      changeStarColor(ratingElement);
+    });
 
-        // Réinitialiser la hauteur de divScroll pour que detailsFilm ait sa hauteur naturelle
-        divScrollElement.style.height = "auto";
-
-        const detailsHeight = detailsFilmElement.offsetHeight;
-        divScrollElement.style.height = detailsHeight + "px";
-
-        // Restaurer la position de défilement
-        divScrollElement.scrollTop = scrollTop;
-      }
-    }*/
   });
-
-  // --- Début du code d'égalisation des hauteurs ---
 </script>
+<!-- FIN DU SCRIPT JAVASCRIPT -->
 {% endblock %}

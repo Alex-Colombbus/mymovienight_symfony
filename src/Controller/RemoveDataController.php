@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
@@ -54,10 +53,7 @@ final class RemoveDataController extends AbstractController
             // 1. Trouver la liste de l'utilisateur
             $liste = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Ma liste']);
 
-
-
             // 2. Trouver l'entrée ListFilm spécifique à supprimer
-
             // Trouver d'abord l'entité FilmFiltre, car la propriété 'tconst' de ListFilm est une relation vers FilmFiltre
             $filmFiltre = $entityManager->getRepository(FilmFiltre::class)->find($tconst);
 
@@ -117,7 +113,6 @@ final class RemoveDataController extends AbstractController
         }
 
 
-
         // S'assurer que l'utilisateur est authentifié
         if (!$user instanceof UserInterface) {
             return new JsonResponse(['status' => 'error', 'message' => 'Veuillez vous connnecter.'], Response::HTTP_UNAUTHORIZED); // 401 Unauthorized
@@ -135,10 +130,7 @@ final class RemoveDataController extends AbstractController
             // 1. Trouver la liste de l'utilisateur
             $liste = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Liste de refus']);
 
-
-
             // 2. Trouver l'entrée ListFilm spécifique à supprimer
-
             // Trouver d'abord l'entité FilmFiltre, car la propriété 'tconst' de ListFilm est une relation vers FilmFiltre
             $filmFiltre = $entityManager->getRepository(FilmFiltre::class)->find($tconst);
 
@@ -190,9 +182,8 @@ final class RemoveDataController extends AbstractController
             $this->addFlash('error', 'Token CSRF invalide.');
             return $this->redirectToRoute('app_liste_favorites');
         }
-        
+
         $user = $this->getUser();
-        // $user sera un objet UserInterface grâce à IsGranted. Si vous utilisez des méthodes User spécifiques, faites un cast ou vérifiez.
 
         $liste = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Ma liste']);
 
@@ -283,7 +274,6 @@ final class RemoveDataController extends AbstractController
         }
 
         $user = $this->getUser();
-        // $user sera un objet UserInterface grâce à IsGranted. Si vous utilisez des méthodes User spécifiques, faites un cast ou vérifiez.
 
         $liste = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Historique des films']);
 

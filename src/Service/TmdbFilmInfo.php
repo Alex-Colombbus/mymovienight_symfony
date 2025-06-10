@@ -144,10 +144,10 @@ class TmdbFilmInfo
                 $this->logger->info('TmdbFilmInfo: Film non trouvé dans la base locale pour tconst: ' . $this->tconst);
             }
 
-            $filmFiltreBDD = $this->filmFiltreRepository->find($this->tconst);
-            if ($filmFiltreBDD) {
+
+            if ($filmBDD) {
                 // Récupération des genres via la nouvelle relation ManyToMany
-                $genresCollection = $filmFiltreBDD->getGenresCollection();
+                $genresCollection = $filmBDD->getGenresCollection();
                 if (!$genresCollection->isEmpty()) {
                     $genreNames = [];
                     foreach ($genresCollection as $genre) {
@@ -158,7 +158,7 @@ class TmdbFilmInfo
                     $this->genres = null;
                 }
 
-                $this->imdbRating = $filmFiltreBDD->getAverageRating();
+                $this->imdbRating = $filmBDD->getAverageRating();
             } else {
                 $this->logger->info('TmdbFilmInfo: Film non trouvé dans FilmFiltreRepository pour tconst: ' . $this->tconst);
             }
@@ -187,6 +187,7 @@ class TmdbFilmInfo
             });
 
             $jobsByName = [];
+            // Regroupe les jobs par nom
             foreach ($importantCrewMembers as $crewMember) {
                 $name = $crewMember['name'];
                 $job = $crewMember['job'];
@@ -200,7 +201,7 @@ class TmdbFilmInfo
             foreach ($jobsByName as $name => $jobs) {
                 $jobsByName[$name] = implode(', ', $jobs);
             }
-
+            // Stocke les membres importants de l'équipe
             $this->importantCrew = $jobsByName;
             $this->isValid = true; // Marque comme valide si tout s'est bien passé
 

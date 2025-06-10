@@ -24,7 +24,7 @@ final class SaveDataController extends AbstractController
      * Vérifie si le film est déjà dans l'une des listes avant de l'ajouter.
      */
     #[Route('/save/data/favorite', name: 'app_save_data')]
-    public function index(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function saveFavorite(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         // Décodage des données JSON de la requête
         $data = json_decode($request->getContent(), true);
@@ -36,7 +36,7 @@ final class SaveDataController extends AbstractController
         if (!$this->isCsrfTokenValid('save_favorite', $submittedToken)) {
             return new JsonResponse(['status' => 'error', 'message' => 'CSRF token invalide.'], Response::HTTP_FORBIDDEN);
         }
-        $content = $request->getContent(); // Get the raw request body
+        $content = $request->getContent(); // Récupérer le corps brut de la requête
         error_log('SaveDataController: Raw Content Received: ' . $content);
 
         // S'assurer que l'utilisateur est authentifié
@@ -46,12 +46,13 @@ final class SaveDataController extends AbstractController
 
         // Validation de base : vérifier si les données requises (comme tconst) sont présentes
         if (!isset($data['tconst']) || empty($data['tconst'])) {
-            return new JsonResponse(['status' => 'error', 'message' => 'Tconst est non valide ou manquant.'], Response::HTTP_BAD_REQUEST); // 400 Bad Requestonst'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['status' => 'error', 'message' => 'Tconst est non valide ou manquant.'], Response::HTTP_BAD_REQUEST); // 400 Requête incorrecte
         }
 
         // --- Logique de sauvegarde ---
         try {
-            // 1. Rechercher l'entité FilmFiltre. Gérer si non trouvée.
+
+            // 1. Rechercher l'enregistrement du film dans la base de donnée.
             $filmFiltre = $entityManager->getRepository(FilmFiltre::class)->find($data['tconst']);
 
             if (!$filmFiltre) {
@@ -64,13 +65,15 @@ final class SaveDataController extends AbstractController
             // Ces blocs vérifient si une propriété du film est nulle dans la base de données
             // et si des données correspondantes sont fournies dans la requête, puis mettent à jour l'entité.
             if (isset($data['title']) && $filmFiltre->getTitle() === null) {
-                // Ensure the incoming data for title is a non-empty string
-                if ($data['title'] !== '') { // Use strict non-empty check
+                // S'assurer que les données entrantes pour le titre sont une chaîne non vide
+                if ($data['title'] !== '') { // Utiliser une vérification stricte de non-vide
                     $filmFiltre->setTitle($data['title']);
+                } else {
+                    return new JsonResponse(['status' => 'error', 'message' => 'Le titre du film est manquant ou invalide.'], Response::HTTP_BAD_REQUEST);
                 }
             }
 
-            // 2. Update FilmFiltre details if necessary (handle null checks and type conversions)
+            // 2. Mettre à jour les détails de FilmFiltre si nécessaire (gérer les vérifications null et les conversions de type)
             if (isset($data['synopsis']) && $filmFiltre->getSynopsis() === null) {
                 $filmFiltre->setSynopsis($data['synopsis']);
             }
@@ -81,16 +84,16 @@ final class SaveDataController extends AbstractController
 
             // Gestion de la date de sortie (startYear)
             if (isset($data['releaseDate']) && $filmFiltre->getStartYear() === null) {
-                // Assuming releaseDate is 'YYYY-MM-DD', extract year and cast
+                // releaseDate est 'YYYY-MM-DD', extraire l'année et convertir
                 try {
                     $year = (new \DateTimeImmutable($data['releaseDate']))->format('Y');
                     $filmFiltre->setStartYear((int) $year);
                 } catch (\Exception $e) {
-                    // Handle potential date parsing errors if format isn't reliable
-                    // Log or ignore, depending on strictness
+                    // En cas d'erreur de formatage, on peut choisir de ne pas mettre à jour ou de gérer l'erreur
+                    return new JsonResponse(['status' => 'error', 'message' => 'Date de sortie invalide.'], Response::HTTP_BAD_REQUEST);
                 }
             } else if (isset($data['startYear']) && $filmFiltre->getStartYear() === null) {
-                // If startYear is already an integer in data
+                // Si startYear est déjà un entier dans les données
                 if (is_numeric($data['startYear'])) {
                     $filmFiltre->setStartYear((int) $data['startYear']);
                 }
@@ -98,12 +101,12 @@ final class SaveDataController extends AbstractController
 
 
             if (isset($data['imdbRating']) && $filmFiltre->getAverageRating() === null) {
-                // Ensure the data type matches the entity's DECIMAL(3,1) property
-                $filmFiltre->setAverageRating((string) $data['imdbRating']); // Cast to string for DECIMAL
+                // S'assurer que le type de données correspond à la propriété DECIMAL(3,1) de l'entité
+                $filmFiltre->setAverageRating((string) $data['imdbRating']); // Convertir en chaîne pour DECIMAL
             }
 
             if (isset($data['tmdbRating']) && $filmFiltre->getTmdbRating() === null) {
-                if (is_numeric($data['tmdbRating'])) { // tmdbRating is float in entity
+                if (is_numeric($data['tmdbRating'])) { // tmdbRating est float dans l'entité
                     $filmFiltre->setTmdbRating((float) $data['tmdbRating']);
                 }
             }
@@ -112,24 +115,22 @@ final class SaveDataController extends AbstractController
 
             // Correction pour le type des acteurs : conversion d'un tableau en chaîne de caractères
             if (isset($data['actors']) && $filmFiltre->getActors() === null) {
-                // Convert array of actor names to a string
+                // Convertir un tableau de noms d'acteurs en chaîne
                 if (is_array($data['actors'])) {
                     $filmFiltre->setActors(implode(', ', $data['actors']));
                 } else if (is_string($data['actors'])) {
-                    // If by chance it's already a string
+                    // Si par hasard c'est déjà une chaîne
                     $filmFiltre->setActors($data['actors']);
                 }
             }
-            // *** END FIX ***
 
-            // importantCrew est défini comme tableau dans l'entité et est un tableau dans les données - C'est OK
+            // importantCrew est défini comme tableau dans l'entité
             if (isset($data['importantCrew']) && $filmFiltre->getImportantCrew() === null) {
                 if (is_array($data['importantCrew'])) {
                     $filmFiltre->setImportantCrew($data['importantCrew']);
                 }
             }
 
-            // Pas besoin de persister FilmFiltre ici, Doctrine le gère après find()
 
             // 3. Rechercher la liste de l'utilisateur ou la créer si elle n'existe pas
             // Recherche ou création de la "Liste de refus"
@@ -143,6 +144,7 @@ final class SaveDataController extends AbstractController
                 'user' => $user,
                 'name_liste' => 'Ma liste'
             ]);
+
             // Conditionnel : Créer la liste UNIQUEMENT si elle n'existe pas
             if (!$listeRefusal) {
                 $liste = new Liste();
@@ -167,6 +169,7 @@ final class SaveDataController extends AbstractController
                     'name_liste' => 'Ma liste'
                 ]);
             }
+
 
             // 4. Vérifier si le FilmFiltre est déjà lié à cette Liste dans ListFilm
             // Vérification pour "Ma liste"
@@ -241,7 +244,7 @@ final class SaveDataController extends AbstractController
             return new JsonResponse(['status' => 'error', 'message' => 'Token CSRF invalide'], Response::HTTP_FORBIDDEN);
         }
 
-        // *** Add logging here to see the raw content ***
+        // *** Ajouter un log ici pour voir le contenu brut ***
         error_log('SaveDataController: Raw Content Received: ' . $content);
 
         // S'assurer que l'utilisateur est authentifié
@@ -265,13 +268,13 @@ final class SaveDataController extends AbstractController
 
             // Mise à jour des détails de FilmFiltre si nécessaire (similaire à la méthode index)
             if (isset($data['title']) && $filmFiltre->getTitle() === null) {
-                // Ensure the incoming data for title is a non-empty string
-                if ($data['title'] !== '') { // Use strict non-empty check
+                // S'assurer que les données entrantes pour le titre sont une chaîne non vide
+                if ($data['title'] !== '') { // Utiliser une vérification stricte de non-vide
                     $filmFiltre->setTitle($data['title']);
                 }
             }
 
-            // 2. Update FilmFiltre details if necessary (handle null checks and type conversions)
+            // 2. Mettre à jour les détails de FilmFiltre si nécessaire (gérer les vérifications null et les conversions de type)
             if (isset($data['synopsis']) && $filmFiltre->getSynopsis() === null) {
                 $filmFiltre->setSynopsis($data['synopsis']);
             }
@@ -282,16 +285,16 @@ final class SaveDataController extends AbstractController
 
             // Gestion de la date de sortie (startYear)
             if (isset($data['releaseDate']) && $filmFiltre->getStartYear() === null) {
-                // Assuming releaseDate is 'YYYY-MM-DD', extract year and cast
+                // releaseDate est 'YYYY-MM-DD', extraire l'année et convertir
                 try {
                     $year = (new \DateTimeImmutable($data['releaseDate']))->format('Y');
                     $filmFiltre->setStartYear((int) $year);
                 } catch (\Exception $e) {
-                    // Handle potential date parsing errors if format isn't reliable
-                    // Log or ignore, depending on strictness
+                    // En cas d'erreur de formatage, on peut choisir de ne pas mettre à jour ou de gérer l'erreur
+                    return new JsonResponse(['status' => 'error', 'message' => 'Date de sortie invalide.'], Response::HTTP_BAD_REQUEST);
                 }
             } else if (isset($data['startYear']) && $filmFiltre->getStartYear() === null) {
-                // If startYear is already an integer in data
+                // Si startYear est déjà un entier dans les données
                 if (is_numeric($data['startYear'])) {
                     $filmFiltre->setStartYear((int) $data['startYear']);
                 }
@@ -299,12 +302,12 @@ final class SaveDataController extends AbstractController
 
 
             if (isset($data['imdbRating']) && $filmFiltre->getAverageRating() === null) {
-                // Ensure the data type matches the entity's DECIMAL(3,1) property
-                $filmFiltre->setAverageRating((string) $data['imdbRating']); // Cast to string for DECIMAL
+                // S'assurer que le type de données correspond à la propriété DECIMAL(3,1) de l'entité
+                $filmFiltre->setAverageRating((string) $data['imdbRating']); // Convertir en chaîne pour DECIMAL
             }
 
             if (isset($data['tmdbRating']) && $filmFiltre->getTmdbRating() === null) {
-                if (is_numeric($data['tmdbRating'])) { // tmdbRating is float in entity
+                if (is_numeric($data['tmdbRating'])) { // tmdbRating est float dans l'entité
                     $filmFiltre->setTmdbRating((float) $data['tmdbRating']);
                 }
             }
@@ -312,16 +315,16 @@ final class SaveDataController extends AbstractController
 
             // Correction pour le type des acteurs
             if (isset($data['actors']) && $filmFiltre->getActors() === null) {
-                // Convert array of actor names to a string
+                // Convertir un tableau de noms d'acteurs en chaîne
                 if (is_array($data['actors'])) {
                     $filmFiltre->setActors(implode(', ', $data['actors']));
                 } else if (is_string($data['actors'])) {
-                    // If by chance it's already a string
+                    // Si par hasard c'est déjà une chaîne
                     $filmFiltre->setActors($data['actors']);
                 }
             }
-            // *** END FIX ***
 
+            // importantCrew est défini comme tableau dans l'entité
             if (isset($data['importantCrew']) && $filmFiltre->getImportantCrew() === null) {
                 if (is_array($data['importantCrew'])) {
                     $filmFiltre->setImportantCrew($data['importantCrew']);
@@ -427,6 +430,7 @@ final class SaveDataController extends AbstractController
         $listeFavorites = $entityManager->getRepository(Liste::class)->findOneBy(['user' => $user, 'name_liste' => 'Ma liste']);
 
         if (!$listeHistory) {
+            // Si la liste "Historique des films" n'existe pas, on la crée
             $listeHistory = new Liste();
             $listeHistory->setUser($user);
             $listeHistory->setNameListe('Historique des films');
@@ -445,9 +449,6 @@ final class SaveDataController extends AbstractController
         }
 
         // S'assurer que la liste des favoris existe avant de chercher un film dedans
-        // Bien que la logique de création des listes soit dans les autres méthodes,
-        // il est plus sûr de vérifier ici aussi, ou de s'assurer que $listeFavorites ne peut pas être null.
-        // Pour cet exemple, on suppose que si on arrive ici, $listeFavorites devrait exister si l'utilisateur a des favoris.
         // Si $listeFavorites est null et qu'on essaie de l'utiliser dans findOneBy, cela causera une erreur.
         // Une gestion plus robuste pourrait être nécessaire si $listeFavorites peut légitimement être null.
 
@@ -470,7 +471,7 @@ final class SaveDataController extends AbstractController
         if ($listFilmFavorites) {
             $entityManager->remove($listFilmFavorites);
             // Le flush sera fait plus bas ou après l'ajout à l'historique pour regrouper les opérations DB
-            $this->addFlash('success', sprintf('Film "%s" enlevé de votre liste des favoris.', $filmFiltre->getTitle()));
+            $this->addFlash('success', sprintf('"%s" est maintenant dans votre historique', $filmFiltre->getTitle()));
         }
 
         // Si le film n'est pas déjà dans l'historique, l'ajouter
@@ -478,17 +479,6 @@ final class SaveDataController extends AbstractController
             $listFilm = new ListFilm();
             $listFilm->setListFilmInfo($filmFiltre, $listeHistory);
             $entityManager->persist($listFilm);
-            // Message de succès pour l'ajout à l'historique
-            // Le message précédent "enlevé de votre liste des favoris" est déjà là si applicable.
-            // On peut ajouter un message spécifique pour l'historique si on le souhaite,
-            // ou considérer que le message de suppression des favoris implique son déplacement.
-            // Pour plus de clarté, on peut ajouter un message distinct si le film n'était pas dans les favoris mais est ajouté à l'historique.
-            if (!$listFilmFavorites) { // Si le film n'était pas dans les favoris (donc pas de message de suppression)
-                $this->addFlash('success', sprintf('Film "%s" ajouté à votre historique.', $filmFiltre->getTitle()));
-            } else {
-                // Si déjà enlevé des favoris, on peut ajouter un message confirmant l'ajout à l'historique
-                $this->addFlash('info', sprintf('Film "%s" également ajouté à votre historique.', $filmFiltre->getTitle()));
-            }
         } else {
             // Si le film est déjà dans l'historique et n'a pas été supprimé des favoris (car il n'y était pas)
             if (!$listFilmFavorites) {

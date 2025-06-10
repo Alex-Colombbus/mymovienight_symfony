@@ -142,8 +142,9 @@ final class ListeController extends AbstractController
         foreach ($listFilms as $listFilm) {;
             $film = $entityManager->getRepository(FilmFiltre::class)->findOneBy(['tconst' => $listFilm->getTconst()]);
 
-
+            // Vérifier si le film existe avant de l'ajouter à la liste à afficher
             if ($film) {
+                // Ajouter les informations du film à la liste à afficher
                 $listToDisplay[] = [
                     'tconst' => $film->getTconst(),
                     'title' => $film->getTitle(),

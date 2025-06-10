@@ -10,40 +10,40 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class JsonCodeEditorType extends AbstractType
 {
+    /**
+     * Ce type de formulaire étend CodeEditorType pour gérer les données JSON.
+     * Il transforme entre une chaîne JSON et un tableau associatif.
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(new CallbackTransformer(
-            function ($arrayToTransform) { // Model data (array) to form data (JSON string)
+            function ($arrayToTransform) { // Données du modèle (tableau) vers données du formulaire (chaîne JSON)
                 if ($arrayToTransform === null) {
-                    return ''; // Return empty string for null array
+                    return ''; // Retourner une chaîne vide pour un tableau nul
                 }
 
                 return json_encode($arrayToTransform, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
             },
-            function ($stringToTransform) { // Form data (JSON string) to model data (array)
+            function ($stringToTransform) { // Données du formulaire (chaîne JSON) vers données du modèle (tableau)
                 if ($stringToTransform === null ||  trim($stringToTransform) === '') {
-                    return null; // Or [] if your entity expects an empty array for empty JSON
+                    return null; // Ou [] si l'entité attend un tableau vide pour un JSON vide
                 }
                 $decoded = json_decode($stringToTransform, true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
-                    // Optionally, throw TransformationFailedException
+                    // Optionnellement, lever une TransformationFailedException
                     // use Symfony\Component\Form\Exception\TransformationFailedException;
-                    // throw new TransformationFailedException('Invalid JSON format.');
-                    return null; // For now, returning null if JSON is invalid
+                    // throw new TransformationFailedException('Format JSON invalide.');
+                    return null; // Pour l'instant, retourne null si le JSON est invalide
                 }
                 return $decoded;
             }
         ));
     }
 
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        // You can define default options for your custom type here if needed
-        // or allow options to be passed through to the parent.
-    }
+    public function configureOptions(OptionsResolver $resolver): void {}
 
     public function getParent(): string
     {
-        return CodeEditorType::class; // Set CodeEditorType as the parent
+        return CodeEditorType::class; // Définir CodeEditorType comme parent
     }
 }

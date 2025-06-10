@@ -2,15 +2,14 @@
 
 namespace App\Controller;
 
-use App\Entity\Film;
-use App\Repository\FilmRepository;
+
 use App\Repository\FilmFiltreRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Loader\Configurator\session;
+
 
 
 
@@ -71,15 +70,13 @@ final class HomeController extends AbstractController
 
 
 
-
+        // Vérification si genresArray est vide
         if (empty($genresArray)) {
             // dd("test");
             $films = $filmFiltreRepository->findMoviesAllGenres($minRating, $maxRating, $minYear, $maxYear);
             $session->set('films', $films);
             return $this->redirectToRoute('app_film');
-        } else {
-            // $genres = implode('%', $genresArray);
-            // dd($genres);
+        } else { // Si genresArray n'est pas vide, on utilise la méthode findMoviesWithGenres
             $films = $filmFiltreRepository->findMoviesWithGenres($genresArray, $minRating, $maxRating, $minYear, $maxYear);
             $session->set('films', $films);
             return $this->redirectToRoute('app_film');

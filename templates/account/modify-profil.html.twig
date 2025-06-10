@@ -5,10 +5,10 @@ movie night{% endblock %} {% block main %}
   class="container-fluid d-flex flex-column align-items-center justify-content-start loginMain bgSite"
 >
   <h1>Profil de {{ app.user.username }}</h1>
-  <h3 class="colorJauneMoche">Modification du mot de passe</h3>
+  <h3 class="colorJauneMoche">Modification du profil</h3>
   <div class="card-border col-6">
     <div class="cardBody p-4">
-      {{ form(modifyPwd) }}
+      {{ form(modifyProfil) }}
     </div>
   </div>
 </div>

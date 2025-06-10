@@ -2,15 +2,13 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Form\MailUserForm;
+use App\Form\ProfilUserForm;
 use App\Form\PasswordUserForm;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 
@@ -58,6 +56,8 @@ final class AccountController extends AbstractController
                 'success',
                 'Votre mot de passe a été modifié avec succès !'
             );
+
+            return $this->redirectToRoute('app_account_modify_pwd');
         }
 
 
@@ -67,40 +67,30 @@ final class AccountController extends AbstractController
     }
 
     #[Route('compte/modifier-profil', name: 'app_account_modify_profil')]
-    public function modifyMail(Request $request, EntityManagerInterface $entityManager): Response
+    public function modifyProfil(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $user = $this->getUser();
 
-
-        $user = $this->getUser(); // Récupère l'utilisateur connecté
-
-
-        $form = $this->createForm(MailUserForm::class, $user, [
-            "data_class" => User::class,
-            // On n'utilise pas l'option userPasswordHasher car on ne modifie pas le mot de passe
-        ]);
-        $form = $this->createForm(BirthdayType::class, $user, [
-            "data_class" => User::class,
-            // On n'utilise pas l'option userPasswordHasher car on ne modifie pas le mot de passe
-        ]);
+        // Utiliser seulement MailUserForm
+        $form = $this->createForm(ProfilUserForm::class, $user);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-
-            // Pas besoin de persist() car on insere pas une nouvelle entité
-            // Exécute la requête SQL pour insérer l'utilisateur dans la base de données
             $entityManager->flush();
 
-            // Envoie un message flash de succès
+
             $this->addFlash(
                 'success',
-                'Votre mot de passe a été modifié avec succès !'
+                'Votre profil a été modifié avec succès !'
             );
+
+
+            return $this->redirectToRoute('app_account_modify_profil');
         }
 
-
-        return $this->render('account/password.html.twig', [
+        // Utiliser le bon template
+        return $this->render('account/modify-profil.html.twig', [
             'modifyProfil' => $form->createView(),
         ]);
     }
