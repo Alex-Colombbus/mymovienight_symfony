@@ -28,7 +28,7 @@
                         </div>
 
 
-                        <ul class="col-8 col-sm-4 col-md-4 col-lg-4 p-5 d-flex justify-content-around">
+                        <ul class="col-8 col-sm-4 col-md-5 col-lg-5 p-5 d-flex justify-content-around">
                         {% if app.user %}
       
 
@@ -47,9 +47,9 @@
                               <div class="dropend mx-4 row">
                                     
                                     {% if app.user %}
-                                          <p class="iconeNavIndex my-auto mx-2 fs-6 fs-md-5 fs-lg-4 col-5">{{app.user.username}}</p>
+                                          <p class="iconeNavIndex my-auto mx-2 fs-6 fs-md-5 fs-lg-4 col">{{app.user.username}}</p>
                         {% endif %}
-                        <button class ="dropdown-toggle col-5" type="button"  data-bs-toggle="dropdown" aria-expanded="false" aria-label="Menu utilisateur">
+                        <button class ="dropdown-toggle col" type="button"  data-bs-toggle="dropdown" aria-expanded="false" aria-label="Menu utilisateur">
                               <i class="bi bi-person-circle iconeNavIndex"></i>
                         </button>
       
@@ -98,8 +98,8 @@
 
       {% endblock %}
 </main>
-<footer class="footerIndex d-flex justify-content-end align-items-end">
-<p class="iconeNavIndex fs-6 text-end">Crée par Alexandre Cavet, avec l'aide d'IMDB et de TMDB</p>
+<footer class="footerIndex d-flex justify-content-center align-items-end">
+<p class="iconeNavIndex fs-6">Crée par Alexandre Cavet, avec l'aide d'IMDB et de TMDB</p>
 </footer>
 <script src="{{ asset('JS/script.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>

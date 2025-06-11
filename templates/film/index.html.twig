@@ -479,7 +479,7 @@ function showMessage(type, message) {
               iconeHeart.classList.add('bi-heart-fill'); // Ajouter la nouvelle icone pour montrer que l'ajout a été fait
               bouttonSendListFav.disabled = false; // Réactiver le bouton à la fin
             } else {
-              // Gérer le cas où le serveur retourne un statut 'error' même avec HTTP 200 (moins courant)
+              // Gérer le cas où le serveur retourne un statut 'error' même avec HTTP 200
               throw new Error(data.message || 'Une erreur logique est survenue.');
             }
           })
@@ -491,8 +491,8 @@ function showMessage(type, message) {
 
             // Réactiver le bouton en cas d'erreur pour permettre une nouvelle tentative
             bouttonSendListFav.disabled = false;
-            iconeHeart.classList.remove('bi-heart-fill'); // Assurer qu'il n'est pas vert
-            iconeHeart.classList.add('bi-heart'); // Mettre en rouge par exemple
+            iconeHeart.classList.remove('bi-heart-fill');
+            iconeHeart.classList.add('bi-heart');
           });
 
       } else {
@@ -523,12 +523,12 @@ function showMessage(type, message) {
               showMessage('success', data.message);
               console.log('Succès:', data.message);
               // --- Changer l'apparence du bouton ---
-              iconeHeart.classList.remove('bi-heart-fill'); // Enlever l'ancienne classe
-              iconeHeart.classList.add('bi-heart'); // Ajouter nouvelle classe (ex: Bootstrap vert)=
-              // Optionnel: Garder le bouton désactivé ou le réactiver après un délai
-              bouttonSendListFav.disabled = false; // Réactiver si besoin
+              iconeHeart.classList.remove('bi-heart-fill');
+              iconeHeart.classList.add('bi-heart');
+
+              bouttonSendListFav.disabled = false; 
             } else {
-              // Gérer le cas où le serveur retourne un statut 'error' même avec HTTP 200 (moins courant)
+              // Gérer le cas où le serveur retourne un statut 'error' même avec HTTP 200
               throw new Error(data.message || 'Une erreur logique est survenue.');
             }
           })
@@ -540,8 +540,8 @@ function showMessage(type, message) {
 
             // Réactiver le bouton en cas d'erreur pour permettre une nouvelle tentative
             bouttonSendListFav.disabled = false;
-            iconeHeart.classList.remove('bi-heart'); // Assurer qu'il n'est pas vert
-            iconeHeart.classList.add('bi-heart-fill'); // Mettre en rouge par exemple
+            iconeHeart.classList.remove('bi-heart');
+            iconeHeart.classList.add('bi-heart-fill');
           });
         }
       }
@@ -587,24 +587,24 @@ function showMessage(type, message) {
               console.log('Succès:', data.message);
               // --- Changer l'apparence du bouton ---
               iconeRef.classList.remove('bi-x-circle'); // Enlever l'ancienne classe
-              iconeRef.classList.add('bi-x-circle-fill'); // Ajouter nouvelle classe (ex: Bootstrap vert)=
-              // Optionnel: Garder le bouton désactivé ou le réactiver après un délai
-              bouttonSendListRef.disabled = false; // Réactiver si besoin
+              iconeRef.classList.add('bi-x-circle-fill');
+              
+              bouttonSendListRef.disabled = false; // Réactive
             } else {
               // Gérer le cas où le serveur retourne un statut 'error' même avec HTTP 200 (moins courant)
               throw new Error(data.message || 'Une erreur logique est survenue.');
             }
           })
           .catch(error => {
-            // Traitement en cas d'erreur (réseau, JSON invalide, erreur serveur explicite)
+            // Traitement en cas d'erreur
             showMessage('error', error.message);
             console.error('Erreur AJAX:', error);
             console.error('Erreur: ' + error.message);
 
             // Réactiver le bouton en cas d'erreur pour permettre une nouvelle tentative
             bouttonSendListRef.disabled = false;
-            iconeRef.classList.remove('bi-x-circle-fill'); // Assurer qu'il n'est pas vert
-            iconeRef.classList.add('bi-x-circle'); // Mettre en rouge par exemple
+            iconeRef.classList.remove('bi-x-circle-fill'); 
+            iconeRef.classList.add('bi-x-circle');
           });
 
       } else {
@@ -652,8 +652,8 @@ function showMessage(type, message) {
 
             // Réactiver le bouton en cas d'erreur pour permettre une nouvelle tentative
             bouttonSendListRef.disabled = false;
-            iconeRef.classList.remove('bi-x-circle'); // Assurer qu'il n'est pas vert
-            iconeRef.classList.add('bi-x-circle-fill'); // Mettre en rouge par exemple
+            iconeRef.classList.remove('bi-x-circle'); 
+            iconeRef.classList.add('bi-x-circle-fill');
           });
 
       }

@@ -30,9 +30,7 @@ class JsonCodeEditorType extends AbstractType
                 }
                 $decoded = json_decode($stringToTransform, true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
-                    // Optionnellement, lever une TransformationFailedException
-                    // use Symfony\Component\Form\Exception\TransformationFailedException;
-                    // throw new TransformationFailedException('Format JSON invalide.');
+
                     return null; // Pour l'instant, retourne null si le JSON est invalide
                 }
                 return $decoded;
